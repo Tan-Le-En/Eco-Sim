@@ -1,8 +1,10 @@
 /**
- * ECO//SIM — "Deep Ocean Console" design system
- * Deep navy sea background, teal signal accent, mono data readouts,
- * hairline grids + tick ornaments, honest status chips.
- * Fonts: Space Grotesk (display), IBM Plex Mono (data), IBM Plex Sans (body).
+ * ECO//SIM — "Kampung Coast" design system (v2)
+ * Warm Malaysian daylight: cream picture-book background, deep sea-teal accent,
+ * mangrove green, sunny amber, coral. Rounded friendly shapes, big type.
+ * Kid layer up front (Baloo 2 + Nunito); expert layer below (IBM Plex Mono).
+ * Principles: one glance one story; kid words up front, professor words below;
+ * still hard, still honest — engine unchanged.
  */
 @import "tailwindcss";
 @import "tw-animate-css";
@@ -13,7 +15,7 @@
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) + 6px);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -48,63 +50,68 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-teal-signal: var(--teal-signal);
   --color-emerald-life: var(--emerald-life);
+  --color-purple-fair: var(--purple-fair);
+  --color-sky-deep: var(--sky-deep);
   --color-amber-warn: var(--amber-warn);
   --color-coral-risk: var(--coral-risk);
   --color-violet-policy: var(--violet-policy);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
-  --font-display: "Space Grotesk", sans-serif;
+  --color-sand: var(--sand);
+  --font-display: "Baloo 2", cursive;
   --font-mono: "IBM Plex Mono", monospace;
-  --font-sans: "IBM Plex Sans", sans-serif;
+  --font-sans: "Nunito", sans-serif;
 }
 
-:root,
-.dark {
-  --radius: 0.5rem;
-  /* Deep ocean navy base */
-  --background: oklch(0.17 0.035 250);
-  --foreground: oklch(0.93 0.015 220);
-  --card: oklch(0.21 0.04 250);
-  --card-foreground: oklch(0.93 0.015 220);
-  --popover: oklch(0.21 0.04 250);
-  --popover-foreground: oklch(0.93 0.015 220);
-  /* Teal signal = signature brand color */
-  --primary: oklch(0.72 0.13 190);
-  --primary-foreground: oklch(0.15 0.03 250);
-  --secondary: oklch(0.26 0.045 250);
-  --secondary-foreground: oklch(0.9 0.015 220);
-  --muted: oklch(0.24 0.04 250);
-  --muted-foreground: oklch(0.68 0.03 230);
-  --accent: oklch(0.3 0.05 250);
-  --accent-foreground: oklch(0.93 0.015 220);
-  --destructive: oklch(0.63 0.19 25);
-  --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.33 0.04 245);
-  --input: oklch(0.33 0.04 245);
-  --ring: oklch(0.72 0.13 190);
+:root {
+  --radius: 1.1rem;
+  /* Warm cream paper — picture book */
+  --background: oklch(0.965 0.012 90);
+  --foreground: oklch(0.28 0.035 230);
+  --card: oklch(0.99 0.008 95);
+  --card-foreground: oklch(0.28 0.035 230);
+  --popover: oklch(0.99 0.008 95);
+  --popover-foreground: oklch(0.28 0.035 230);
+  /* Deep sea-teal = signature brand color */
+  --primary: oklch(0.55 0.1 210);
+  --primary-foreground: oklch(0.985 0.005 95);
+  --secondary: oklch(0.93 0.02 90);
+  --secondary-foreground: oklch(0.35 0.04 230);
+  --muted: oklch(0.93 0.015 90);
+  --muted-foreground: oklch(0.5 0.03 230);
+  --accent: oklch(0.9 0.03 90);
+  --accent-foreground: oklch(0.3 0.04 230);
+  --destructive: oklch(0.6 0.19 28);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.88 0.02 90);
+  --input: oklch(0.88 0.02 90);
+  --ring: oklch(0.55 0.1 210);
 
-  --teal-signal: oklch(0.72 0.13 190);
-  --emerald-life: oklch(0.75 0.15 165);
-  --amber-warn: oklch(0.8 0.15 80);
-  --coral-risk: oklch(0.66 0.19 25);
-  --violet-policy: oklch(0.7 0.14 300);
-  --ink: oklch(0.97 0.01 220);
-  --ink-soft: oklch(0.78 0.02 220);
+  --teal-signal: oklch(0.55 0.1 210);
+  --emerald-life: oklch(0.62 0.13 155);
+  --purple-fair: oklch(0.6 0.13 310);
+  --sky-deep: oklch(0.6 0.1 240);
+  --amber-warn: oklch(0.75 0.15 75);
+  --coral-risk: oklch(0.62 0.18 30);
+  --violet-policy: oklch(0.6 0.13 300);
+  --ink: oklch(0.25 0.03 230);
+  --ink-soft: oklch(0.5 0.03 230);
+  --sand: oklch(0.9 0.04 85);
 
   --chart-1: var(--teal-signal);
   --chart-2: var(--emerald-life);
-  --chart-3: oklch(0.7 0.12 250);
+  --chart-3: oklch(0.65 0.1 250);
   --chart-4: var(--amber-warn);
   --chart-5: var(--violet-policy);
 
-  --sidebar: oklch(0.19 0.038 250);
-  --sidebar-foreground: oklch(0.93 0.015 220);
+  --sidebar: oklch(0.955 0.012 90);
+  --sidebar-foreground: oklch(0.28 0.035 230);
   --sidebar-primary: var(--teal-signal);
-  --sidebar-primary-foreground: oklch(0.15 0.03 250);
-  --sidebar-accent: oklch(0.26 0.045 250);
-  --sidebar-accent-foreground: oklch(0.93 0.015 220);
-  --sidebar-border: oklch(0.33 0.04 245);
-  --sidebar-ring: oklch(0.72 0.13 190);
+  --sidebar-primary-foreground: oklch(0.985 0.005 95);
+  --sidebar-accent: oklch(0.9 0.03 90);
+  --sidebar-accent-foreground: oklch(0.3 0.04 230);
+  --sidebar-border: oklch(0.88 0.02 90);
+  --sidebar-ring: oklch(0.55 0.1 210);
 }
 
 @layer base {
@@ -113,10 +120,11 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: "IBM Plex Sans", sans-serif;
+    font-family: "Nunito", sans-serif;
   }
   h1, h2, h3, .font-display {
-    font-family: "Space Grotesk", sans-serif;
+    font-family: "Baloo 2", cursive;
+    letter-spacing: -0.01em;
   }
   .font-data {
     font-family: "IBM Plex Mono", monospace;
@@ -156,87 +164,84 @@
     .container {
       padding-left: 2rem;
       padding-right: 2rem;
-      max-width: 1280px;
+      max-width: 1200px;
     }
   }
 
-  /* ---- signature elements ---- */
+  /* ---- Kampung Coast signature elements ---- */
 
-  /* Micro-label above every panel: mono uppercase with tracking */
+  /* Kid-friendly panel label: small, friendly, teal dash */
   .panel-label {
-    font-family: "IBM Plex Mono", monospace;
-    font-size: 0.6875rem;
+    font-family: "Nunito", sans-serif;
+    font-size: 0.75rem;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: oklch(0.68 0.03 230);
+    letter-spacing: 0.12em;
+    color: oklch(0.5 0.03 230);
     display: flex;
     align-items: center;
     gap: 0.5rem;
   }
   .panel-label::before {
     content: "";
-    width: 10px;
-    height: 1px;
+    width: 12px;
+    height: 3px;
+    border-radius: 2px;
     background: var(--teal-signal);
     display: inline-block;
   }
 
-  /* Hairline chart-paper grid texture for data cards */
+  /* Soft warm grid texture (lighter than console version) */
   .grid-paper {
     background-image:
-      linear-gradient(oklch(1 0 0 / 0.035) 1px, transparent 1px),
-      linear-gradient(90deg, oklch(1 0 0 / 0.035) 1px, transparent 1px);
+      linear-gradient(oklch(0.25 0.03 230 / 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, oklch(0.25 0.03 230 / 0.04) 1px, transparent 1px);
     background-size: 24px 24px;
   }
 
-  /* Status chip: educational-model honesty label */
+  /* Status chip: honesty label, now soft and rounded */
   .status-chip {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "Nunito", sans-serif;
     font-size: 0.625rem;
-    letter-spacing: 0.08em;
+    font-weight: 700;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    border: 1px dashed oklch(0.5 0.04 230 / 0.55);
-    color: oklch(0.72 0.03 230);
-    padding: 0.15rem 0.5rem;
+    border: 1px dashed oklch(0.5 0.04 230 / 0.4);
+    color: oklch(0.48 0.03 230);
+    padding: 0.2rem 0.55rem;
     border-radius: 999px;
     white-space: nowrap;
+    background: oklch(1 0 0 / 0.5);
   }
 
-  /* Tick-mark ornaments on card edges */
+  /* Soft rounded cards with gentle shadow */
+  .soft-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 4px 20px oklch(0.25 0.03 230 / 0.06);
+  }
+
+  /* Tick ornaments — kept subtle */
   .tick-edge {
     position: relative;
   }
-  .tick-edge::after {
-    content: "";
-    position: absolute;
-    top: -4px;
-    left: 12px;
-    right: 12px;
-    height: 3px;
-    background-image: repeating-linear-gradient(
-      90deg,
-      oklch(0.55 0.05 230 / 0.5) 0px,
-      oklch(0.55 0.05 230 / 0.5) 1px,
-      transparent 1px,
-      transparent 7px
-    );
-  }
 
-  /* Instrument button press */
   .btn-press {
     transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
   }
   .btn-press:active {
     transform: scale(0.97);
   }
-}
 
-@media (prefers-reduced-motion: no-preference) {
-  @keyframes pulse-glow {
-    0%, 100% { opacity: 0.55; }
-    50% { opacity: 1; }
+  /* Gentle float for the hero scene */
+  @media (prefers-reduced-motion: no-preference) {
+    .float-gentle {
+      animation: float-gentle 5s ease-in-out infinite;
+    }
   }
-  .animate-pulse-glow {
-    animation: pulse-glow 2.2s ease-in-out infinite;
+  @keyframes float-gentle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
   }
 }

@@ -1,133 +1,58 @@
 /**
- * ECO//SIM — Policy control panel (8 sliders)
- * Style: Deep Ocean Console — instrument dials. Each slider shows current
- * value, min/max, unit, live impact arrows, and a short explanation.
- * Trade-offs are never hidden (spec §2.2).
+ * ECO//SIM — Policy control panel (Kampung Coast v2)
+ * Kid layer first: friendly names, one-line stories, plain trade-off lines
+ * ("More of X → less of Y"). Expert numbers stay in the small print.
  */
-import { ArrowDown, ArrowUp, Minus } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  Sun,
+  Bus,
+  TreePine,
+  Building2,
+  Droplets,
+  Recycle,
+  Fish,
+  Factory,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
-import { Controls } from "@/lib/sim/types";
+import { Controls, KID_CONTROLS } from "@/lib/sim/types";
 
 export type ControlKey = keyof Controls;
 
-interface SliderDef {
-  key: ControlKey;
-  label: string;
-  unit: string;
-  min: number;
-  max: number;
-  step: number;
-  defaultVal: number;
-  explanation: string;
-  plus: string[]; // expected positive impacts
-  minus: string[]; // expected negative impacts
-  budgetCost?: number; // rough budget drain per 100 units
-}
+const SLIDER_RANGES: Record<ControlKey, { min: number; max: number; step: number; defaultVal: number }> = {
+  renewableElectricity: { min: 0, max: 100, step: 5, defaultVal: 30 },
+  publicTransport: { min: 0, max: 100, step: 5, defaultVal: 10 },
+  mangroveRestoration: { min: 0, max: 30, step: 1, defaultVal: 0 },
+  coastalDevelopment: { min: 0, max: 30, step: 1, defaultVal: 10 },
+  waterEfficiency: { min: 0, max: 60, step: 5, defaultVal: 10 },
+  wasteRecycling: { min: 0, max: 60, step: 5, defaultVal: 20 },
+  fishingPressure: { min: 0, max: 100, step: 5, defaultVal: 60 },
+  industrialActivity: { min: 0, max: 100, step: 5, defaultVal: 55 },
+};
 
-export const SLIDER_DEFS: SliderDef[] = [
-  {
-    key: "renewableElectricity",
-    label: "Renewable electricity",
-    unit: "%",
-    min: 0,
-    max: 100,
-    step: 5,
-    defaultVal: 30,
-    explanation: "Transition the grid from fossil fuels toward solar, wind, and hydro.",
-    plus: ["emissions", "air quality"],
-    minus: ["upfront cost", "grid upgrades"],
-    budgetCost: 14,
-  },
-  {
-    key: "publicTransport",
-    label: "Public transport investment",
-    unit: "budget units",
-    min: 0,
-    max: 100,
-    step: 5,
-    defaultVal: 10,
-    explanation: "Metro, buses, and bike lanes that pull people out of cars and motorcycles.",
-    plus: ["transport emissions", "mobility", "equity"],
-    minus: ["public funds", "construction"],
-    budgetCost: 12,
-  },
-  {
-    key: "mangroveRestoration",
-    label: "Tree & mangrove restoration",
-    unit: "% extra coverage",
-    min: 0,
-    max: 30,
-    step: 1,
-    defaultVal: 0,
-    explanation: "Replant mangroves along the coast and trees across the city.",
-    plus: ["flood protection", "biodiversity", "carbon storage", "cooling"],
-    minus: ["available development land", "maintenance cost"],
-    budgetCost: 9,
-  },
-  {
-    key: "coastalDevelopment",
-    label: "Coastal development",
-    unit: "% expansion",
-    min: 0,
-    max: 30,
-    step: 1,
-    defaultVal: 10,
-    explanation: "Build housing and economy on the coastal fringe — the most exposed land.",
-    plus: ["housing", "short-term economy"],
-    minus: ["flood exposure", "habitat loss", "infrastructure demand"],
-    budgetCost: 5,
-  },
-  {
-    key: "waterEfficiency",
-    label: "Water efficiency",
-    unit: "% improvement",
-    min: 0,
-    max: 60,
-    step: 5,
-    defaultVal: 10,
-    explanation: "Fix leaks, recycle wastewater, and fit efficient fixtures city-wide.",
-    plus: ["water resilience", "supply pressure"],
-    minus: ["initial cost"],
-    budgetCost: 8,
-  },
-  {
-    key: "wasteRecycling",
-    label: "Waste & recycling",
-    unit: "% recycling rate",
-    min: 0,
-    max: 60,
-    step: 5,
-    defaultVal: 20,
-    explanation: "Sort, recycle, and stop plastic leaking into rivers and the ocean.",
-    plus: ["river & ocean health", "biodiversity", "some jobs"],
-    minus: ["collection cost"],
-    budgetCost: 6,
-  },
-  {
-    key: "fishingPressure",
-    label: "Fishing pressure",
-    unit: "%",
-    min: 0,
-    max: 100,
-    step: 5,
-    defaultVal: 60,
-    explanation: "How intensively the bay's fish stocks are harvested each year.",
-    plus: ["short-term food", "fisher incomes"],
-    minus: ["fish-stock health", "long-term food security"],
-  },
-  {
-    key: "industrialActivity",
-    label: "Industrial activity",
-    unit: "%",
-    min: 0,
-    max: 100,
-    step: 5,
-    defaultVal: 55,
-    explanation: "Factories and plants: jobs and output, but also energy, water, and pollution.",
-    plus: ["jobs", "economic output"],
-    minus: ["emissions", "water use", "pollution"],
-  },
-];
+const ICONS: Record<ControlKey, LucideIcon> = {
+  renewableElectricity: Sun,
+  publicTransport: Bus,
+  mangroveRestoration: TreePine,
+  coastalDevelopment: Building2,
+  waterEfficiency: Droplets,
+  wasteRecycling: Recycle,
+  fishingPressure: Fish,
+  industrialActivity: Factory,
+};
+
+const UNIT_LABEL: Record<ControlKey, string> = {
+  renewableElectricity: "clean power",
+  publicTransport: "bus money",
+  mangroveRestoration: "more trees",
+  coastalDevelopment: "new buildings",
+  waterEfficiency: "water saved",
+  wasteRecycling: "rubbish sorted",
+  fishingPressure: "fishing a lot",
+  industrialActivity: "factories busy",
+};
 
 interface ControlPanelProps {
   controls: Controls;
@@ -137,61 +62,67 @@ interface ControlPanelProps {
 
 export default function ControlPanel({ controls, onChange, onReset }: ControlPanelProps) {
   return (
-    <div className="space-y-4">
-      {SLIDER_DEFS.map((def) => {
-        const value = controls[def.key];
+    <div className="space-y-3.5">
+      {(Object.keys(KID_CONTROLS) as ControlKey[]).map((key) => {
+        const kid = KID_CONTROLS[key];
+        const r = SLIDER_RANGES[key];
+        const value = controls[key];
+        const pct = Math.round((value / r.max) * 100);
         return (
-          <div key={def.key} className="tick-edge bg-card/60 border border-border rounded-md p-3.5">
-            <div className="flex items-baseline justify-between gap-2 mb-1">
-              <span className="font-display text-sm font-semibold">{def.label}</span>
-              <span className="font-data text-sm text-teal-signal font-medium tabular-nums">
-                {value}
-                <span className="text-muted-foreground text-xs ml-0.5">{def.unit}</span>
+          <div key={key} className="soft-card p-4">
+            <div className="flex items-center gap-2.5 mb-1.5">
+              <span className="w-9 h-9 rounded-xl bg-teal-signal/12 flex items-center justify-center shrink-0">
+                {
+                  (() => {
+                    const Ico = ICONS[key];
+                    return <Ico className="w-[18px] h-[18px] text-teal-signal" aria-hidden={true} />;
+                  })()
+                }
               </span>
-            </div>
-            <Slider
-              aria-label={def.label}
-              value={[value]}
-              min={def.min}
-              max={def.max}
-              step={def.step}
-              onValueChange={([v]) => onChange(def.key, v)}
-              className="mb-2"
-            />
-            <div className="flex items-center justify-between gap-2 mb-1.5">
-              <span className="font-data text-[10px] text-muted-foreground uppercase tracking-wider">
-                {def.min} – {def.max} {def.unit}
-              </span>
-              <div className="flex items-center gap-0.5">
-                <span className="status-chip !border-0 !px-1">{def.defaultVal} baseline</span>
+              <div className="flex-1">
+                <div className="font-display font-bold text-[15px] leading-tight">{kid.kidName}</div>
+                <div className="font-data text-[10px] text-muted-foreground">{kid.bm}</div>
+              </div>
+              <div className="text-right">
+                <div className="font-display text-lg font-extrabold text-teal-signal leading-none tabular-nums">{pct}%</div>
+                <div className="font-data text-[10px] text-muted-foreground leading-tight mt-0.5">{UNIT_LABEL[key]}</div>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground leading-snug mb-1.5">{def.explanation}</p>
-            <div className="flex flex-wrap gap-x-3 gap-y-1">
-              {def.plus.map((p) => (
-                <span key={"p" + p} className="flex items-center gap-1 text-[11px] text-emerald-life">
-                  <ArrowUp className="w-3 h-3" /> {p}
-                </span>
-              ))}
-              {def.minus.map((m) => (
-                <span key={"m" + m} className="flex items-center gap-1 text-[11px] text-amber-warn">
-                  <ArrowDown className="w-3 h-3" /> {m}
-                </span>
-              ))}
-              {def.plus.length === 0 && def.minus.length === 0 && (
-                <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
-                  <Minus className="w-3 h-3" /> direct trade-off
-                </span>
-              )}
+            <p className="text-xs text-muted-foreground leading-snug mb-2">{kid.kidStory}</p>
+            <Slider
+              aria-label={kid.kidName}
+              value={[value]}
+              min={r.min}
+              max={r.max}
+              step={r.step}
+              onValueChange={([v]) => onChange(key, v)}
+              className="mb-1.5"
+            />
+            <div className="flex items-center justify-between gap-2 text-[10px]">
+              <span className="text-muted-foreground font-bold uppercase tracking-wider">
+                less ← → more
+              </span>
+              <span className="status-chip !border-0 !px-1">start: {r.defaultVal}</span>
+            </div>
+            {/* Plain-language trade-offs: what gets better / what gets harder */}
+            <div className="mt-2.5 space-y-1.5">
+              <div className="flex items-start gap-1.5 text-xs">
+                <ArrowUp className="w-3.5 h-3.5 text-emerald-life shrink-0 mt-0.5" />
+                <span className="text-foreground font-semibold">{kid.goodWhenMore}</span>
+              </div>
+              <div className="flex items-start gap-1.5 text-xs">
+                <ArrowDown className="w-3.5 h-3.5 text-amber-warn shrink-0 mt-0.5" />
+                <span className="text-muted-foreground font-semibold">{kid.badWhenMore}</span>
+              </div>
             </div>
           </div>
         );
       })}
       <button
         onClick={onReset}
-        className="btn-press w-full font-data text-[11px] uppercase tracking-widest text-muted-foreground border border-border rounded-md py-2 hover:bg-secondary hover:text-foreground transition-colors"
+        className="btn-press w-full text-xs font-bold text-muted-foreground border border-border rounded-full py-2 hover:bg-secondary hover:text-foreground transition-colors"
       >
-        Reset all to baseline
+        Start over — back to the beginning
       </button>
     </div>
   );

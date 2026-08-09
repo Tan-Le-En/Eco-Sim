@@ -90,7 +90,7 @@ function computeYear(
   const privateTransportShare = Math.max(0.2, 0.68 - (c.publicTransport / 100) * 0.4);
   const transportEmissions =
     (population * privateTransportShare * TRANSPORT_EMISSIONS_PER_PERSON_KG) / 1_000_000; // Mt
-  const industrialEmissions = (c.industrialActivity / 100) * 5.4 * (1 + t * 0.004); // Mt
+  const industrialEmissions = (c.industrialActivity / 100) * 14.1 * (1 + t * 0.004); // Mt
   const wasteEmissions = Math.max(0, 0.9 - (c.wasteRecycling / 100) * 1.2); // Mt
   const emissionsMtco2e =
     fossilEmissions + renewableEmissions + transportEmissions + industrialEmissions + wasteEmissions;
@@ -102,7 +102,7 @@ function computeYear(
   const supplyGrowth = t * 1_200_000; // gradual capacity expansion (educational)
   const waterSupply = BASE_WATER_SUPPLY_M3 + supplyGrowth + (c.waterEfficiency / 100) * 30_000_000;
   let waterSecurity = clamp((100 * waterSupply) / Math.max(waterDemandM3, 1), 0, 100);
-  waterSecurity *= rainfallFactorFor(year);
+  waterSecurity = clamp(waterSecurity * rainfallFactorFor(year), 0, 100);
 
   // ---- biodiversity (spec equations, annualized) ----
   const mangroveCoverage = 0.18 + (c.mangroveRestoration / 100) * 0.3 * rollout;
@@ -377,8 +377,10 @@ export function explainOutcome(controls: Controls, baseline: Indicators, final: 
       reasons.push("coastal development destroyed habitat");
     if (k === "biodiversity" && controls.fishingPressure > 70)
       reasons.push("intensive fishing depleted fish stocks");
-    if (k === "waterSecurity" && controls.industrialActivity > 55)
+    if (k === "waterSecurity" && controls.industrialActivity > 50)
       reasons.push("industrial water demand outgrew supply");
+    if (k === "waterSecurity" && controls.industrialActivity <= 50)
+      reasons.push("more people needed more water than the taps could give");
     if (k === "floodResilience" && controls.mangroveRestoration < 10)
       reasons.push("insufficient natural protection against rising seas");
     if (k === "equity") reasons.push("costs and risks fell disproportionately on low-income districts");

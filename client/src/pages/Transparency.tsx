@@ -85,15 +85,15 @@ export default function Transparency() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
         >
-          <div className="panel-label mb-2">Open science · public documentation</div>
-          <h1 className="font-display text-3xl sm:text-4xl font-bold mb-3">
-            How ECO//SIM <span className="text-teal-signal">actually works</span>
+          <div className="panel-label mb-2">For teachers, students & professors</div>
+          <h1 className="font-display text-3xl sm:text-4xl font-extrabold mb-3">
+            How this game <span className="text-teal-signal">actually works</span>
           </h1>
           <p className="text-muted-foreground leading-relaxed mb-8 max-w-2xl">
-            Everything on this page is published deliberately. If you can't see
-            how a simulation decides its outcomes, it can't teach you anything
-            real. Below are the equations, the variables, the score weights —
-            and just as important, the things the model gets wrong.
+            A child can play ECO//SIM without reading this page. But if you want
+            to see the machinery — the equations, the variables, the score
+            weights — everything is published here. If you can't see how a
+            simulation decides its outcomes, it can't teach you anything real.
           </p>
 
           {/* Equations */}
@@ -110,11 +110,11 @@ export default function Transparency() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.04 }}
-                  className="tick-edge bg-card/60 border border-border rounded-md p-4"
+                  className="soft-card p-4"
                 >
                   <div className="flex items-baseline justify-between gap-3 flex-wrap mb-1.5">
                     <h3 className="font-display font-semibold text-sm">{eq.title}</h3>
-                    <code className="font-data text-xs text-teal-signal bg-secondary/60 border border-border rounded px-2 py-0.5">
+                    <code className="font-data text-xs text-teal-signal bg-secondary/60 border border-border rounded-lg px-2 py-0.5">
                       {eq.formula}
                     </code>
                   </div>
@@ -130,7 +130,7 @@ export default function Transparency() {
               <FlaskConical className="w-5 h-5 text-violet-policy" />
               <h2 className="font-display text-xl font-bold">Variables &amp; units</h2>
             </div>
-            <div className="overflow-x-auto border border-border rounded-md">
+            <div className="overflow-x-auto soft-card">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="font-data text-[10px] uppercase tracking-wider text-muted-foreground bg-secondary/50 border-b border-border">
@@ -160,7 +160,7 @@ export default function Transparency() {
               <Scale className="w-5 h-5 text-amber-warn" />
               <h2 className="font-display text-xl font-bold">Score weights — the same for everyone</h2>
             </div>
-            <div className="grid-paper tick-edge border border-border rounded-md p-5 space-y-3">
+            <div className="soft-card p-5 space-y-3">
               {[
                 ["Climate pressure", 0.20, "#f87171"],
                 ["Biodiversity", 0.15, "#34d399"],
@@ -195,14 +195,14 @@ export default function Transparency() {
             </div>
             <div className="space-y-3">
               {LIMITS.map((lim, i) => (
-                <div key={i} className="border-l-2 border-coral-risk/50 bg-card/60 border border-border rounded-r-md pl-4 py-3">
+                <div key={i} className="border-l-4 border-coral-risk/50 soft-card pl-4 py-3">
                   <p className="text-sm leading-relaxed">{lim}</p>
                 </div>
               ))}
             </div>
           </section>
 
-          <div className="border border-teal-signal/30 bg-teal-signal/5 rounded-md p-5 mb-4">
+          <div className="border border-teal-signal/30 bg-teal-signal/10 rounded-2xl p-5 mb-4">
             <div className="flex items-start gap-3">
               <FlaskConical className="w-5 h-5 text-teal-signal shrink-0 mt-0.5" />
               <div>
@@ -220,7 +220,7 @@ export default function Transparency() {
 
           <Link
             href="/simulator"
-            className="btn-press inline-flex items-center gap-2 bg-teal-signal text-primary-foreground font-display font-semibold rounded-md px-5 py-2.5 hover:brightness-110 transition-all"
+            className="btn-press inline-flex items-center gap-2 bg-teal-signal text-primary-foreground font-display font-bold rounded-full px-6 py-3 hover:brightness-105 transition-all shadow-md shadow-teal-signal/25"
           >
             Back to the simulator <ArrowRight className="w-4 h-4" />
           </Link>

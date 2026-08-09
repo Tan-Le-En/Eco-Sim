@@ -1,83 +1,71 @@
-# ECO//SIM: Coastal City 2050 — Design Brainstorm
+# ECO//SIM — Design Direction (v2: "Kampung Coast")
 
-## Project brief
-A browser-based educational environmental simulation. The user manages the fictional coastal city **Nusa Bay** (1M people) from 2026 to 2050, tuning 8 policy controls and observing consequences across 7 indicators. Core promise: *"Change one thing. See everything change."*
-Audience: students 13–22, teachers, competition judges. Must feel serious but approachable, credible and transparent (educational-model labels everywhere).
+## User feedback driving this version
+"Too complicated — you look at it and it's hard to understand. I want to see it and understand. Based in Malaysian culture. Simple but hard: a 5-year-old understands everything, a professor of environmental technology still applauds it."
 
----
+## CHANGED direction: "Kampung Coast" — warm, instant, Malaysian
 
-## Three candidate directions
-
-### 1. "Deep Ocean Console"
-Dark-navy mission-control aesthetic with teal/glow accents — a dashboard-as-command-center vibe.
-Probability: 0.07
-
-### 2. "Field Cartographer"
-Warm paper-map aesthetic: cream/parchment background, ink linework, atlas typography — the simulation styled like an old explorer's atlas crossed with a modern science journal.
-Probability: 0.04
-
-### 3. "Mangrove Brutalism"
-Light utilitarian style: stark grid, oversized monospace data labels, raw concrete grey + mangrove green, Swiss-report functionalism that treats the city like a specimen under study.
-Probability: 0.02
-
----
-
-## CHOSEN: "Deep Ocean Console" (with scientific-journal rigor)
-
-The spec itself suggests deep navy background + teal water + green biodiversity + amber warning + red risk + purple policy. The dark console aesthetic best supports: data-dense simulation UI, glowing indicator reads, "mission briefing" narrative framing, and the serious-but-approachable tone for a student audience. It also makes the city map and animated chart lines visually dramatic.
-
-**Design Movement**: Scientific dashboard / "mission control" vernacular — inspired by climate-monitoring consoles (NASA Earthdata) and editorial data journalism (FT/The Pudding), with a subtle retro-instrument feel (tick marks, LED-style reads, hairline grids).
+**Design Movement**: Warm Malaysian daylight modernism — the visual language of a beautifully illustrated children's picture book of the Malay coast (kampung houses on stilts, fishing boats, mangroves, monsoon skies), crossed with the honest rigor of a science exhibit at the Petronas Science Centre. Think "Puspakar illustration meets National Geographic Kids Malaysia".
 
 **Core Principles**:
-1. **Data is the hero** — every surface communicates measured values; decoration only exists to serve readability.
-2. **Transparent credibility** — every number carries a status label ("educational model", "simplified assumption"); honesty is a visual feature (muted caption chips, dotted borders).
-3. **One screen, one tension** — the simulator is a single dense cockpit: map left, controls right, results below; no hidden nav layers.
-4. **Consequence is visible** — change one slider and the whole dashboard should visibly respond (indicator arrows, color shifts, chart motion).
+1. **One glance, one story** — every screen answers "is the city happy or not?" in under 2 seconds: a big friendly face/city portrait, three traffic lights, zero reading required.
+2. **Kid words up front, professor words below** — layering: children's plain language on top ("the sea is angry"), expandable expert layer underneath (numbers, equations, weights).
+3. **Malaysian everywhere** — warm cream/sand/sea palette, local names and references (Nusa Bay = "Teluk Nusa", kampung, nelayan, monsoon, kedai, durian economics), Bahasa Malaysia sprinkle words used naturally (sayang, bagus, waspada).
+4. **Still hard, still honest** — the engine from v1 is untouched: 8 sliders, 7 indicators, 25-year simulation, scoring, causal links. Complexity is hidden behind "Tap to learn why" affordances, never removed.
 
-**Color Philosophy**: Deep ocean navy (#0a1628 family, oklch ~0.16) as the sea the city lives in; teal for water systems (the city's lifeblood); emerald green for living systems; amber for warnings, coral-red for risk, violet for policy/AI narration. Light panels only as *data cards* floating on the dark sea — white data chips read like instrument panels. Green is never automatically "good": equity/budget warnings keep amber even in positive frames.
+**Color Philosophy** (light theme now — instantly readable by children): warm cream paper background (like a picture book), deep sea-teal for the ocean, lush mangrove green for nature, sunny amber for warnings, coral for danger, warm terracotta accents. Dark mode console look is GONE for the main flow; kept only as an optional "expert night mode" on the transparency page.
 
-**Layout Paradigm**: Asymmetric cockpit — a tall hero landing (split: narrative left / living city illustration right), then the simulator as a three-band console: (1) header strip with year readout + budget, (2) main band = city map (left, ~55%) + policy console (right, ~45% scrollable), (3) results band = 7 indicator gauges + timeline chart + causal feed. Not a centered marketing page; a working instrument.
+**Layout Paradigm**: Picture-book hero (huge illustrated coastal scene + 1 sentence). Then one-screen simulator shaped like a game: big friendly map in the middle, sliders as simple "more/less" toggles with icons, giant animated "city happiness" result. No data walls.
 
 **Signature Elements**:
-1. **Hairline grid + tick marks** — every card edge carries subtle 1px gridlines and millimeter tick ornaments, like chart paper.
-2. **Status chips** — small dotted-outline chips ("EDUCATIONAL MODEL · SIMPLIFIED ASSUMPTION") on every data panel.
-3. **Pulse-line indicator strips** — the 7 indicators render as live sparkline strips (like an ECG), not just numbers.
+1. **The City Face** — Nusa Bay shown as a living illustrated scene that visibly changes mood (sunny/smiling → stormy/sad) as indicators shift.
+2. **Traffic-light goal cards** — three big circles (green/amber/red) for the kid's goals: sea clean, city safe, everyone happy.
+3. **"Kenapa?" (Why?) taps** — every number has a tappable why that opens plain-language explanation first, expert numbers below.
 
-**Interaction Philosophy**: Sliders feel like instrument dials — instant feedback, value chips update in real time, predicted-impact arrows (+/−) appear live next to affected indicators. Run triggers an animated year-counter that walks 2026→2050 with indicators tweening and event warnings surfacing as alert cards. Speed controls: 1-yr step / 5-yr step / run-to-2050.
+**Interaction Philosophy**: Big targets, no small text. Sliders with live emoji-free icon arrows (fish icon moves, water icon moves). Instant color feedback. A friendly narrator voice in copy ("Pak Ali the fisherman says…").
 
-**Animation**: Framer Motion for panel entrances (staggered 40–60ms, translateY 12px, ease-out cubic-bezier(0.23,1,0.32,1)). Year playback: numbers count up/down per year with spring tweens (≤200ms). Sliders: 150ms value-chip pop. Indicator cards flash a 300ms tint when they change direction. Respect prefers-reduced-motion.
+**Animation**: Soft and bouncy for child delight (springy entrances 300ms, gentle floating clouds), but charts animate precisely for the expert. Respect reduced motion.
 
 **Typography System**:
-- Display/headlines: **Space Grotesk** (700/600) — technical, slightly characterful.
-- Data/labels: **IBM Plex Mono** — all readouts, slider values, status chips, tick numerals.
-- Body: **IBM Plex Sans** (400/500).
-Hierarchy: mono uppercase micro-labels (11px, tracking 0.12em) above every panel; display for mission titles; sans for explanations.
+- Display: **Baloo 2** (rounded, friendly, Malay-web standard) — headlines and big numbers.
+- Body/explanation: **Nunito** — warm, highly readable.
+- Expert data: **IBM Plex Mono** — only inside "expert view" panels.
+Hierarchy: one giant friendly sentence > big icon numbers > tiny expert footnote.
 
-**Brand Essence**: "ECO//SIM — the decision lab for the climate generation." For students who want to *see* systems thinking. Adjectives: rigorous, vivid, honest.
+**Brand Essence**: "ECO//SIM — Permainan Bandar Pantai." A game you play with your town. Kid-friendly warmth, Malaysian soul, professor-grade honesty underneath. Adjectives: warm, playful, true.
 
-**Brand Voice**: Mission-briefing imperative + plain-language honesty. No marketing fluff.
-- Example headline: "Nusa Bay has 25 years. Every decision you make echoes."
-- Example CTA: "Take command — start the 2026 briefing"
-- Status microcopy: "These numbers are an educational model, not a forecast."
+**Brand Voice**: Like a kind teacher who is also a scientist. Short sentences. Local warmth.
+- Example headline: "Bandar kamu perlukan kamu." (Your town needs you.)
+- Example CTA: "Main! Let's protect Teluk Nusa"
+- Narrator: "Pak Ali, our old fisherman, says the fish are fewer every year…"
 
-**Wordmark & Logo**: "ECO//SIM" set in Space Grotesk 700 with the double-slash rendered in teal as the brand mark; logo glyph = a stylized wave-over-grid square (generated, transparent PNG).
+**Logo**: same ECO//SIM wordmark kept for continuity, but now on cream with teal slash.
 
-**Signature Brand Color**: **Teal signal #14b8a6-family (oklch 0.72 0.13 190)** — the "life-line teal" that appears in the wordmark slash, active indicators, and the pulsing year readout.
+## Engine (unchanged, kept from v1)
+- 8 controls, 7 indicators, yearly 2026–2050 deterministic simulation, budget, events, causal links, score/100, saved scenarios.
+- Re-label indicators for kid layer; keep original keys in code.
 
-## Page map
-1. `/` Landing — hero, one-sentence promise, start challenge, how-it-works, transparency link.
-2. `/briefing` Mission briefing — city profile, challenges, budget, success conditions.
-3. `/simulator` The cockpit — map + 8 policy sliders + 7 live indicators + run.
-4. `/results` Scorecard, line chart, biggest success, biggest unintended consequence, deterministic causal explanation, retry, compare scenarios.
-5. `/transparency` Model assumptions & equations (open-science page).
+Kid-friendly indicator names (EN first, BM beside):
+- climatePressure → "Sea & Air" (Laut & Udara) — heat/smoke/warming
+- biodiversity → "Nature & Animals" (Alam & Haiwan)
+- waterSecurity → "Clean Water" (Air Bersih)
+- floodResilience → "Safe From Flood" (Selamat Dari Banjir)
+- publicHealth → "Healthy People" (Orang Sihat)
+- economicWellbeing → "Good Life" (Kehidupan Selesa)
+- equity → "Fair For All" (Adil Untuk Semua)
 
-## Simulation model (deterministic, client-side, transparent)
-- 8 controls: renewable electricity %, public transport investment, mangrove/tree restoration %, coastal development %, water efficiency %, waste/recycling %, fishing pressure %, industrial activity %.
-- 7 indicators: climate pressure, biodiversity, water security, flood resilience, public health, economic wellbeing, equity.
-- Yearly simulation 2026–2050 following the spec's educational equations (population growth, emissions, transport, water, biodiversity, flood, health, equity, economy), plus budget accounting, rainfall variability, and seeded events.
-- Baseline + up to 3 saved scenarios for comparison; deterministic causal-link engine (rule-based explanations).
+Kid-friendly control names:
+- Renewable electricity → "Clean power" (solar/wind instead of smoke)
+- Public transport → "Buses & trains"
+- Tree & mangrove restoration → "Plant trees & mangroves"
+- Coastal development → "Building near the beach"
+- Water efficiency → "Saving water"
+- Waste & recycling → "Sorting rubbish"
+- Fishing pressure → "How much we fish"
+- Industrial activity → "Factories working"
 ## Style Decisions
-- Every major data panel must contain either a measured value, target/baseline reference, causal annotation, or plotted trace; no large console surface should exist as decorative grid alone.
-- The seven indicators are the product's signature visual system: each appears as a city "vital sign" with a consistent colored pulse/sparkline motif (ECG ticks + pulsing endpoint dot) across simulator, results, and summaries.
-- Nusa Bay imagery is always treated as evidence under study — framed with corner brackets, grid outlines, and specimen/coordinate annotations — rather than standalone cinematic scenery.
-- The trajectory chart always shows a 2026 baseline reference line so every playback state can be read against the starting point.
+
+- Every main gameplay/results screen begins with the same hierarchy: **living Teluk Nusa mood portrait first, three traffic-light goals second, expert numbers third**. Implemented as the TownMood band (Simulator) and mood portrait + traffic lights on Results.
+- The simulator map reads as a **picture-book coastal play-board of Teluk Nusa**: rounded organic cells, wave-and-beach header strip with a little boat token, compass marks, BM labels (Bakau, Kampung, Kilang).
+- Expert material lives in a distinct **"science exhibit" layer**: IBM Plex Mono / chart-grid language and "Kenapa?" framing only after the child-friendly explanation has answered what happened.
+- Signature motif: hand-drawn wave divider with boat token (WaveDivider), teal slash in the ECO//SIM wordmark, recurring Malaysian tokens (fish, mangrove, monsoon) as section accents.

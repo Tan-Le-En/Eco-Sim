@@ -28,19 +28,19 @@ function cellColor(cell: MapCell, controls: Controls, indicators: Indicators | n
   if (cell.type === "mangrove") {
     // restoration thickens the mangrove belt (brighter green)
     const boost = (controls.mangroveRestoration / 30) * rollout;
-    return boost > 0.3 ? "#10b981" : CELL_COLORS.mangrove;
+    return boost > 0.3 ? "#2f8f52" : CELL_COLORS.mangrove;
   }
   if (cell.type === "beach" || cell.type === "residentialLow") {
     // coastal development paves over the fringe: sand → slate grey
-    if ((controls.coastalDevelopment / 30) * rollout > 0.5) return "#94a3b8";
+    if ((controls.coastalDevelopment / 30) * rollout > 0.5) return "#c9a87e";
   }
   if (cell.type === "wetland") {
     const loss = (controls.coastalDevelopment / 30) * rollout;
-    if (loss > 0.4) return "#78716c";
+    if (loss > 0.4) return "#b8a478";
   }
   if (indicators && cell.type === "residentialLow" && indicators.floodResilience < 45 && t > 10) {
     // low-income coastal settlement under flood stress
-    return "#b45309";
+    return "#d0784a";
   }
   return CELL_COLORS[cell.type];
 }
@@ -54,10 +54,26 @@ export default function CityMap({ controls, indicators, year, className }: CityM
   return (
     <div className={className}>
       <div className="panel-label mb-2">
-        Nusa Bay · 20 × 20 district grid · fictional educational model
+        Teluk Nusa · your town map · tap a square to explore
       </div>
-      <div className="grid-paper relative rounded-md border border-border p-2 sm:p-3 overflow-hidden">
-        <div className="flex gap-2 sm:gap-3">
+      <div className="soft-card relative p-2 sm:p-3 overflow-hidden rounded-3xl">
+        {/* picture-book wave & beach header — the sea meets the sand */}
+        <div className="absolute top-0 left-0 right-0 h-8 overflow-hidden pointer-events-none" aria-hidden>
+          <svg viewBox="0 0 400 32" className="w-full h-8" preserveAspectRatio="none">
+            <path d="M0,14 C40,6 90,24 140,14 C190,4 230,26 290,14 C330,7 370,22 400,12 L400,0 L0,0 Z" fill="var(--teal-signal, oklch(0.55 0.1 210))" opacity="0.22" />
+            <path d="M0,20 C60,10 110,30 170,19 C230,8 280,28 340,17 C370,12 390,20 400,16 L400,0 L0,0 Z" fill="var(--teal-signal, oklch(0.55 0.1 210))" opacity="0.32" />
+            <rect x="0" y="24" width="400" height="8" fill="var(--amber-warn, oklch(0.75 0.15 75))" opacity="0.28" />
+          </svg>
+        </div>
+        {/* little boat riding the header wave */}
+        <div className="absolute top-3 right-10 pointer-events-none hidden sm:block" aria-hidden>
+          <svg width="34" height="22" viewBox="0 0 46 26">
+            <path d="M0,12 L46,12 L38,22 L8,22 Z" fill="var(--teal-signal)" />
+            <line x1="23" y1="12" x2="23" y2="3" stroke="var(--teal-signal)" strokeWidth="2" strokeLinecap="round" />
+            <path d="M23,3 Q33,7 23,11" fill="none" stroke="var(--teal-signal)" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </div>
+        <div className="flex gap-2 sm:gap-3 mt-6">
           <div
             className="grid gap-[2px] flex-1"
             style={{ gridTemplateColumns: `repeat(20, minmax(0, 1fr))` }}
@@ -68,11 +84,11 @@ export default function CityMap({ controls, indicators, year, className }: CityM
                   <TooltipTrigger asChild>
                     <motion.button
                       aria-label={`${CELL_LABELS[cell.type]} at ${cell.x}, ${cell.y}`}
-                      className="aspect-square rounded-[2px] border border-black/20 transition-colors duration-500"
+                      className="aspect-square rounded-[30%] border border-white/40 transition-colors duration-500 shadow-[inset_0_1px_2px_rgba(0,0,0,0.12)]"
                       style={{ backgroundColor: cellColor(cell, controls, indicators, t) }}
                       onHoverStart={() => setHovered(cell)}
                       onHoverEnd={() => setHovered(null)}
-                      whileHover={{ scale: 1.35, zIndex: 20 }}
+                      whileHover={{ scale: 1.4, zIndex: 20 }}
                       transition={{ type: "spring", stiffness: 400, damping: 25 }}
                     />
                   </TooltipTrigger>
@@ -95,29 +111,29 @@ export default function CityMap({ controls, indicators, year, className }: CityM
             )}
           </div>
           {/* Legend */}
-          <div className="hidden lg:flex flex-col gap-1.5 justify-center pl-1 min-w-[110px]">
+          <div className="hidden lg:flex flex-col gap-1.5 justify-center pl-1 min-w-[120px]">
             {(
               [
-                ["urbanCore", "City core"],
-                ["residential", "Residential"],
-                ["residentialLow", "Low-income"],
-                ["highIncome", "High-income"],
-                ["industrial", "Industry"],
-                ["mangrove", "Mangroves"],
+                ["urbanCore", "Pusat bandar"],
+                ["residential", "Houses"],
+                ["residentialLow", "Kampung houses"],
+                ["highIncome", "Taman houses"],
+                ["industrial", "Kilang"],
+                ["mangrove", "Bakau"],
                 ["wetland", "Wetlands"],
-                ["agriculture", "Farmland"],
-                ["river", "River"],
-                ["ocean", "Sea"],
+                ["agriculture", "Kebun"],
+                ["forest", "Hutan"],
+                ["river", "Sungai"],
+                ["ocean", "Laut"],
+                ["beach", "Pantai"],
               ] as const
             ).map(([k, label]) => (
               <div key={k} className="flex items-center gap-2">
                 <span
-                  className="w-3 h-3 rounded-[2px] border border-black/25 shrink-0"
+                  className="w-3.5 h-3.5 rounded-[4px] border border-white/60 shrink-0 shadow-[inset_0_1px_2px_rgba(0,0,0,0.12)]"
                   style={{ backgroundColor: CELL_COLORS[k] }}
                 />
-                <span className="font-data text-[10px] uppercase tracking-wider text-muted-foreground">
-                  {label}
-                </span>
+                <span className="text-xs font-bold text-foreground">{label}</span>
               </div>
             ))}
           </div>
@@ -131,12 +147,11 @@ export default function CityMap({ controls, indicators, year, className }: CityM
           ))}
         </div>
       </div>
-      <div className="font-data text-[10px] text-muted-foreground mt-1.5 flex items-center gap-2 flex-wrap">
-        <span className="status-chip">Educational model · simplified assumption</span>
+      <div className="flex items-center gap-2 flex-wrap mt-1.5">
+        <span className="status-chip">Fictional town · educational game</span>
         {hovered && (
-          <span className="text-teal-signal">
-            {CELL_LABELS[hovered.type]} — {(hovered.biodiversityValue * 100).toFixed(0)}%
-            biodiversity value
+          <span className="text-teal-signal font-bold text-sm">
+            {CELL_LABELS[hovered.type]} · nature value {(hovered.biodiversityValue * 100).toFixed(0)}%
           </span>
         )}
       </div>

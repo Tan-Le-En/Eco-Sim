@@ -184,3 +184,186 @@ export type SavedScenario = {
   controls: Controls;
   result: SimulationResult;
 };
+
+/* ------------------------------------------------------------------
+ * KID LAYER (Kampung Coast v2) — simple-but-hard
+ * Friendly names, one-word plain meanings, icons, and a single
+ * "why it matters" sentence a child understands. The professor layer
+ * (labels/meanings above + published equations) stays untouched.
+ * ------------------------------------------------------------------ */
+
+export interface KidIndicatorMeta {
+  key: keyof Indicators;
+  /** Big friendly name a child reads first */
+  kidName: string;
+  /** Bahasa Malaysia term used as flavor */
+  bm: string;
+  /** One-line story: what a child should picture */
+  kidStory: string;
+  /** Plain icon name (lucide): Sea, Fish, Droplets, Waves, HeartPulse, Briefcase, Scale */
+  icon: string;
+  /** Happy version of the world vs sad version, kid language */
+  happy: string;
+  sad: string;
+}
+
+export const KID_INDICATORS: Record<keyof Indicators, KidIndicatorMeta> = {
+  climatePressure: {
+    key: "climatePressure",
+    kidName: "Sea & Air",
+    bm: "Laut & Udara",
+    kidStory: "The sky and the sea getting hotter from smoke.",
+    icon: "Sun",
+    happy: "Clear skies, cool breeze",
+    sad: "Smoky, hot, stormy days",
+  },
+  biodiversity: {
+    key: "biodiversity",
+    kidName: "Nature & Animals",
+    bm: "Alam & Haiwan",
+    kidStory: "How many birds, fish, and trees are happy here.",
+    icon: "Leaf",
+    happy: "Birds singing, fish jumping",
+    sad: "Quiet forest, empty sea",
+  },
+  waterSecurity: {
+    key: "waterSecurity",
+    kidName: "Clean Water",
+    bm: "Air Bersih",
+    kidStory: "Is there enough clean water for everyone's taps?",
+    icon: "Droplets",
+    happy: "Water flows at every tap",
+    sad: "Taps running dry",
+  },
+  floodResilience: {
+    key: "floodResilience",
+    kidName: "Safe From Flood",
+    bm: "Selamat Dari Banjir",
+    kidStory: "When the monsoon rain comes, are the houses safe?",
+    icon: "Umbrella",
+    happy: "Rain falls, homes stay dry",
+    sad: "Water on the roads and floors",
+  },
+  publicHealth: {
+    key: "publicHealth",
+    kidName: "Healthy People",
+    bm: "Orang Sihat",
+    kidStory: "Do people stay healthy and not get sick?",
+    icon: "HeartPulse",
+    happy: "Everyone is strong and well",
+    sad: "More coughs, more doctors' visits",
+  },
+  economicWellbeing: {
+    key: "economicWellbeing",
+    kidName: "Good Life",
+    bm: "Kehidupan Selesa",
+    kidStory: "Can families earn enough for food, school, and fun?",
+    icon: "Briefcase",
+    happy: "Jobs for everyone, good food on the table",
+    sad: "No jobs, prices too high",
+  },
+  equity: {
+    key: "equity",
+    kidName: "Fair For All",
+    bm: "Adil Untuk Semua",
+    kidStory: "Does everybody get a fair share — rich and poor alike?",
+    icon: "Scale",
+    happy: "Everyone is treated fairly",
+    sad: "Some have plenty, some have little",
+  },
+};
+
+/* Kid layer for the 8 controls. */
+export interface KidControlMeta {
+  key: keyof Controls;
+  kidName: string;
+  bm: string;
+  kidStory: string;
+  icon: string; // lucide icon name
+  /** What goes up when you push this more */
+  goodWhenMore: string;
+  /** What gets worse when you push this more */
+  badWhenMore: string;
+}
+
+export const KID_CONTROLS: Record<keyof Controls, KidControlMeta> = {
+  renewableElectricity: {
+    key: "renewableElectricity",
+    kidName: "Clean Power",
+    bm: "Tenaga Bersih",
+    kidStory: "Make electricity from sun and wind instead of smoke.",
+    icon: "Sun",
+    goodWhenMore: "Less smoke in the sky",
+    badWhenMore: "Costs more at the start",
+  },
+  publicTransport: {
+    key: "publicTransport",
+    kidName: "Buses & Trains",
+    bm: "Bas & Kereta Api",
+    kidStory: "Big buses and trains so fewer cars crowd the roads.",
+    icon: "Bus",
+    goodWhenMore: "Less traffic, cleaner air, fairer for everyone",
+    badWhenMore: "Spends our town's money",
+  },
+  mangroveRestoration: {
+    key: "mangroveRestoration",
+    kidName: "Plant Trees & Mangroves",
+    bm: "Tanam Pokok & Bakau",
+    kidStory: "Plant mangroves by the sea — nature's flood wall!",
+    icon: "TreePine",
+    goodWhenMore: "Less flooding, more fish and birds",
+    badWhenMore: "Takes up land we could build on",
+  },
+  coastalDevelopment: {
+    key: "coastalDevelopment",
+    kidName: "Building by the Beach",
+    bm: "Bina di Tepi Pantai",
+    kidStory: "Build new homes and shops near the water.",
+    icon: "Building2",
+    goodWhenMore: "More homes, more money jobs",
+    badWhenMore: "More flood danger, less nature",
+  },
+  waterEfficiency: {
+    key: "waterEfficiency",
+    kidName: "Saving Water",
+    bm: "Jimat Air",
+    kidStory: "Fix leaky pipes and reuse water — every drop counts.",
+    icon: "Droplets",
+    goodWhenMore: "Water lasts through dry months",
+    badWhenMore: "Costs money to fix the pipes",
+  },
+  wasteRecycling: {
+    key: "wasteRecycling",
+    kidName: "Sorting Rubbish",
+    bm: "Kitar Semula",
+    kidStory: "Sort rubbish so it can be used again — not thrown in the sea.",
+    icon: "Recycle",
+    goodWhenMore: "Cleaner river and beach, happy fish",
+    badWhenMore: "Takes work and costs a little",
+  },
+  fishingPressure: {
+    key: "fishingPressure",
+    kidName: "How Much We Fish",
+    bm: "Menjala Ikan",
+    kidStory: "Catch more fish today — but leave enough to come back tomorrow.",
+    icon: "Fish",
+    goodWhenMore: "More fish on the table now",
+    badWhenMore: "Fewer fish every year after",
+  },
+  industrialActivity: {
+    key: "industrialActivity",
+    kidName: "Factories Working",
+    bm: "Kilang",
+    kidStory: "Factories make jobs and things — but use power and water.",
+    icon: "Factory",
+    goodWhenMore: "More jobs, more money for the town",
+    badWhenMore: "More smoke, dirtier water",
+  },
+};
+
+/* The three big kid goals shown as traffic lights on the results screen. */
+export const KID_GOALS: { id: string; title: string; bm: string; keys: (keyof Indicators)[] }[] = [
+  { id: "sea", title: "Sea is clean & calm", bm: "Laut bersih & tenang", keys: ["climatePressure", "biodiversity", "floodResilience"] },
+  { id: "city", title: "City is safe & healthy", bm: "Bandar selamat & sihat", keys: ["waterSecurity", "publicHealth", "floodResilience"] },
+  { id: "people", title: "Everyone is treated fair", bm: "Semua orang dapat adil", keys: ["economicWellbeing", "equity"] },
+];
