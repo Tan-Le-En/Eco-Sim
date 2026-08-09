@@ -4,13 +4,22 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { SimProvider } from "./contexts/SimContext";
 import Home from "./pages/Home";
+import Briefing from "./pages/Briefing";
+import Simulator from "./pages/Simulator";
+import Results from "./pages/Results";
+import Transparency from "./pages/Transparency";
 
 
 function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+      <Route path={"/briefing"} component={Briefing} />
+      <Route path={"/simulator"} component={Simulator} />
+      <Route path={"/results"} component={Results} />
+      <Route path={"/transparency"} component={Transparency} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
@@ -26,13 +35,12 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
+      <ThemeProvider defaultTheme="dark">
         <TooltipProvider>
           <Toaster />
-          <Router />
+          <SimProvider>
+            <Router />
+          </SimProvider>
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
