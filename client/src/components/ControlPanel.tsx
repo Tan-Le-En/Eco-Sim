@@ -79,9 +79,9 @@ export default function ControlPanel({ controls, onChange, onReset }: ControlPan
                 <span className="font-display font-semibold text-[14px] leading-tight">{kid.kidName}</span>
                 <span className="font-data text-[10px] text-muted-foreground block mt-0.5">{kid.bm}</span>
               </span>
-              <span className="font-data text-[13px] tabular-nums font-medium w-16 text-right">
+              <span className="font-data text-[12px] tabular-nums font-medium w-20 text-right whitespace-nowrap">
                 {pct}%
-                <span className="text-muted-foreground font-normal"> / {r.defaultVal}%</span>
+                <span className="text-muted-foreground font-normal">/ {r.defaultVal}%</span>
               </span>
             </div>
             <Slider

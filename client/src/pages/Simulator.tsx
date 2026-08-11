@@ -7,7 +7,6 @@
  */
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause, FastForward, Save, Lightbulb, Coins } from "lucide-react";
 import { toast } from "sonner";
 import SiteHeader from "@/components/SiteHeader";
@@ -36,33 +35,56 @@ export default function Simulator() {
   const [speed, setSpeed] = useState<1 | 5 | 25>(25);
   const [saveOpen, setSaveOpen] = useState(false);
   const [saveName, setSaveName] = useState("");
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const playingRef = useRef(playing);
+  const speedRef = useRef(speed);
+  const [lastTick, setLastTick] = useState(0);
+
+  // Keep refs in sync with state for the animation loop.
+  playingRef.current = playing;
+  speedRef.current = speed;
+
+  // Precompute the full simulation once per controls change; every other
+  // read is a plain array lookup (no re-run).
+  const fullResult = useMemo(() => runSimulation(controls), [controls]);
 
   useEffect(() => {
-    const r = runSimulation(controls);
-    setPreviewResult(r);
-  }, [controls]);
+    setPreviewResult(fullResult);
+  }, [fullResult]);
 
+  // RAF-driven playback: steps years at a fixed wall-clock cadence, so "Fast"
+  // advances several years per frame and the UI never queues up.
   useEffect(() => {
-    if (!playing) {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      return;
-    }
-    const step = speed === 25 ? 1 : speed;
-    intervalRef.current = setInterval(() => {
-      setDisplayYear((y) => {
-        const next = Math.min(2050, y + step);
-        if (next >= 2050) {
-          setPlaying(false);
-          return 2050;
-        }
-        return next;
-      });
-    }, 420);
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    if (!playing) return;
+    let last = performance.now();
+    const loop = (now: number) => {
+      if (!playingRef.current) return;
+      const interval = speedRef.current === 25 ? 110 : 420 / speedRef.current;
+      const elapsed = now - last;
+      if (elapsed >= interval) {
+        const steps = Math.floor(elapsed / interval);
+        setLastTick((t) => t + 1);
+        setDisplayYear((y) => {
+          const next = Math.min(2050, y + steps * speedRef.current);
+          if (next >= 2050) {
+            setPlaying(false);
+            return 2050;
+          }
+          return next;
+        });
+        last = now;
+      }
+      rafRef.current = requestAnimationFrame(loop);
     };
-  }, [playing, speed]);
+    rafRef.current = requestAnimationFrame(loop);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [playing]);
+
+  // Suppress unused warning — lastTick forces re-render cadence during play.
+  void lastTick;
 
   const handleRun = () => {
     setDisplayYear(2026);
@@ -82,14 +104,27 @@ export default function Simulator() {
     return y.indicators;
   }, [previewResult, displayYear]);
 
+  // Sampled chart data: at most ~14 points regardless of elapsed years,
+  // so Recharts never re-lays-out hundreds of points mid-playback.
   const chartData: ChartRow[] = useMemo(() => {
     if (!previewResult) return [];
     const slice = previewResult.years.filter((y) => y.year <= displayYear);
-    return slice.map((y) => {
+    if (slice.length <= 14) {
+      return slice.map((y) => {
+        const row: ChartRow = { year: y.year };
+        for (const k of INDICATOR_KEYS) row[k] = y.indicators[k];
+        return row;
+      });
+    }
+    const step = (slice.length - 1) / 13;
+    const rows: ChartRow[] = [];
+    for (let i = 0; i < 14; i++) {
+      const y = slice[Math.round(i * step)];
       const row: ChartRow = { year: y.year };
       for (const k of INDICATOR_KEYS) row[k] = y.indicators[k];
-      return row;
-    });
+      rows.push(row);
+    }
+    return rows;
   }, [previewResult, displayYear]);
 
   const historyForSparklines = useMemo(() => {
@@ -129,15 +164,12 @@ export default function Simulator() {
           <div className="flex items-center gap-6">
             <div>
               <div className="font-data text-[10px] tracking-[0.16em] uppercase text-muted-foreground">Year</div>
-              <motion.div
-                key={displayYear}
-                initial={{ opacity: 0.4 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.2 }}
+              <div
                 className="font-data text-3xl tabular-nums font-medium leading-tight"
+                style={{ transition: "opacity 200ms ease" }}
               >
                 {displayYear}
-              </motion.div>
+              </div>
             </div>
             <div className="h-8 w-px bg-border hidden sm:block" />
             <div className="flex items-center gap-2">
@@ -202,28 +234,21 @@ export default function Simulator() {
           {indicatorsAtDisplay && <TownMood indicators={indicatorsAtDisplay} year={displayYear} />}
           <CityMap controls={controls} indicators={indicatorsAtDisplay} year={displayYear} />
 
-          <AnimatePresence mode="wait">
-            {indicatorsAtDisplay && (
-              <motion.div
-                key={displayYear}
-                initial={{ opacity: 0.7 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.2 }}
-              >
-                <div className="flex items-baseline justify-between gap-4 mb-2">
-                  <span className="field-label">Registers · {displayYear}</span>
-                  <span className="font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground">
-                    tap a row for the plain-language reading
-                  </span>
-                </div>
-                <IndicatorStrip
-                  indicators={indicatorsAtDisplay}
-                  baseline={previewResult!.baselineYear.indicators}
-                  history={historyForSparklines}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {indicatorsAtDisplay && (
+            <div>
+              <div className="flex items-baseline justify-between gap-4 mb-2">
+                <span className="field-label">Registers · {displayYear}</span>
+                <span className="font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground">
+                  tap a row for the plain-language reading
+                </span>
+              </div>
+              <IndicatorStrip
+                indicators={indicatorsAtDisplay}
+                baseline={previewResult!.baselineYear.indicators}
+                history={historyForSparklines}
+              />
+            </div>
+          )}
 
           <div>
             <div className="field-label mb-2">Trajectory · {chartData[0]?.year ?? 2026} – {displayYear}</div>
@@ -231,11 +256,7 @@ export default function Simulator() {
           </div>
 
           {finished && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="border border-border bg-card"
-            >
+            <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 border border-border bg-card">
               <figure className="photo-plate overflow-hidden">
                 <img
                   src={moodPhoto(previewResult!.score)}
@@ -285,12 +306,12 @@ export default function Simulator() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           )}
         </div>
 
         {/* Right: decision ledger */}
-        <aside className="lg:sticky lg:top-14 lg:self-start max-h-[calc(100vh-5.5rem)] overflow-y-auto pr-1">
+        <aside className="lg:sticky lg:top-14 lg:self-start lg:h-[calc(100vh-3.5rem)] lg:overflow-y-auto pr-1 pb-4">
           <div className="field-label mb-2">Eight decisions · each year</div>
           <ControlPanel controls={controls} onChange={setControl} onReset={resetControls} />
           <div className="mt-3 px-1">

@@ -1,0 +1,6 @@
+# Mobile audit (375x812)
+
+- /simulator: GOOD — single column, map readable, controls below.
+- /briefing: GOOD — stacked, photos hidden on mobile, clean.
+- /results: ISSUE — verdict photo overflows viewport width slightly? Screenshot shows photo extends past right edge / caption text truncated ("2050, WO_"). Check Results verdict figure: it is a grid cell; at 375px photo width ~335px, seems fine but caption overflows (whitespace-nowrap caption). FIX: caption allow wrap or smaller text on mobile. Also check the photo cell doesn't overflow container (it appeared flush right edge with 1px border).
+- /story: ISSUE — blockquote on mobile runs off-screen: `border-l-2 border-vermilion pl-5` inside lg:grid-cols-2 with wide text; the quote has no max-width, overflows horizontally ("The houses here lean on the water. When the..." gets cut). FIX: wrap blockquote in overflow-visible container / allow line-wrap (it should wrap naturally unless a long word). Actually screenshot shows text running off right edge — the quote paragraph lacks wrap: default div wraps, so issue may be the section grid with "gap-0" and photo column hidden below; quote width should be contained. Fix: add min-w-0 / ensure h2+blockquote are in a flex-col with min-w-0.

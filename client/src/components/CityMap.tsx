@@ -1,17 +1,13 @@
 /**
  * ECO//SIM — City map (20×20 tile grid, Editorial Field Study v3)
- * Flat square cells on a white plate, hairline rules, field label,
- * mono legend. Cells respond to controls: mangroves thicken, coastline paves.
+ * PERFORMANCE: single <svg> with 400 <rect> elements updated via inline
+ * styles + CSS transitions. No 400 framer-motion buttons, no per-cell
+ * React components. Tooltip tracks pointer position in a single overlay.
+ * This keeps playback at 60fps while dragging sliders or running years.
  */
-import { useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { buildCityMap, CELL_COLORS, CELL_LABELS, MapCell } from "@/lib/sim/cityMap";
 import { Controls, Indicators } from "@/lib/sim/types";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 interface CityMapProps {
   controls: Controls;
@@ -21,6 +17,9 @@ interface CityMapProps {
 }
 
 const staticMap = buildCityMap();
+const SIZE = 20;
+const COLS = staticMap[0].length;
+const ROWS = staticMap.length;
 
 const LEGEND: [keyof typeof CELL_COLORS, string][] = [
   ["urbanCore", "Pusat bandar"],
@@ -56,11 +55,49 @@ function cellColor(cell: MapCell, controls: Controls, indicators: Indicators | n
   return CELL_COLORS[cell.type];
 }
 
+interface HoverInfo {
+  x: number;
+  y: number;
+  cell: MapCell;
+}
+
 export default function CityMap({ controls, indicators, year, className }: CityMapProps) {
   const t = year - 2026;
-  const [hovered, setHovered] = useState<MapCell | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [hover, setHover] = useState<HoverInfo | null>(null);
 
-  const rows = useMemo(() => staticMap, []);
+  // Pre-compute rects once; colors come from CSS custom updates only.
+  const rects = useMemo(() => {
+    const out: { key: string; x: number; y: number; cell: MapCell }[] = [];
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        const cell = staticMap[r][c];
+        out.push({
+          key: cell.id,
+          x: (c / COLS) * 100,
+          y: (r / ROWS) * 100,
+          cell,
+        });
+      }
+    }
+    return out;
+  }, []);
+
+  const cellWidth = 100 / COLS;
+  const cellHeight = 100 / ROWS;
+
+  const onMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width;
+    const py = (e.clientY - rect.top) / rect.height;
+    const c = Math.min(COLS - 1, Math.max(0, Math.floor(px * COLS)));
+    const r = Math.min(ROWS - 1, Math.max(0, Math.floor(py * ROWS)));
+    const cell = staticMap[r][c];
+    setHover({ x: e.clientX - rect.left, y: e.clientY - rect.top, cell });
+  }, []);
+
+  const onLeave = useCallback(() => setHover(null), []);
 
   return (
     <div className={className}>
@@ -68,49 +105,46 @@ export default function CityMap({ controls, indicators, year, className }: CityM
         <span className="field-label">
           Teluk Nusa — town survey · {year}
         </span>
-        {hovered && (
-          <span className="font-data text-[11px] tracking-[0.08em] uppercase text-muted-foreground truncate">
-            {CELL_LABELS[hovered.type]} · elev {hovered.elevationM} m
-            {hovered.population > 0 ? ` · pop ~${hovered.population.toLocaleString()}` : ""}
-          </span>
-        )}
+        <span className="font-data text-[11px] tracking-[0.08em] uppercase text-muted-foreground truncate hidden sm:block">
+          {hover ? `${CELL_LABELS[hover.cell.type]} · elev ${hover.cell.elevationM} m${hover.cell.population > 0 ? ` · pop ~${hover.cell.population.toLocaleString()}` : ""}` : "Move the pointer over the town"}
+        </span>
       </div>
       <div className="border border-border bg-card p-3">
         <div className="flex gap-3">
           <div
-            className="grid gap-[2px] flex-1"
-            style={{ gridTemplateColumns: "repeat(20, minmax(0, 1fr))" }}
+            ref={containerRef}
+            className="relative flex-1 select-none"
+            onPointerMove={onMove}
+            onPointerLeave={onLeave}
           >
-            {rows.flatMap((row, y) =>
-              row.map((cell) => (
-                <Tooltip key={cell.id}>
-                  <TooltipTrigger asChild>
-                    <motion.button
-                      aria-label={`${CELL_LABELS[cell.type]} at ${cell.x}, ${cell.y}`}
-                      className="aspect-square border border-border/40 transition-colors duration-500"
-                      style={{ backgroundColor: cellColor(cell, controls, indicators, t) }}
-                      onHoverStart={() => setHovered(cell)}
-                      onHoverEnd={() => setHovered(null)}
-                      whileHover={{ scale: 1.5, zIndex: 20, borderColor: "#1C1A16" }}
-                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent
-                    side="right"
-                    className="font-data text-[11px] max-w-[220px] bg-card text-card-foreground border-border"
-                    sideOffset={8}
-                  >
-                    <div className="font-semibold font-display">{CELL_LABELS[cell.type]}</div>
-                    <div className="opacity-70 mt-1">
-                      elev {cell.elevationM} m ·{" "}
-                      {cell.population > 0
-                        ? `pop ~${cell.population.toLocaleString()}`
-                        : "uninhabited"}{" "}
-                      · flood exposure {(cell.floodExposure * 100).toFixed(0)}%
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              )),
+            <svg
+              viewBox={`0 0 100 100`}
+              preserveAspectRatio="none"
+              className="w-full h-auto block"
+              role="img"
+              aria-label="Town map of fictional Teluk Nusa"
+            >
+              {rects.map((r) => (
+                <rect
+                  key={r.key}
+                  x={r.x + cellWidth * 0.04}
+                  y={r.y + cellHeight * 0.04}
+                  width={cellWidth * 0.92}
+                  height={cellHeight * 0.92}
+                  fill={cellColor(r.cell, controls, indicators, t)}
+                  style={{ transition: "fill 500ms ease" }}
+                />
+              ))}
+            </svg>
+            {/* Hover indicator: thin outline cell */}
+            {hover && (
+              <div
+                className="pointer-events-none absolute w-[6%] h-[6%] border border-foreground/80 bg-foreground/10"
+                style={{
+                  left: `${((hover.x / containerRef.current!.getBoundingClientRect().width) * 100 / cellWidth) * cellWidth}%`,
+                  top: `${((hover.y / containerRef.current!.getBoundingClientRect().height) * 100 / cellHeight) * cellHeight}%`,
+                }}
+              />
             )}
           </div>
           <div className="hidden lg:flex flex-col gap-[7px] justify-center pl-1 min-w-[124px]">

@@ -79,7 +79,7 @@ export default function Transparency() {
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader backHref="/" />
-      <main className="container py-10 flex-1 max-w-4xl">
+      <main className="container py-10 flex-1 max-w-5xl">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}

@@ -363,7 +363,7 @@ export const KID_CONTROLS: Record<keyof Controls, KidControlMeta> = {
 
 /* The three big kid goals shown as traffic lights on the results screen. */
 export const KID_GOALS: { id: string; title: string; bm: string; keys: (keyof Indicators)[] }[] = [
-  { id: "sea", title: "Sea is clean & calm", bm: "Laut bersih & tenang", keys: ["climatePressure", "biodiversity", "floodResilience"] },
-  { id: "city", title: "City is safe & healthy", bm: "Bandar selamat & sihat", keys: ["waterSecurity", "publicHealth", "floodResilience"] },
-  { id: "people", title: "Everyone is treated fair", bm: "Semua orang dapat adil", keys: ["economicWellbeing", "equity"] },
+  { id: "sea", title: "Clean & calm sea", bm: "Laut bersih & tenang", keys: ["climatePressure", "biodiversity", "floodResilience"] },
+  { id: "city", title: "Safe & healthy town", bm: "Bandar selamat & sihat", keys: ["waterSecurity", "publicHealth", "floodResilience"] },
+  { id: "people", title: "Fair for everyone", bm: "Semua orang dapat adil", keys: ["economicWellbeing", "equity"] },
 ];

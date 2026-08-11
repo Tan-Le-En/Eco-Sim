@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import Briefing from "./pages/Briefing";
 import Simulator from "./pages/Simulator";
 import Results from "./pages/Results";
+import Story from "./pages/Story";
 import Transparency from "./pages/Transparency";
 
 
@@ -19,6 +20,7 @@ function Router() {
       <Route path={"/briefing"} component={Briefing} />
       <Route path={"/simulator"} component={Simulator} />
       <Route path={"/results"} component={Results} />
+      <Route path={"/story"} component={Story} />
       <Route path={"/transparency"} component={Transparency} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}

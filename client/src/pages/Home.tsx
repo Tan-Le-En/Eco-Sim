@@ -12,6 +12,7 @@ const HERO = "/manus-storage/real-kampung-boats_57e6e432.jpg";
 const JETTY = "/manus-storage/real-penang-jetty_a82ca28d.jpg";
 const MANGROVE = "/manus-storage/real-mangrove-aerial_deefef09.jpg";
 const NETS = "/manus-storage/real-fishermen-nets_6fb1be29.jpg";
+const LANGKAWI = "/manus-storage/real-langkawi-boats_00027e7a.jpg";
 
 const FIELD = [
   {
@@ -52,6 +53,12 @@ export default function Home() {
             </Link>
             <nav className="flex items-center gap-1 sm:gap-2">
               <Link
+                href="/story"
+                className="btn-press font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 border border-border hover:border-foreground transition-colors"
+              >
+                Story mode
+              </Link>
+              <Link
                 href="/transparency"
                 className="btn-press font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 border border-border hover:border-foreground transition-colors"
               >
@@ -87,10 +94,10 @@ export default function Home() {
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link
-                href="/briefing"
+                href="/story"
                 className="btn-press inline-flex items-center gap-3 bg-vermilion text-primary-foreground font-display italic text-lg px-8 py-3.5 hover:brightness-105 transition-all"
               >
-                Read the briefing <ArrowRight className="w-4 h-4" />
+                Read the story <ArrowRight className="w-4 h-4" />
               </Link>
               <span className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground">
                 Simple enough for a child. Rigorous enough for a professor.
@@ -171,9 +178,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ────────────── CTA band ────────────── */}
+      {/* ────────────── CTA band: quote + closing photograph + actions ────────────── */}
       <section className="border-t border-border">
-        <div className="px-6 sm:px-10 lg:px-14 py-14 grid lg:grid-cols-[1fr_auto] items-center gap-8">
+        <div className="px-6 sm:px-10 lg:px-14 py-14 grid lg:grid-cols-[1.3fr_1fr_auto] items-center gap-8">
           <div>
             <div className="field-label mb-3">The year is 2026</div>
             <p className="font-display italic text-xl sm:text-2xl max-w-xl">
@@ -181,6 +188,18 @@ export default function Home() {
               fix my town?"
             </p>
           </div>
+          <figure className="photo-plate overflow-hidden hidden md:block">
+            <img
+              src={LANGKAWI}
+              alt="Colourful fishing boats in a Langkawi bay"
+              className="h-36 w-full object-cover"
+              loading="lazy"
+            />
+            <figcaption className="plate-caption">
+              <span>Fishing bay, Langkawi</span>
+              <span>Fig. 05</span>
+            </figcaption>
+          </figure>
           <div className="flex flex-wrap gap-3">
             <Link
               href="/simulator"

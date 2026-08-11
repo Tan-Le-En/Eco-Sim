@@ -10,8 +10,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { BASELINE, KID_GOALS, INDICATOR_META } from "@/lib/sim/types";
 
-const PHOTO = "/manus-storage/real-fishermen-dawn_e6a0536d.jpg";
+const PHOTO = "/manus-storage/real-fishermen-dawn_28f5a3e4.jpg";
 const RIVER = "/manus-storage/real-mangrove-river_4e88bc33.jpg";
+const JETTY = "/manus-storage/real-clan-jetty_cc25bfaa.jpg";
 
 const CHALLENGES: [string, string][] = [
   ["Smoke", "Most electricity comes from burning fuel."],
@@ -141,10 +142,18 @@ export default function Briefing() {
           </figure>
 
           <figure className="photo-plate overflow-hidden hidden lg:block">
-            <img src={RIVER} alt="Mangrove river in Langkawi" className="h-44 w-full" loading="lazy" />
+            <img src={RIVER} alt="Mangrove river in Langkawi" className="h-40 w-full" loading="lazy" />
             <figcaption className="plate-caption">
               <span>Mangrove river, Kilim Geopark</span>
               <span>Fig. 03</span>
+            </figcaption>
+          </figure>
+
+          <figure className="photo-plate overflow-hidden hidden lg:block">
+            <img src={JETTY} alt="Clan jetty houses on stilts over the sea" className="h-40 w-full object-cover" loading="lazy" />
+            <figcaption className="plate-caption">
+              <span>Where your town lives · clan jetty</span>
+              <span>Fig. 04</span>
             </figcaption>
           </figure>
 

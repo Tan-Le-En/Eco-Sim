@@ -4,7 +4,6 @@
  * tick, tap to open the plain-language story. No rounded meters, no emojis.
  */
 import { useState } from "react";
-import { motion } from "framer-motion";
 import {
   Cloud,
   Leaf,
@@ -67,12 +66,9 @@ export default function IndicatorStrip({ indicators, baseline, history }: Indica
         const sparkValues = history.map((h) => h.indicators[k]).concat(value).slice(-25);
         const isOpen = openKey === k;
         return (
-          <motion.button
+          <button
             key={k}
             type="button"
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.04, duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
             onClick={() => setOpenKey(isOpen ? null : k)}
             aria-label={`${kid.kidName}: ${value.toFixed(0)}. ${isOpen ? "Close story" : "Tap for the story"}`}
             className={`w-full text-left px-3.5 py-2.5 transition-colors ${isOpen ? "bg-secondary/50" : "hover:bg-secondary/30"}`}
@@ -80,15 +76,12 @@ export default function IndicatorStrip({ indicators, baseline, history }: Indica
             <div className="flex items-center gap-3">
               <Icon className="w-4 h-4 shrink-0" style={{ color: meta.color }} aria-hidden="true" />
               <span className="font-data text-[11px] tracking-[0.06em] uppercase w-28 sm:w-36 shrink-0">{kid.kidName}</span>
-              <motion.span
-                key={value}
+              <span
                 className="font-data text-[15px] tabular-nums font-semibold w-8 text-right"
-                initial={{ opacity: 0.4 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.2 }}
+                style={{ transition: "opacity 150ms ease" }}
               >
                 {value.toFixed(0)}
-              </motion.span>
+              </span>
               <span
                 className={`font-data text-[11px] tabular-nums w-11 text-right ${good ? "text-emerald-700" : "text-vermilion"}`}
               >
@@ -117,18 +110,21 @@ export default function IndicatorStrip({ indicators, baseline, history }: Indica
                 aria-hidden="true"
               />
             </div>
-            <motion.div
-              initial={false}
-              animate={isOpen ? { height: "auto", opacity: 1 } : { height: 0, opacity: 0 }}
-              transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
-              className="overflow-hidden"
+            <div
+              className="grid transition-all duration-200"
+              style={{
+                gridTemplateRows: isOpen ? "1fr" : "0fr",
+                opacity: isOpen ? 1 : 0,
+              }}
             >
-              <div className="pt-2 text-[12px] leading-relaxed max-w-xl">
-                <p className="text-foreground font-medium">{isGoodNow ? kid.happy : kid.sad}</p>
-                <p className="text-muted-foreground font-data text-[10px] mt-1 uppercase tracking-wider">{kid.bm}</p>
+              <div className="overflow-hidden">
+                <div className="pt-2 text-[12px] leading-relaxed max-w-xl">
+                  <p className="text-foreground font-medium">{isGoodNow ? kid.happy : kid.sad}</p>
+                  <p className="text-muted-foreground font-data text-[10px] mt-1 uppercase tracking-wider">{kid.bm}</p>
+                </div>
               </div>
-            </motion.div>
-          </motion.button>
+            </div>
+          </button>
         );
       })}
     </div>
