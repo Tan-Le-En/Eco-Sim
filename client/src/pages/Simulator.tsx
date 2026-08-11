@@ -8,6 +8,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Play, Pause, FastForward, Save, Lightbulb, Coins } from "lucide-react";
+import { goalsMetCount } from "@/components/TownMood";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { MISSION_TARGETS } from "@/lib/sim/types";
 import { toast } from "sonner";
 import SiteHeader from "@/components/SiteHeader";
 import CityMap from "@/components/CityMap";
@@ -158,9 +161,9 @@ export default function Simulator() {
     <div className="min-h-screen flex flex-col bg-background">
       <SiteHeader backHref="/briefing" />
 
-      {/* ── Instrument bar ── */}
+      {/* ── Instrument bar: year · budget · mission target ── */}
       <div className="border-b border-border">
-        <div className="px-6 sm:px-10 lg:px-14 py-3 flex flex-wrap items-center justify-between gap-4">
+        <div className="px-6 sm:px-10 lg:px-14 py-3 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-6">
             <div>
               <div className="font-data text-[10px] tracking-[0.16em] uppercase text-muted-foreground">Year</div>
@@ -171,6 +174,29 @@ export default function Simulator() {
                 {displayYear}
               </div>
             </div>
+            {/* Mission chip: the clear goal, always visible while playing */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex items-center gap-2 border border-border bg-card px-3 py-1.5 cursor-help hover:border-vermilion/60 transition-colors">
+                  <span className="font-data text-[10px] tracking-[0.14em] uppercase text-vermilion font-semibold whitespace-nowrap">
+                    Mission
+                  </span>
+                  <span className="font-data text-[11px] tabular-nums whitespace-nowrap">
+                    {indicatorsAtDisplay ? goalsMetCount(indicatorsAtDisplay) : 0} / 5 targets
+                  </span>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className="rounded-none border-border max-w-xs" side="bottom">
+                <p className="font-data text-[11px] leading-relaxed">
+                  <span className="font-bold uppercase tracking-wider text-vermilion">Your 5 targets by 2050:</span>
+                  {MISSION_TARGETS.map((m) => (
+                    <span key={m.key} className="block">
+                      · {missionLabel(m.key)} {m.direction === "above" ? "≥ " + m.threshold : "≤ " + m.threshold}
+                    </span>
+                  ))}
+                </p>
+              </TooltipContent>
+            </Tooltip>
             <div className="h-8 w-px bg-border hidden sm:block" />
             <div className="flex items-center gap-2">
               <Coins className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
@@ -353,6 +379,17 @@ export default function Simulator() {
       </Dialog>
     </div>
   );
+}
+
+function missionLabel(key: string): string {
+  const labels: Record<string, string> = {
+    climatePressure: "Air & sea pressure",
+    biodiversity: "Nature alive",
+    waterSecurity: "Clean water in taps",
+    floodResilience: "Flood-safe homes",
+    equity: "Fair for everyone",
+  };
+  return labels[key] ?? key;
 }
 
 function moodPhoto(score: number): string {

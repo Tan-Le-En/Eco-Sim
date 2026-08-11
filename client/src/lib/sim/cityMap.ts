@@ -1,9 +1,12 @@
 /**
  * ECO//SIM — City map (20×20 grid)
  * Style note: generated deterministic zone map of fictional Nusa Bay.
- * Coastline on the EASTERN side (x = 19), river crossing the city,
- * wetlands + mangrove belt along the coast, urban core in the center-west,
- * industrial zone north, low-income settlement south, agricultural edge west.
+ * Geography matches the illustrated field map: SEA on the EAST forming a
+ * protected bay (teluk) curving into the south; MANGROVE belt hugging the
+ * southeast shore; RIVER flowing west→east through the middle and emptying
+ * into the bay, WETLANDS around the mouth; URBAN CORE center-west;
+ * INDUSTRIAL zone north near the docks; KAMPUNG (low-income) houses on the
+ * southern coast; FARMLAND far west; FOREST hill rising in the northwest.
  * All values are fictional educational-model assumptions.
  */
 
@@ -53,47 +56,51 @@ function riverY(x: number): number {
 }
 
 function cellTypeFor(x: number, y: number): CellType {
-  const coastX = 19;
   const r = riverY(x);
 
-  // Ocean: easternmost columns beyond coast
-  if (x >= 18 && y > 14) return "ocean";
-  if (x >= 19) return "ocean";
+  // ── Sea: the bay curves into the southeast corner ──
+  const seaEdge = 16 + 3 * Math.sin(((y - 11) / 9) * Math.PI * 0.5 + 0.9); // curves landward below y=11
+  if (y >= 11 && x >= seaEdge) return "ocean";
+  if (x >= 19 && y <= 10) return "ocean"; // open water north-east
 
-  // River band (±0.9 around river path)
+  // ── Beach: coastal fringe on land side of the sea ──
+  if (y >= 11 && x === Math.max(0, Math.floor(seaEdge) - 1)) return "beach";
+  if (x >= 18 && y >= 4 && y <= 10) return "beach"; // north-east beach
+
+  // ── River band (±0.9 around river path) ──
   if (Math.abs(y - r) < 0.9) return "river";
 
-  // Mangrove belt: between coast and land, south-eastern wetland zone
-  if (x >= 16 && y >= 11 && y <= 15) return "mangrove";
-  if (x >= 15 && y >= 12 && y <= 14) return "mangrove";
+  // ── Wetlands: lowlands around the river mouth ──
+  if (x >= 12 && y >= 9 && y <= 14 && x < seaEdge - 2) return "wetland";
+  if (x >= 11 && y >= 11 && y <= 13) return "wetland";
 
-  // Wetlands: southeast lowlands near the river mouth
-  if (x >= 13 && y >= 10 && y <= 16) return "wetland";
+  // ── Mangrove belt: hugging the southeast shore ──
+  if (x >= 13 && y >= 12 && y <= 15 && x < seaEdge) return "mangrove";
+  if (x >= 12 && (y === 13 || y === 14)) return "mangrove";
 
-  // Beach: coastal fringe
-  if (x >= 17) return "beach";
-
-  // Forest: northwest corner
+  // ── Forest hill: northwest corner, rising elevation ──
   if (x <= 3 && y <= 4) return "forest";
   if (x <= 4 && y <= 6 && x + y <= 9) return "forest";
+  if (x === 5 && y <= 3) return "forest";
 
-  // Agricultural edge: western strip and far north
+  // ── Farmland: western strip and northern fields ──
   if (x <= 2) return "agriculture";
   if (y === 0 && x >= 4 && x <= 14) return "agriculture";
+  if (x === 3 && y === 0) return "agriculture";
 
-  // Industrial zone: northeast
-  if (x >= 10 && x <= 14 && y <= 3) return "industrial";
-  if (x >= 15 && y <= 4) return "industrial";
+  // ── Industrial zone: northeast near the docks ──
+  if (x >= 11 && x <= 15 && y <= 3) return "industrial";
+  if (x >= 16 && y <= 3) return "industrial";
 
-  // Urban core: center-west
+  // ── Urban core: center-west ──
   if (x >= 5 && x <= 9 && y >= 6 && y <= 10) return "urbanCore";
 
-  // High-income district: north-central, higher elevation
+  // ── Upscale district: north-central, higher ground ──
   if (x >= 7 && x <= 11 && y >= 3 && y <= 5) return "highIncome";
 
-  // Low-income settlement: southern coastal edge (highest flood exposure)
-  if (y >= 16) return "residentialLow";
-  if (x >= 13 && y >= 15) return "residentialLow";
+  // ── Kampung settlement: southern coastal edge (highest flood exposure) ──
+  if (y >= 17) return "residentialLow";
+  if (x >= 14 && y >= 15) return "residentialLow";
 
   // Residential fills the rest
   return "residential";

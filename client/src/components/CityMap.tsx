@@ -9,6 +9,8 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { buildCityMap, CELL_COLORS, CELL_LABELS, MapCell } from "@/lib/sim/cityMap";
 import { Controls, Indicators } from "@/lib/sim/types";
 
+const ILLUSTRATED_MAP = "/manus-storage/teluk-nusa-map-illustrated_e05d6285.png";
+
 interface CityMapProps {
   controls: Controls;
   indicators: Indicators | null;
@@ -36,23 +38,31 @@ const LEGEND: [keyof typeof CELL_COLORS, string][] = [
   ["beach", "Pantai"],
 ];
 
-function cellColor(cell: MapCell, controls: Controls, indicators: Indicators | null, t: number): string {
+// Colored swatches shown on the illustrated base map while the data changes
+const OVERLAY_LEGEND: [string, string][] = [
+  ["rgba(47,122,72,0.8)", "Mangrove restored"],
+  ["rgba(185,154,107,0.9)", "Coast built over"],
+  ["rgba(201,107,66,0.9)", "Flood-prone kampung"],
+];
+
+/** Overlay tint for the illustrated base map: near-transparent so the map
+ *  shows through, with colored tints only where the data changes something. */
+function overlayTint(cell: MapCell, controls: Controls, indicators: Indicators | null, t: number): string {
   const rollout = Math.min(1, t / 10);
   if (cell.type === "mangrove") {
     const boost = (controls.mangroveRestoration / 30) * rollout;
-    return boost > 0.3 ? "#2f7a48" : CELL_COLORS.mangrove;
+    return boost > 0.3 ? "rgba(47,122,72,0.55)" : "transparent";
   }
   if (cell.type === "beach" || cell.type === "residentialLow") {
-    if ((controls.coastalDevelopment / 30) * rollout > 0.5) return "#b99a6b";
+    if ((controls.coastalDevelopment / 30) * rollout > 0.5) return "rgba(185,154,107,0.6)";
   }
   if (cell.type === "wetland") {
-    const loss = (controls.coastalDevelopment / 30) * rollout;
-    if (loss > 0.4) return "#a8946a";
+    if ((controls.coastalDevelopment / 30) * rollout > 0.4) return "rgba(168,148,106,0.55)";
   }
   if (indicators && cell.type === "residentialLow" && indicators.floodResilience < 45 && t > 10) {
-    return "#c96b42";
+    return "rgba(201,107,66,0.55)";
   }
-  return CELL_COLORS[cell.type];
+  return "transparent";
 }
 
 interface HoverInfo {
@@ -113,16 +123,24 @@ export default function CityMap({ controls, indicators, year, className }: CityM
         <div className="flex gap-3">
           <div
             ref={containerRef}
-            className="relative flex-1 select-none"
+            className="relative flex-1 select-none aspect-[4/3] min-h-[180px]"
             onPointerMove={onMove}
             onPointerLeave={onLeave}
           >
+            {/* Base layer: illustrated field map of Teluk Nusa */}
+            <img
+              src={ILLUSTRATED_MAP}
+              alt="Illustrated field map of Teluk Nusa — sea, river, mangroves, town, forest"
+              className="absolute inset-0 w-full h-full object-cover"
+              draggable={false}
+            />
+            {/* Data layer: zone overlay tints driven by controls & indicators */}
             <svg
               viewBox={`0 0 100 100`}
               preserveAspectRatio="none"
-              className="w-full h-auto block"
+              className="absolute inset-0 w-full h-full"
               role="img"
-              aria-label="Town map of fictional Teluk Nusa"
+              aria-label="Town data overlay on the map of fictional Teluk Nusa"
             >
               {rects.map((r) => (
                 <rect
@@ -131,7 +149,7 @@ export default function CityMap({ controls, indicators, year, className }: CityM
                   y={r.y + cellHeight * 0.04}
                   width={cellWidth * 0.92}
                   height={cellHeight * 0.92}
-                  fill={cellColor(r.cell, controls, indicators, t)}
+                  fill={overlayTint(r.cell, controls, indicators, t)}
                   style={{ transition: "fill 500ms ease" }}
                 />
               ))}
@@ -147,7 +165,7 @@ export default function CityMap({ controls, indicators, year, className }: CityM
               />
             )}
           </div>
-          <div className="hidden lg:flex flex-col gap-[7px] justify-center pl-1 min-w-[124px]">
+          <div className="hidden lg:flex flex-col gap-[6px] justify-center pl-1 min-w-[124px]">
             {LEGEND.map(([k, label]) => (
               <div key={k} className="flex items-center gap-2">
                 <span
@@ -157,6 +175,15 @@ export default function CityMap({ controls, indicators, year, className }: CityM
                 <span className="text-[11px] font-data text-muted-foreground">{label}</span>
               </div>
             ))}
+            <div className="border-t border-border/60 pt-1.5 mt-0.5">
+              <div className="font-data text-[9px] tracking-[0.12em] uppercase text-muted-foreground/70 mb-1">Tints = change</div>
+              {OVERLAY_LEGEND.map(([c, label]) => (
+                <div key={label} className="flex items-center gap-2 mb-1">
+                  <span className="w-3.5 h-3.5 border border-border/70 shrink-0" style={{ backgroundColor: c }} />
+                  <span className="text-[11px] font-data text-muted-foreground">{label}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         <div className="flex justify-between px-1 mt-1.5">
