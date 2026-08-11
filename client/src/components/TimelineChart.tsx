@@ -1,6 +1,7 @@
 /**
- * ECO//SIM — Timeline chart (Kampung Coast v2)
- * Light soft card, kid-friendly legend names (Bahasa gloss), warm axes.
+ * ECO//SIM — Timeline chart (Editorial Field Study v3)
+ * Chart-paper aesthetic: flat white plate, hairline grid, mono tick labels,
+ * flat legend toggles with strikethrough. Traces use the semantic ink colors.
  */
 import { useState } from "react";
 import {
@@ -27,6 +28,8 @@ interface TimelineChartProps {
   highlightKeys?: (keyof Indicators)[];
 }
 
+const TICK = { fontFamily: "IBM Plex Mono", fontSize: 10, fontWeight: 400, fill: "oklch(0.45 0.02 65)" };
+
 export default function TimelineChart({ data, className, highlightKeys }: TimelineChartProps) {
   const keys = highlightKeys ?? INDICATOR_KEYS;
   const [hidden, setHidden] = useState<Record<string, boolean>>({});
@@ -34,28 +37,30 @@ export default function TimelineChart({ data, className, highlightKeys }: Timeli
   const toggle = (k: string) => setHidden((h) => ({ ...h, [k]: !h[k] }));
 
   return (
-    <div className={`soft-card p-3 ${className ?? ""}`}>
-      <ResponsiveContainer width="100%" height={280}>
-        <LineChart data={data} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
-          <CartesianGrid stroke="oklch(0.235 0.015 65 / 0.08)" strokeDasharray="2 3" />
+    <div className={`border border-border bg-card p-3 ${className ?? ""}`}>
+      <ResponsiveContainer width="100%" height={260}>
+        <LineChart data={data} margin={{ top: 8, right: 12, left: -18, bottom: 0 }}>
+          <CartesianGrid stroke="oklch(0.235 0.015 65 / 0.1)" strokeDasharray="1 3" />
           <XAxis
             dataKey="year"
-            tick={{ fontFamily: "Nunito", fontSize: 11, fontWeight: 700, fill: "oklch(0.45 0.02 65)" }}
+            tick={TICK}
             ticks={[2026, 2030, 2035, 2040, 2045, 2050]}
+            stroke="oklch(0.235 0.015 65 / 0.35)"
           />
           <YAxis
             domain={[0, 100]}
-            tick={{ fontFamily: "Nunito", fontSize: 11, fontWeight: 700, fill: "oklch(0.45 0.02 65)" }}
+            tick={TICK}
             ticks={[0, 25, 50, 75, 100]}
+            stroke="oklch(0.235 0.015 65 / 0.35)"
           />
           <Tooltip
             contentStyle={{
               background: "oklch(0.99 0.008 80)",
-              border: "1px solid oklch(0.9 0.02 65)",
-              borderRadius: 12,
-              fontFamily: "Nunito",
-              fontSize: 12,
-              boxShadow: "0 4px 16px oklch(0.235 0.015 65 / 0.12)",
+              border: "1px solid oklch(0.85 0.015 80)",
+              borderRadius: 0,
+              fontFamily: "IBM Plex Mono",
+              fontSize: 11,
+              boxShadow: "none",
             }}
             formatter={(value: number, name: string) => [
               `${value.toFixed(1)}`,
@@ -74,9 +79,9 @@ export default function TimelineChart({ data, className, highlightKeys }: Timeli
               >
                 <span
                   style={{
-                    fontFamily: "Nunito",
-                    fontSize: 11,
-                    fontWeight: 700,
+                    fontFamily: "IBM Plex Mono",
+                    fontSize: 10,
+                    fontWeight: 500,
                     color: "oklch(0.35 0.02 65)",
                     textDecoration: hidden[value as string] ? "line-through" : "none",
                     opacity: hidden[value as string] ? 0.45 : 1,
@@ -87,24 +92,24 @@ export default function TimelineChart({ data, className, highlightKeys }: Timeli
               </button>
             )}
           />
-          <ReferenceLine y={50} stroke="oklch(0.235 0.015 65 / 0.12)" strokeDasharray="4 4" />
+          <ReferenceLine y={50} stroke="oklch(0.235 0.015 65 / 0.18)" strokeDasharray="3 4" />
           {keys.map((k) => (
             <Line
               key={k}
               type="monotone"
               dataKey={k}
               stroke={INDICATOR_META[k].color}
-              strokeWidth={2.2}
+              strokeWidth={1.6}
               dot={false}
-              activeDot={{ r: 3.5, strokeWidth: 0 }}
+              activeDot={{ r: 3, strokeWidth: 0 }}
               hide={hidden[k as string]}
               animationDuration={400}
             />
           ))}
         </LineChart>
       </ResponsiveContainer>
-      <div className="text-[10px] text-muted-foreground mt-1 flex items-center gap-2">
-        <span className="status-chip">Fictional town · educational game · not a real forecast</span>
+      <div className="mt-1">
+        <span className="status-chip">Fictional town · educational model · not a forecast</span>
       </div>
     </div>
   );

@@ -1,11 +1,10 @@
 /**
- * ECO//SIM — Policy control panel (Kampung Coast v2)
- * Kid layer first: friendly names, one-line stories, plain trade-off lines
- * ("More of X → less of Y"). Expert numbers stay in the small print.
+ * ECO//SIM — Policy control panel (Editorial Field Study v3)
+ * Flat ledger of eight decisions: numbered rows, hairline rules, mono values,
+ * trade-off notes kept as two short annotated lines. Controls stay compact so
+ * the whole cockpit fits one viewport.
  */
 import {
-  ArrowDown,
-  ArrowUp,
   Sun,
   Bus,
   TreePine,
@@ -44,14 +43,14 @@ const ICONS: Record<ControlKey, LucideIcon> = {
 };
 
 const UNIT_LABEL: Record<ControlKey, string> = {
-  renewableElectricity: "clean power",
-  publicTransport: "bus money",
-  mangroveRestoration: "more trees",
+  renewableElectricity: "% clean power",
+  publicTransport: "% bus share",
+  mangroveRestoration: "restored",
   coastalDevelopment: "new buildings",
-  waterEfficiency: "water saved",
-  wasteRecycling: "rubbish sorted",
-  fishingPressure: "fishing a lot",
-  industrialActivity: "factories busy",
+  waterEfficiency: "% saved",
+  wasteRecycling: "% sorted",
+  fishingPressure: "boats at sea",
+  industrialActivity: "factory output",
 };
 
 interface ControlPanelProps {
@@ -62,33 +61,29 @@ interface ControlPanelProps {
 
 export default function ControlPanel({ controls, onChange, onReset }: ControlPanelProps) {
   return (
-    <div className="space-y-3.5">
-      {(Object.keys(KID_CONTROLS) as ControlKey[]).map((key) => {
+    <div className="border border-border bg-card divide-y divide-border/60">
+      {(Object.keys(KID_CONTROLS) as ControlKey[]).map((key, idx) => {
         const kid = KID_CONTROLS[key];
         const r = SLIDER_RANGES[key];
         const value = controls[key];
         const pct = Math.round((value / r.max) * 100);
+        const Ico = ICONS[key];
         return (
-          <div key={key} className="soft-card p-4">
-            <div className="flex items-center gap-2.5 mb-1.5">
-              <span className="w-9 h-9 rounded-xl bg-teal-signal/12 flex items-center justify-center shrink-0">
-                {
-                  (() => {
-                    const Ico = ICONS[key];
-                    return <Ico className="w-[18px] h-[18px] text-teal-signal" aria-hidden={true} />;
-                  })()
-                }
+          <div key={key} className="px-4 py-3">
+            <div className="flex items-baseline gap-3">
+              <span className="font-data text-vermilion text-[11px] tabular-nums w-4 shrink-0">
+                {String(idx + 1).padStart(2, "0")}
               </span>
-              <div className="flex-1">
-                <div className="font-display font-bold text-[15px] leading-tight">{kid.kidName}</div>
-                <div className="font-data text-[10px] text-muted-foreground">{kid.bm}</div>
-              </div>
-              <div className="text-right">
-                <div className="font-display text-lg font-extrabold text-teal-signal leading-none tabular-nums">{pct}%</div>
-                <div className="font-data text-[10px] text-muted-foreground leading-tight mt-0.5">{UNIT_LABEL[key]}</div>
-              </div>
+              <Ico className="w-4 h-4 text-foreground/70 shrink-0" aria-hidden={true} />
+              <span className="flex-1">
+                <span className="font-display font-semibold text-[14px] leading-tight">{kid.kidName}</span>
+                <span className="font-data text-[10px] text-muted-foreground block mt-0.5">{kid.bm}</span>
+              </span>
+              <span className="font-data text-[13px] tabular-nums font-medium w-16 text-right">
+                {pct}%
+                <span className="text-muted-foreground font-normal"> / {r.defaultVal}%</span>
+              </span>
             </div>
-            <p className="text-xs text-muted-foreground leading-snug mb-2">{kid.kidStory}</p>
             <Slider
               aria-label={kid.kidName}
               value={[value]}
@@ -96,34 +91,29 @@ export default function ControlPanel({ controls, onChange, onReset }: ControlPan
               max={r.max}
               step={r.step}
               onValueChange={([v]) => onChange(key, v)}
-              className="mb-1.5"
+              className="mt-2"
             />
-            <div className="flex items-center justify-between gap-2 text-[10px]">
-              <span className="text-muted-foreground font-bold uppercase tracking-wider">
-                less ← → more
-              </span>
-              <span className="status-chip !border-0 !px-1">start: {r.defaultVal}</span>
-            </div>
-            {/* Plain-language trade-offs: what gets better / what gets harder */}
-            <div className="mt-2.5 space-y-1.5">
-              <div className="flex items-start gap-1.5 text-xs">
-                <ArrowUp className="w-3.5 h-3.5 text-emerald-life shrink-0 mt-0.5" />
-                <span className="text-foreground font-semibold">{kid.goodWhenMore}</span>
+            <div className="mt-1.5 space-y-0.5">
+              <div className="flex items-start gap-2 text-[11px] leading-snug">
+                <span className="font-data text-emerald-700 font-bold text-[10px] tracking-wider uppercase pt-px shrink-0">+</span>
+                <span className="text-foreground/80">{kid.goodWhenMore}</span>
               </div>
-              <div className="flex items-start gap-1.5 text-xs">
-                <ArrowDown className="w-3.5 h-3.5 text-amber-warn shrink-0 mt-0.5" />
-                <span className="text-muted-foreground font-semibold">{kid.badWhenMore}</span>
+              <div className="flex items-start gap-2 text-[11px] leading-snug">
+                <span className="font-data text-vermilion font-bold text-[10px] tracking-wider uppercase pt-px shrink-0">−</span>
+                <span className="text-muted-foreground">{kid.badWhenMore}</span>
               </div>
             </div>
           </div>
         );
       })}
-      <button
-        onClick={onReset}
-        className="btn-press w-full text-xs font-bold text-muted-foreground border border-border rounded-full py-2 hover:bg-secondary hover:text-foreground transition-colors"
-      >
-        Start over — back to the beginning
-      </button>
+      <div className="px-4 py-2.5">
+        <button
+          onClick={onReset}
+          className="btn-press w-full font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground border border-border py-2 px-3 hover:border-foreground hover:text-foreground transition-colors"
+        >
+          Reset all to baseline
+        </button>
+      </div>
     </div>
   );
 }

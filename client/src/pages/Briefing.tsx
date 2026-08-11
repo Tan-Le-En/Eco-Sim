@@ -1,163 +1,163 @@
 /**
- * ECO//SIM — Briefing (Kampung Coast v2)
- * Style: warm picture-book storytelling. Story first, numbers tucked in an
- * expandable "for grown-ups" panel so a child reads the mission in seconds.
+ * ECO//SIM — Briefing (Editorial Field Study v3)
+ * A single-screen field briefing: mission statement left, datum plate right,
+ * three goals as a numbered register, challenges as a hairline list.
+ * Real photography, flat hairline rules, mono specimen labels.
  */
 import { Link } from "wouter";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ChevronDown, Sun, Fish, Umbrella } from "lucide-react";
-import {
-  BASELINE,
-  INDICATOR_KEYS,
-  INDICATOR_META,
-  KID_GOALS,
-  MISSION_TARGETS,
-} from "@/lib/sim/types";
+import { ArrowRight, ChevronDown } from "lucide-react";
+import { BASELINE, KID_GOALS, INDICATOR_META } from "@/lib/sim/types";
 
-const PAKALI = "/manus-storage/pakali_3bdfa8db.png";
-const TOWN = "/manus-storage/kampung-hero_6340e8df.png";
+const PHOTO = "/manus-storage/real-fishermen-dawn_e6a0536d.jpg";
+const RIVER = "/manus-storage/real-mangrove-river_4e88bc33.jpg";
 
-const CHALLENGES = [
-  { icon: Sun, title: "The sky is getting smoky", kid: "Most of our electricity comes from burning fuel." },
-  { icon: Umbrella, title: "The monsoon is getting stronger", kid: "Houses by the sea are in danger of floods." },
-  { icon: Fish, title: "The fish are fewer", kid: "Too many boats, and the mangroves are disappearing." },
-  { icon: Sun, title: "Some taps are running dry", kid: "We need more water than we can always find." },
+const CHALLENGES: [string, string][] = [
+  ["Smoke", "Most electricity comes from burning fuel."],
+  ["Monsoon", "Stronger storms put seafront homes at risk."],
+  ["Fewer fish", "Too many boats; the mangroves are shrinking."],
+  ["Dry taps", "Water demand is growing faster than supply."],
+];
+
+const DATUM: [string, string][] = [
+  ["Population", BASELINE.population.toLocaleString()],
+  ["Window", "2026 – 2050"],
+  ["Electricity demand", "8,000 GWh / year"],
+  ["Fossil share", "70%"],
+  ["Renewable share", "30%"],
+  ["Forest & mangroves", "18% of mapped area"],
+  ["Urbanized land", "52%"],
+  ["Annual rainfall", "2,400 mm"],
+  ["Water demand", "210 million m³ / year"],
+  ["Recycling", "18%"],
+  ["Private vehicles", "68% of motorized trips"],
+  ["Flood exposure", "Moderate"],
 ];
 
 export default function Briefing() {
   const [showNumbers, setShowNumbers] = useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <main className="container py-8 sm:py-12 flex-1">
-        <Link
-          href="/"
-          className="btn-press inline-flex items-center gap-1.5 text-sm font-bold text-muted-foreground hover:text-foreground mb-6"
-        >
-          ← Home
-        </Link>
+    <div className="min-h-screen flex flex-col bg-background">
+      {/* Top bar */}
+      <header className="border-b border-border">
+        <div className="px-6 sm:px-10 lg:px-14 py-4 flex items-center justify-between">
+          <Link href="/" className="font-display italic font-semibold text-xl tracking-tight">
+            ECO<span className="text-vermilion">//</span>SIM
+          </Link>
+          <Link
+            href="/simulator"
+            className="btn-press font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 border border-foreground hover:bg-foreground hover:text-background transition-colors"
+          >
+            Go to the field
+          </Link>
+        </div>
+      </header>
 
-        {/* Story intro with Pak Ali */}
-        <motion.section
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
-          className="grid lg:grid-cols-[auto_1fr] gap-8 items-start soft-card p-6 sm:p-8 mb-8"
-        >
-          <img
-            src={PAKALI}
-            alt="Pak Ali, the old fisherman of Teluk Nusa"
-            className="w-32 h-32 rounded-full border-4 border-white shadow-lg mx-auto"
-          />
-          <div>
-            <div className="panel-label mb-3">Your mission briefing</div>
-            <h1 className="font-display text-3xl sm:text-4xl font-extrabold leading-tight mb-4">
-              <span className="text-teal-signal">Pak Ali</span> says: take care
-              of my town.
-            </h1>
-            <p className="text-base sm:text-lg leading-relaxed text-muted-foreground max-w-2xl mb-4">
-              <strong className="text-foreground">Teluk Nusa</strong> is a
-              friendly little town by the sea in Malaysia — one million people,
-              a busy fishing bay, and a forest of mangroves that guards the
-              shore. But the town is in trouble, and the mayor has asked{" "}
-              <em>you</em> to be in charge.
-            </p>
-            <p className="text-base sm:text-lg leading-relaxed text-muted-foreground max-w-2xl">
-              You get <strong className="text-teal-signal">RM 100 every year</strong> to
-              spend on the town. The game runs from <strong>2026 to 2050</strong>.
-              Keep three big things healthy, and the town wins.
-            </p>
-          </div>
-        </motion.section>
+      <main className="flex-1 px-6 sm:px-10 lg:px-14 py-10 grid lg:grid-cols-[1.2fr_1fr] gap-12 max-w-[1400px]">
+        {/* ── Left: mission ── */}
+        <div className="flex flex-col">
+          <div className="field-label mb-6">Mission briefing · Section 00</div>
+          <h1 className="font-display font-semibold tracking-tight leading-[0.98] text-[clamp(2.4rem,5.5vw,4.2rem)]">
+            Teluk Nusa is yours.
+            <br />
+            <em className="text-vermilion">Keep it alive</em> for 25 years.
+          </h1>
+          <p className="mt-6 max-w-xl text-base sm:text-lg leading-relaxed text-muted-foreground">
+            One million people live in this fictional Malaysian town. You
+            receive <strong className="text-foreground">RM 100 every year</strong> to
+            spend on it — energy, buses, trees, mangroves, water, housing. Every
+            year from 2026 to 2050, the town responds. You win by keeping three
+            registers healthy; you lose by neglecting any one of them.
+          </p>
 
-        {/* The 3 big goals — traffic lights */}
-        <motion.section
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
-          className="mb-8"
-        >
-          <div className="panel-label mb-4">Your three big goals (the traffic lights)</div>
-          <div className="grid sm:grid-cols-3 gap-4">
+          {/* The three registers */}
+          <div className="mt-10 space-y-0 divide-y divide-border border-t border-border">
             {KID_GOALS.map((g, i) => (
               <motion.div
                 key={g.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15 + i * 0.07, duration: 0.35 }}
-                className="soft-card p-5 text-center"
+                transition={{ delay: 0.1 + i * 0.06, duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+                className="py-4 flex items-baseline gap-5"
               >
-                <div className="flex justify-center gap-1.5 mb-3">
-                  {["bg-emerald-life", "bg-amber-warn", "bg-coral-risk"].map((c, j) => (
-                    <span key={j} className={`w-7 h-7 rounded-full border-2 border-white shadow ${c}`} />
-                  ))}
-                </div>
-                <div className="font-display font-bold text-lg mb-1">{g.title}</div>
-                <div className="font-data text-[11px] text-muted-foreground mb-2">{g.bm}</div>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  {g.keys
-                    .map((k) => INDICATOR_META[k].label)
-                    .join(" · ")}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.section>
-
-        {/* Four challenges the town faces */}
-        <section className="mb-8">
-          <div className="panel-label mb-4">What's wrong right now</div>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {CHALLENGES.map((c, i) => (
-              <motion.div
-                key={c.title}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.06, duration: 0.3 }}
-                className="soft-card p-5 flex gap-4 items-start"
-              >
-                <span className="w-12 h-12 rounded-2xl bg-coral-risk/10 flex items-center justify-center shrink-0">
-                  <c.icon className="w-6 h-6 text-coral-risk" aria-hidden="true" />
-                </span>
-                <div>
-                  <div className="font-display font-bold mb-1">{c.title}</div>
-                  <p className="text-sm text-muted-foreground leading-snug">{c.kid}</p>
+                <span className="font-data text-vermilion text-sm w-6">{String(i + 1).padStart(2, "0")}</span>
+                <div className="flex-1">
+                  <div className="font-display font-semibold text-xl">{g.title}</div>
+                  <div className="font-data text-[11px] tracking-[0.08em] uppercase text-muted-foreground mt-1">
+                    {g.keys.map((k) => INDICATOR_META[k].label).join(" · ")}
+                  </div>
                 </div>
               </motion.div>
             ))}
           </div>
-        </section>
 
-        {/* Town snapshot image */}
-        <motion.section
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="mb-8"
-        >
-          <img
-            src={TOWN}
-            alt="Teluk Nusa town illustration"
-            className="rounded-3xl border-4 border-white shadow-xl w-full max-h-72 object-cover object-top"
-          />
-        </motion.section>
+          {/* Challenges: hairline list */}
+          <div className="mt-10">
+            <div className="field-label mb-4">What's wrong in 2026</div>
+            <div className="grid sm:grid-cols-2 gap-x-10 gap-y-4">
+              {CHALLENGES.map((entry, i) => (
+                <motion.div
+                  key={entry[0]}
+                  initial={{ opacity: 0, y: 8 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.05, duration: 0.3 }}
+                  className="border-l-2 border-vermilion pl-4"
+                >
+                  <div className="font-data text-[11px] tracking-[0.14em] uppercase text-vermilion mb-0.5">{entry[0]}</div>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{entry[1]}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
 
-        {/* Expert numbers, tucked away */}
-        <section className="mb-8">
+          {/* CTA */}
+          <div className="mt-10 flex flex-wrap items-center gap-3">
+            <Link
+              href="/simulator"
+              className="btn-press inline-flex items-center gap-3 bg-vermilion text-primary-foreground font-display italic text-lg px-8 py-3.5 hover:brightness-105 transition-all"
+            >
+              Begin the study <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/transparency"
+              className="btn-press inline-flex items-center border border-foreground px-6 py-3.5 font-data text-[11px] tracking-[0.14em] uppercase hover:bg-foreground hover:text-background transition-colors"
+            >
+              The equations
+            </Link>
+          </div>
+        </div>
+
+        {/* ── Right: datum plate + optional numbers ── */}
+        <div className="flex flex-col gap-6">
+          <figure className="photo-plate overflow-hidden">
+            <img src={PHOTO} alt="Malaysian fishermen at dawn" className="h-64 w-full" loading="lazy" />
+            <figcaption className="plate-caption">
+              <span>Fishermen at dawn, East Coast</span>
+              <span>Fig. 02</span>
+            </figcaption>
+          </figure>
+
+          <figure className="photo-plate overflow-hidden hidden lg:block">
+            <img src={RIVER} alt="Mangrove river in Langkawi" className="h-44 w-full" loading="lazy" />
+            <figcaption className="plate-caption">
+              <span>Mangrove river, Kilim Geopark</span>
+              <span>Fig. 03</span>
+            </figcaption>
+          </figure>
+
+          {/* The datum — expandable */}
           <button
             onClick={() => setShowNumbers((v) => !v)}
-            className="btn-press w-full soft-card p-5 flex items-center justify-between gap-3 text-left"
+            className="btn-press border border-border bg-card px-5 py-4 flex items-center justify-between gap-3 text-left"
           >
-            <div>
-              <div className="font-display font-bold">The real numbers (for teachers & professors)</div>
-              <div className="text-sm text-muted-foreground">
-                Optional: the 2026 baseline data behind the story
-              </div>
-            </div>
+            <span className="font-data text-[11px] tracking-[0.14em] uppercase">
+              {showNumbers ? "Close" : "Open"} the 2026 datum
+            </span>
             <ChevronDown
-              className={`w-5 h-5 text-muted-foreground transition-transform duration-300 ${showNumbers ? "rotate-180" : ""}`}
+              className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ${showNumbers ? "rotate-180" : ""}`}
             />
           </button>
           <AnimatePresence>
@@ -166,59 +166,34 @@ export default function Briefing() {
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+                transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
                 className="overflow-hidden"
               >
-                <div className="soft-card p-6 mt-3 grid sm:grid-cols-2 gap-x-8 gap-y-2.5">
-                  {[
-                    ["Population", BASELINE.population.toLocaleString()],
-                    ["Simulation window", "2026 – 2050"],
-                    ["Electricity demand", "8,000 GWh / year"],
-                    ["Fossil electricity share", "70%"],
-                    ["Renewable share", "30%"],
-                    ["Forest & mangrove coverage", "18% of mapped area"],
-                    ["Urbanized land", "52%"],
-                    ["Annual rainfall", "2,400 mm"],
-                    ["Water demand", "210 million m³ / year"],
-                    ["Recycling rate", "18%"],
-                    ["Private vehicle trips", "68% of motorized trips"],
-                    ["Coastal flood exposure", "Moderate"],
-                  ].map(([label, value]) => (
-                    <div key={label as string} className="flex items-baseline justify-between gap-3 border-b border-border/50 pb-1.5">
-                      <span className="font-data text-[11px] uppercase tracking-wider text-muted-foreground">{label}</span>
-                      <span className="font-data text-sm tabular-nums">{value}</span>
+                <div className="border border-border bg-card divide-y divide-border/60">
+                  {DATUM.map(([label, value]) => (
+                    <div key={label} className="px-4 py-2 flex items-baseline justify-between gap-3">
+                      <span className="font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground">{label}</span>
+                      <span className="font-data text-[13px] tabular-nums">{value}</span>
                     </div>
                   ))}
-                  <div className="sm:col-span-2 mt-3">
-                    <span className="status-chip">Fictional baseline · educational model · not real data</span>
+                  <div className="px-4 py-2.5">
+                    <span className="status-chip">Fictional baseline · not real data</span>
                   </div>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
-        </section>
 
-        {/* CTA */}
-        <div className="flex flex-wrap items-center gap-3">
-          <Link
-            href="/simulator"
-            className="btn-press inline-flex items-center gap-2 bg-teal-signal text-primary-foreground font-display text-lg font-bold rounded-full px-8 py-4 hover:brightness-105 transition-all shadow-lg shadow-teal-signal/25"
-          >
-            Start playing! <ArrowRight className="w-5 h-5" />
-          </Link>
-          <Link
-            href="/transparency"
-            className="btn-press inline-flex items-center gap-2 border-2 border-border rounded-full px-6 py-3.5 font-bold text-sm hover:bg-secondary transition-colors"
-          >
-            See the maths behind it
-          </Link>
+          <span className="font-data text-[11px] tracking-[0.12em] uppercase text-muted-foreground">
+            Read this page, then go govern.
+          </span>
         </div>
       </main>
 
-      <footer className="border-t border-border/60 mt-auto">
-        <div className="container py-5 text-center">
-          <span className="font-data text-[11px] text-muted-foreground">
-            ECO//SIM · fictional town · educational game
+      <footer className="border-t border-border">
+        <div className="px-6 sm:px-10 lg:px-14 py-4">
+          <span className="font-data text-[11px] tracking-[0.12em] uppercase text-muted-foreground">
+            ECO//SIM · fictional town · educational model
           </span>
         </div>
       </footer>

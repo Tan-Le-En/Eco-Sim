@@ -1,9 +1,10 @@
 /**
- * ECO//SIM — Results (Kampung Coast v2)
- * Story first: big mood scene + one sentence verdict + 3 traffic lights.
- * Depth hidden in expandable "for teachers" panels (breakdown, table, comparison).
+ * ECO//SIM — Results (Editorial Field Study v3)
+ * A field report: photo verdict plate, mono score register, three goal cells,
+ * plain-language worked/failed, causal chain, and collapsed expert appendix
+ * (breakdown, indicator table, plan comparison). Real photography, no AI art.
  */
-import { useMemo, useState, useRef } from "react";
+import { useMemo, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -11,40 +12,42 @@ import {
   RefreshCw,
   Trash2,
   Share2,
-  CheckCircle2,
-  XCircle,
+  Check,
+  X,
   ChevronDown,
 } from "lucide-react";
 import { toast } from "sonner";
 import SiteHeader from "@/components/SiteHeader";
 import CausalChain from "@/components/CausalChain";
 import { useSim } from "@/contexts/SimContext";
+import { runSimulation } from "@/lib/sim/engine";
 import { INDICATOR_KEYS, INDICATOR_META, KID_GOALS, KID_INDICATORS, MISSION_TARGETS, SimulationResult } from "@/lib/sim/types";
 
-const HAPPY = "/manus-storage/city-happy_12950284.png";
-const SAD = "/manus-storage/city-sad_01d243a3.png";
+const SUNSET_PHOTO = "/manus-storage/real-beach-sunset_7c0d4a16.jpg";
+const DAWN_PHOTO = "/manus-storage/real-fishermen-dawn_e6a0536d.jpg";
 
 export default function Results() {
-  const { currentResult, scenarios, deleteScenario, run } = useSim();
+  const { currentResult, controls, scenarios, deleteScenario } = useSim();
   const [, navigate] = useLocation();
 
-  // Lazy fallback: if nothing has been run yet, compute once (deterministic)
-  // and keep it stable across renders — no setState during render.
-  const fallbackRef = useRef<SimulationResult | null>(null);
-  const latest = currentResult ?? scenarios[0]?.result ?? (fallbackRef.current ??= run());
+  // Never call context run() during render — it calls setCurrentResult and
+  // triggers React's setState-during-render guard. Execute the pure engine
+  // directly instead (no side effects).
+  const fallback = useMemo(() => runSimulation(controls), [controls]);
+  const latest = currentResult ?? scenarios[0]?.result ?? fallback;
 
   if (!latest) {
     return (
       <div className="min-h-screen flex flex-col">
         <SiteHeader backHref="/simulator" />
-        <main className="container py-16 flex-1 flex flex-col items-center justify-center text-center gap-4">
-          <h1 className="font-display text-2xl font-bold">No story yet</h1>
+        <main className="px-6 py-16 flex-1 flex flex-col items-center justify-center text-center gap-4">
+          <h1 className="font-display text-2xl font-semibold">No report yet</h1>
           <p className="text-muted-foreground text-sm max-w-md">
-            Run the simulation to 2050 first, or jump into the simulator to play.
+            Run the simulation to 2050 first, or return to the simulator to play.
           </p>
           <Link
             href="/simulator"
-            className="btn-press inline-flex items-center gap-2 bg-teal-signal text-primary-foreground font-display font-bold rounded-full px-6 py-3 hover:brightness-105 transition-all"
+            className="btn-press inline-flex items-center gap-2 bg-vermilion text-primary-foreground font-data text-[11px] tracking-[0.14em] uppercase px-6 py-3 hover:brightness-105 transition-all"
           >
             Go to simulator <ArrowLeft className="w-4 h-4 rotate-180" />
           </Link>
@@ -56,27 +59,29 @@ export default function Results() {
   const base = latest.baselineYear.indicators;
   const final = latest.years[latest.years.length - 1].indicators;
   const budgetFinal = latest.years[latest.years.length - 1].budgetRemaining;
-  const moodScore = useMemo(() => {
-    const keys = Object.keys(final) as (keyof typeof final)[];
-    return keys.reduce((a, k) => a + final[k], 0) / keys.length;
-  }, [final]);
-  // How many of the 3 big goals are green
-  const goalsMet = useMemo(() => KID_GOALS.map((g) => g.keys.every((k) => {
-    const t = MISSION_TARGETS.find((x) => x.key === k);
-    const v = final[k];
-    return t ? (t.direction === "above" ? v >= t.threshold : v <= t.threshold) : true;
-  })), [final]);
 
-  // Verdict = goals reached, not a raw average — so the story always matches
-  // the traffic lights.
+  const goalsMet = useMemo(
+    () =>
+      KID_GOALS.map((g) =>
+        g.keys.every((k) => {
+          const t = MISSION_TARGETS.find((x) => x.key === k);
+          const v = final[k];
+          return t ? (t.direction === "above" ? v >= t.threshold : v <= t.threshold) : true;
+        }),
+      ),
+    [final],
+  );
   const happy = goalsMet.filter(Boolean).length >= 2;
+  const photo = happy ? SUNSET_PHOTO : DAWN_PHOTO;
+  const verdict = happy
+    ? "Teluk Nusa held its own."
+    : "Teluk Nusa is still struggling — and that is where every plan begins.";
 
   const [expertOpen, setExpertOpen] = useState<Record<string, boolean>>({
     breakdown: false,
     table: false,
     comparison: false,
   });
-
   const toggle = (k: string) => setExpertOpen((o) => ({ ...o, [k]: !o[k] }));
 
   const handleShare = async () => {
@@ -84,142 +89,159 @@ export default function Results() {
     const text = `ECO//SIM — I scored ${score}/100 protecting Teluk Nusa to 2050. Try to beat it!`;
     try {
       await navigator.clipboard.writeText(text);
-      toast.success("Result copied!");
+      toast.success("Result copied to clipboard");
     } catch {
       toast.error("Could not copy — clipboard blocked");
     }
   };
 
+  const handleReplay = () => {
+    navigate("/simulator");
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader backHref="/simulator" />
-      <main className="container py-8 flex-1 space-y-8">
-        {/* Verdict — the story in one picture */}
-        <motion.div
+      <main className="px-6 sm:px-10 lg:px-14 py-8 flex-1 space-y-8 max-w-[1280px] w-full">
+        {/* ── Verdict plate ── */}
+        <motion.section
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="soft-card p-6 sm:p-8"
+          className="grid lg:grid-cols-[46%_1fr] gap-0 border border-border"
         >
-          <div className="flex flex-wrap items-center gap-6">
-            <img
-              src={happy ? HAPPY : SAD}
-              alt={happy ? "A happy Teluk Nusa in 2050" : "A troubled Teluk Nusa in 2050"}
-              className="w-56 h-32 object-cover object-top rounded-2xl border-4 border-white shadow-xl"
-            />
-            <div className="flex-1 min-w-[240px]">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
-                The year is 2050
+            <figure className="photo-plate min-h-[260px] lg:min-h-0 relative overflow-hidden">
+            <img src={photo} alt={happy ? "Teluk Nusa at sunset, 2050" : "Fishermen at dawn, 2050"} className="absolute inset-0 h-full w-full object-cover" />
+            <figcaption className="absolute bottom-0 left-0 right-0 bg-background font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground px-3 py-1.5 whitespace-nowrap overflow-hidden text-ellipsis">
+              Field photograph · {happy ? "Teluk Nusa · December 2050" : "Teluk Nusa · 2050, work ahead"}
+            </figcaption>
+          </figure>
+
+          <div className="p-6 lg:p-8 flex flex-col justify-between">
+            <div>
+              <div className="font-data text-[10px] tracking-[0.16em] uppercase text-muted-foreground mb-1">
+                Field report · the year is 2050
               </div>
-              <h1 className="font-display text-3xl sm:text-4xl font-extrabold leading-tight">
-                {happy ? "Teluk Nusa is happy!" : "Teluk Nusa is having a hard time."}
+              <h1 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight leading-tight">
+                {verdict}
               </h1>
-              <p className="text-base text-muted-foreground mt-2 max-w-xl leading-relaxed">
+              <p className="text-sm text-muted-foreground mt-3 max-w-lg leading-relaxed">
                 {happy
-                  ? "The sea is clean, the town is safe from floods, and the people are proud of their home. Pak Ali smiles every morning at the bay."
-                  : "Some parts of the town are hurting — the sea, the floods, or the people. That's okay: every great city planner fails a few times before they get it right."}
+                  ? "Your decisions kept the mangroves breathing, the drains holding through the monsoon, and households able to afford clean water. Not a single goal was sacrificed to reach another — the sign of a planner who understood the trade-offs."
+                  : "At least one of the three foundations — the sea, the town, or the people — gave way. Read the causal chain below: the model tells you exactly which decision led where. Adjust one variable and re-run; that is the whole game."}
               </p>
-              <div className="flex items-center gap-3 mt-4">
-                <div className="font-display text-3xl font-extrabold text-teal-signal tabular-nums">
-                  {latest.score.toFixed(0)}<span className="text-lg text-muted-foreground font-bold"> / 100</span>
+            </div>
+
+            <div className="mt-6">
+              <div className="flex flex-wrap items-center gap-6 pb-5 border-b border-border">
+                <div>
+                  <div className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">Score</div>
+                  <div className="font-data text-4xl tabular-nums font-medium leading-none">
+                    {latest.score.toFixed(0)}
+                    <span className="text-base text-muted-foreground"> / 100</span>
+                  </div>
                 </div>
-                <div className="h-8 w-px bg-border" />
-                <div className="text-sm">
-                  <div className="font-bold text-foreground tabular-nums">1,080,000 people</div>
-                  <div className="text-muted-foreground">RM {budgetFinal.toFixed(0)} left in the bank</div>
+                <div>
+                  <div className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">Population 2050</div>
+                  <div className="font-data text-xl tabular-nums">1,080,000</div>
                 </div>
-                <div className="h-8 w-px bg-border hidden sm:block" />
-                <div className="hidden sm:block text-sm">
-                  <div className="font-bold text-foreground">{goalsMet.filter(Boolean).length}/3 goals reached</div>
-                  <div className="text-muted-foreground">sea · town · people</div>
+                <div>
+                  <div className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">Budget remaining</div>
+                  <div className="font-data text-xl tabular-nums">RM {budgetFinal.toFixed(0)}</div>
+                </div>
+                <div>
+                  <div className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">Goals reached</div>
+                  <div className="font-data text-xl tabular-nums">
+                    {goalsMet.filter(Boolean).length} / 3
+                    <span className="text-muted-foreground text-xs"> · sea · town · people</span>
+                  </div>
                 </div>
               </div>
-              <div className="flex flex-wrap gap-2 mt-4">
+
+              <div className="grid grid-cols-3 mt-5">
+                {KID_GOALS.map((g, i) => (
+                  <div key={g.id} className={`px-2 first:pl-0 ${i > 0 ? "border-l border-border" : ""}`}>
+                    <div className="flex items-center gap-1.5 mb-1">
+                      {goalsMet[i] ? (
+                        <Check className="w-4 h-4 text-emerald-700 shrink-0" aria-hidden="true" />
+                      ) : (
+                        <X className="w-4 h-4 text-vermilion shrink-0" aria-hidden="true" />
+                      )}
+                      <span className="font-data text-[10px] tracking-[0.1em] uppercase truncate">{g.title}</span>
+                    </div>
+                    <div className="space-y-0.5">
+                      {g.keys.map((k) => (
+                        <div key={k} className="flex items-center justify-between gap-1.5 text-[12px]">
+                          <span className="text-muted-foreground truncate">{KID_INDICATORS[k].kidName}</span>
+                          <span className="font-data tabular-nums shrink-0">{final[k].toFixed(0)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex flex-wrap gap-2 mt-5">
                 <button
                   onClick={handleShare}
-                  className="btn-press inline-flex items-center gap-1.5 border border-border bg-card rounded-full px-4 py-2 text-xs font-bold hover:bg-secondary transition-colors"
+                  className="btn-press inline-flex items-center gap-1.5 border border-border px-4 py-2 text-[11px] font-data tracking-[0.12em] uppercase hover:border-foreground transition-colors"
                 >
-                  <Share2 className="w-3.5 h-3.5" /> Share my score
+                  <Share2 className="w-3.5 h-3.5" /> Share score
                 </button>
-                <Link
-                  href="/simulator"
-                  className="btn-press inline-flex items-center gap-1.5 bg-teal-signal text-primary-foreground font-display font-bold rounded-full px-5 py-2 text-sm hover:brightness-105 transition-all shadow-md shadow-teal-signal/25"
+                <button
+                  onClick={handleReplay}
+                  className="btn-press inline-flex items-center gap-1.5 bg-vermilion text-primary-foreground px-5 py-2 text-[11px] font-data tracking-[0.12em] uppercase hover:brightness-105 transition-all"
                 >
                   <RefreshCw className="w-3.5 h-3.5" /> Play again
-                </Link>
+                </button>
               </div>
             </div>
           </div>
+        </motion.section>
 
-          {/* The 3 big goals as traffic lights */}
-          <div className="grid sm:grid-cols-3 gap-3 mt-8">
-            {KID_GOALS.map((g, i) => (
-              <div key={g.id} className="soft-card p-4">
-                <div className="flex items-center gap-2 mb-1.5">
-                  {goalsMet[i] ? (
-                    <CheckCircle2 className="w-5 h-5 text-emerald-life" aria-hidden="true" />
-                  ) : (
-                    <XCircle className="w-5 h-5 text-coral-risk" aria-hidden="true" />
-                  )}
-                  <span className="font-display font-bold">{g.title}</span>
-                </div>
-                <div className="font-data text-[10px] text-muted-foreground mb-1.5">{g.bm}</div>
-                <div className="space-y-1">
-                  {g.keys.map((k) => (
-                    <div key={k} className="flex items-center justify-between gap-2 text-xs">
-                      <span className="text-muted-foreground font-semibold">{KID_INDICATORS[k].kidName}</span>
-                      <span className="font-display font-extrabold tabular-nums" style={{ color: INDICATOR_META[k].color }}>
-                        {final[k].toFixed(0)}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* What went well / what went wrong — the plain story */}
-        <div className="grid sm:grid-cols-2 gap-4">
+        {/* ── Worked / failed — plain-language account ── */}
+        <section className="grid sm:grid-cols-2 gap-4">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="soft-card p-5 border-l-4 border-emerald-life"
+            transition={{ delay: 0.08 }}
+            className="border border-border border-l-2 border-l-emerald-700 bg-card p-5"
           >
-            <div className="font-display font-bold text-lg text-emerald-life mb-2">What went well</div>
-            <p className="text-sm leading-relaxed">{latest.biggestSuccess}</p>
+            <div className="field-label mb-2 !text-emerald-800">Worked</div>
+            <p className="text-[13px] leading-relaxed">{latest.biggestSuccess}</p>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-            className="soft-card p-5 border-l-4 border-coral-risk"
+            transition={{ delay: 0.14 }}
+            className="border border-border border-l-2 border-l-vermilion bg-card p-5"
           >
-            <div className="font-display font-bold text-lg text-coral-risk mb-2">Oh no — what went wrong</div>
-            <p className="text-sm leading-relaxed">{latest.biggestFailure}</p>
+            <div className="field-label mb-2 !text-vermilion">Failed</div>
+            <p className="text-[13px] leading-relaxed">{latest.biggestFailure}</p>
           </motion.div>
-        </div>
+        </section>
 
-        {/* Causal chain — "Kenapa? Because..." */}
-        <div>
-          <div className="panel-label mb-2">Kenapa? — because...</div>
+        {/* ── Causal chain ── */}
+        <section>
+          <div className="field-label mb-3">Why it happened — the chain of cause and effect</div>
           <CausalChain links={latest.causalLinks} events={latest.events} eventsToShow={6} />
-        </div>
+        </section>
 
-        {/* Expert section — collapsed by default */}
-        <section className="space-y-3">
+        {/* ── Expert appendix ── */}
+        <section className="border-t border-border pt-6">
           <button
-            onClick={() => toggle("expert")}
-            className="btn-press w-full soft-card p-4 flex items-center justify-between gap-3 text-left"
+            onClick={() => setExpertOpen((o) => ({ ...o, appendix: !o.appendix }))}
+            className="btn-press w-full flex items-center justify-between gap-3 text-left py-2"
           >
             <div>
-              <div className="font-display font-bold">The deep stuff — for professors & teachers</div>
-              <div className="text-sm text-muted-foreground">
-                Full scoring breakdown, indicator table, and plan comparison
-              </div>
+              <span className="font-display font-semibold text-lg">Appendix — for professors &amp; teachers</span>
+              <span className="block font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground mt-0.5">
+                Score breakdown · indicator table · plan comparison
+              </span>
             </div>
             <ChevronDown
-              className={`w-5 h-5 text-muted-foreground transition-transform duration-300 ${expertOpen.breakdown || expertOpen.table || expertOpen.comparison ? "rotate-180" : ""}`}
+              className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ${
+                expertOpen.breakdown || expertOpen.table || expertOpen.comparison ? "rotate-180" : ""
+              }`}
             />
           </button>
           <AnimatePresence>
@@ -229,35 +251,43 @@ export default function Results() {
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
-                className="overflow-hidden space-y-4"
+                className="overflow-hidden space-y-4 pt-4"
               >
-                <div className="soft-card p-5">
-                  <button onClick={() => toggle("breakdown")} className="w-full text-left font-display font-bold mb-3 flex items-center justify-between">
+                <div className="border border-border bg-card">
+                  <button
+                    onClick={() => toggle("breakdown")}
+                    className="w-full text-left px-4 py-3 flex items-center justify-between font-data text-[11px] tracking-[0.14em] uppercase"
+                  >
                     Score breakdown <ChevronDown className={`w-4 h-4 transition-transform ${expertOpen.breakdown ? "rotate-180" : ""}`} />
                   </button>
                   <AnimatePresence>
                     {expertOpen.breakdown && (
-                      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="px-4 pb-4 overflow-hidden"
+                      >
                         <div className="space-y-3">
                           {latest.scoreBreakdown.map((row) => {
                             const meta = INDICATOR_META[row.key];
                             return (
                               <div key={row.key}>
                                 <div className="flex items-baseline justify-between gap-3 mb-1">
-                                  <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold">{meta.label}</span>
-                                  <span className="text-xs text-muted-foreground">
+                                  <span className="font-data text-[11px] uppercase tracking-wider text-muted-foreground">{meta.label}</span>
+                                  <span className="font-data text-[11px] text-muted-foreground">
                                     weight ×{(row.weight * 100).toFixed(0)}% · value {row.value.toFixed(0)}
                                   </span>
-                                  <span className="text-sm font-bold tabular-nums">
+                                  <span className="font-data text-[13px] tabular-nums">
                                     {row.points.toFixed(1)} / {(row.weight * 100).toFixed(0)}
                                   </span>
                                 </div>
-                                <div className="h-2 rounded-full bg-secondary overflow-hidden">
+                                <div className="h-1.5 bg-secondary">
                                   <motion.div
                                     initial={{ width: 0 }}
-                                    animate={{ width: `${row.points / (row.weight * 100)}%` }}
+                                    animate={{ width: `${(row.points / (row.weight * 100)) * 100}%` }}
                                     transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
-                                    className="h-full rounded-full"
+                                    className="h-full"
                                     style={{ backgroundColor: meta.color }}
                                   />
                                 </div>
@@ -266,9 +296,9 @@ export default function Results() {
                           })}
                         </div>
                         {latest.penalties.length > 0 && (
-                          <div className="mt-4 border-l-2 border-coral-risk pl-3 space-y-1">
+                          <div className="mt-4 border-l-2 border-vermilion pl-3 space-y-1">
                             {latest.penalties.map((p, i) => (
-                              <p key={i} className="text-xs text-coral-risk">{p}</p>
+                              <p key={i} className="text-xs text-vermilion">{p}</p>
                             ))}
                           </div>
                         )}
@@ -280,21 +310,29 @@ export default function Results() {
                   </AnimatePresence>
                 </div>
 
-                <div className="soft-card p-5">
-                  <button onClick={() => toggle("table")} className="w-full text-left font-display font-bold mb-3 flex items-center justify-between">
+                <div className="border border-border bg-card">
+                  <button
+                    onClick={() => toggle("table")}
+                    className="w-full text-left px-4 py-3 flex items-center justify-between font-data text-[11px] tracking-[0.14em] uppercase"
+                  >
                     Indicator table · baseline → 2050 <ChevronDown className={`w-4 h-4 transition-transform ${expertOpen.table ? "rotate-180" : ""}`} />
                   </button>
                   <AnimatePresence>
                     {expertOpen.table && (
-                      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="px-4 pb-4 overflow-hidden"
+                      >
                         <div className="overflow-x-auto">
                           <table className="w-full text-sm">
                             <thead>
-                              <tr className="text-[10px] uppercase tracking-wider text-muted-foreground border-b border-border">
-                                <th className="text-left py-2 pr-4 font-bold">Indicator</th>
-                                <th className="text-right py-2 px-3 font-bold">2026</th>
-                                <th className="text-right py-2 px-3 font-bold">2050</th>
-                                <th className="text-right py-2 font-bold">Change</th>
+                              <tr className="font-data text-[10px] uppercase tracking-wider text-muted-foreground border-b border-border">
+                                <th className="text-left py-2 pr-4 font-medium">Indicator</th>
+                                <th className="text-right py-2 px-3 font-medium">2026</th>
+                                <th className="text-right py-2 px-3 font-medium">2050</th>
+                                <th className="text-right py-2 font-medium">Change</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -305,13 +343,13 @@ export default function Results() {
                                 return (
                                   <tr key={k} className="border-b border-border/40">
                                     <td className="py-2.5 pr-4 flex items-center gap-2">
-                                      <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: meta.color }} />
-                                      <span className="text-[11px] uppercase tracking-wider font-bold">{meta.label}</span>
+                                      <span className="w-2 h-2 shrink-0" style={{ backgroundColor: meta.color }} />
+                                      <span className="font-data text-[11px] uppercase tracking-wider">{meta.label}</span>
                                     </td>
                                     <td className="text-right tabular-nums text-muted-foreground px-3">{base[k].toFixed(0)}</td>
-                                    <td className="text-right tabular-nums font-bold px-3">{final[k].toFixed(0)}</td>
+                                    <td className="text-right tabular-nums px-3">{final[k].toFixed(0)}</td>
                                     <td className="text-right tabular-nums px-3">
-                                      <span className={`inline-flex items-center gap-1 font-bold ${good ? "text-emerald-life" : "text-coral-risk"}`}>
+                                      <span className={`font-data text-[12px] ${good ? "text-emerald-700" : "text-vermilion"}`}>
                                         {delta > 0 ? "+" : ""}{delta.toFixed(1)}
                                       </span>
                                     </td>
@@ -326,48 +364,56 @@ export default function Results() {
                   </AnimatePresence>
                 </div>
 
-                <div className="soft-card p-5">
-                  <button onClick={() => toggle("comparison")} className="w-full text-left font-display font-bold mb-3 flex items-center justify-between">
-                    Compare your plans <ChevronDown className={`w-4 h-4 transition-transform ${expertOpen.comparison ? "rotate-180" : ""}`} />
+                <div className="border border-border bg-card">
+                  <button
+                    onClick={() => toggle("comparison")}
+                    className="w-full text-left px-4 py-3 flex items-center justify-between font-data text-[11px] tracking-[0.14em] uppercase"
+                  >
+                    Compare saved plans <ChevronDown className={`w-4 h-4 transition-transform ${expertOpen.comparison ? "rotate-180" : ""}`} />
                   </button>
                   <AnimatePresence>
                     {expertOpen.comparison && (
-                      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="px-4 pb-4 overflow-hidden"
+                      >
                         <div className="space-y-2">
                           {scenarios.length === 0 && (
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-[12px] text-muted-foreground">
                               Save plans from the simulator to compare them side by side here.
                             </p>
                           )}
                           {scenarios.map((s) => (
-                            <div key={s.id} className="soft-card p-3">
+                            <div key={s.id} className="border border-border/70 p-3">
                               <div className="flex items-center justify-between gap-2 mb-1.5">
-                                <span className="font-display font-bold text-sm">{s.name}</span>
+                                <span className="font-display font-medium text-[13px]">{s.name}</span>
                                 <div className="flex items-center gap-2">
-                                  <span className="font-display text-teal-signal font-extrabold tabular-nums">{s.result.score.toFixed(1)}</span>
+                                  <span className="font-data text-[13px] tabular-nums">{s.result.score.toFixed(1)}</span>
                                   <button
                                     onClick={() => deleteScenario(s.id)}
-                                    className="text-muted-foreground hover:text-coral-risk transition-colors"
+                                    className="text-muted-foreground hover:text-vermilion transition-colors"
                                     aria-label={`Delete ${s.name}`}
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
                                   </button>
                                 </div>
                               </div>
-                              <div className="flex flex-wrap gap-x-2 gap-y-0.5">
+                              <div className="flex flex-wrap gap-x-3 gap-y-0.5">
                                 {Object.entries(s.controls).map(([k, v]) => (
-                                  <span key={k} className="text-[10px] text-muted-foreground">
-                                    {k}: <span className="tabular-nums font-bold">{v}</span>
+                                  <span key={k} className="font-data text-[10px] text-muted-foreground">
+                                    {k}: <span className="tabular-nums">{v}</span>
                                   </span>
                                 ))}
                               </div>
                             </div>
                           ))}
-                          <p className="text-xs text-muted-foreground leading-relaxed mt-3">
+                          <p className="text-[11px] text-muted-foreground leading-relaxed mt-3">
                             The model rewards strategies that combine ambition with balance —
                             one strong investment alone rarely wins. This is an educational
                             model with simplified assumptions, not a prediction about any
-                            real city. Full equations: transparency page.
+                            real city. Full equations on the transparency page.
                           </p>
                         </div>
                       </motion.div>
@@ -379,12 +425,12 @@ export default function Results() {
           </AnimatePresence>
         </section>
       </main>
-      <footer className="border-t border-border/60 mt-auto">
-        <div className="container py-5 flex items-center justify-between">
-          <span className="text-[11px] text-muted-foreground">
-            ECO//SIM · a fictional town · an educational game
+      <footer className="border-t border-border mt-auto">
+        <div className="px-6 sm:px-10 lg:px-14 py-5 flex items-center justify-between">
+          <span className="font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground">
+            ECO//SIM · fictional town · educational model
           </span>
-          <Link href="/transparency" className="text-[11px] text-teal-signal font-bold hover:underline underline-offset-4">
+          <Link href="/transparency" className="font-data text-[10px] tracking-[0.12em] uppercase text-vermilion hover:underline underline-offset-4">
             How the score is calculated →
           </Link>
         </div>
