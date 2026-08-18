@@ -6,7 +6,6 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch, useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import { LanguageProvider } from "./contexts/LanguageContext";
 import { SimProvider } from "./contexts/SimContext";
 import Home from "./pages/Home";
 import Briefing from "./pages/Briefing";
@@ -56,8 +55,7 @@ function Router() {
   return (
     <AnimatePresence mode="wait">
       <Switch key={location} location={location}>
-        <Route path={"/"} component={Briefing} />
-        <Route path={"/home"} component={Home} />
+        <Route path={"/"} component={Home} />
         <Route path={"/briefing"} component={Briefing} />
         <Route path={"/simulator"} component={Simulator} />
         <Route path={"/results"} component={Results} />
@@ -85,18 +83,17 @@ function App() {
       <ThemeProvider defaultTheme="light" switchable>
         <TooltipProvider>
           <Toaster />
-          <LanguageProvider>
-            <SimProvider>
-              <ScrollRestoration />
-              <Boot />
-              <SkipToContent />
-              <ScrollProgress />
-              <PageEntrance>
-                <Router />
-              </PageEntrance>
-              <CookieBanner />
-            </SimProvider>
-          </LanguageProvider>
+          <SimProvider>
+            <ScrollRestoration />
+            <Boot />
+            <SkipToContent />
+            <ScrollProgress />
+            <PageEntrance>
+              <Router />
+            </PageEntrance>
+            <CookieBanner />
+
+          </SimProvider>
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

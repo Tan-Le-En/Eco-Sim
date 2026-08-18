@@ -26,20 +26,8 @@ import { useSim } from "@/contexts/SimContext";
 import { runSimulation } from "@/lib/sim/engine";
 import { INDICATOR_KEYS, INDICATOR_META, KID_GOALS, KID_INDICATORS, MISSION_TARGETS, SimulationResult } from "@/lib/sim/types";
 
-const PHOTOS = {
-  // Good outcome: nature thriving
-  natureGood: "/manus-storage/merbok-mangrove-real_ccdd2def.jpg",
-  // Good outcome: town thriving
-  townGood: "/manus-storage/fishermen-dawn-nets-real_81f6e009.jpeg",
-  // Struggling: fishermen working hard
-  struggling: "/manus-storage/fishermen-net-cast-real_a6fc104d.jpg",
-  // Bad outcome: empty nets
-  strugglingHard: "/manus-storage/clan-jetties-aerial-real_f756af5d.jpg",
-  // Water crisis
-  waterCrisis: "/manus-storage/mangrove-roots-real_fc3e4c78.jpg",
-  // Flood risk
-  floodRisk: "/manus-storage/stilt-houses-real_4d70b8ec.jpg",
-};
+const SUNSET_PHOTO = "/manus-storage/fishermen-dawn-nets-real_81f6e009.jpeg";
+const DAWN_PHOTO = "/manus-storage/fishermen-net-cast-real_a6fc104d.jpg";
 
 export default function Results() {
   const { currentResult, controls, scenarios, deleteScenario } = useSim();
@@ -92,25 +80,7 @@ export default function Results() {
     [final],
   );
   const happy = goalsMet.filter(Boolean).length >= 2;
-
-  // Pick the verdict photo based on which indicators improved/worsened
-  // so the report feels different for each distinct run.
-  let photo = PHOTOS.townGood;
-  let verdictAlt = "Teluk Nusa, 2050";
-  const delta = (k: keyof typeof final) => final[k] - base[k];
-
-  if (delta("biodiversity") > 5 && delta("floodResilience") > 5) {
-    photo = PHOTOS.natureGood; verdictAlt = "Mangroves restored, Teluk Nusa 2050";
-  } else if (delta("equity") < -8 || delta("publicHealth") < -8) {
-    photo = PHOTOS.strugglingHard; verdictAlt = "Teluk Nusa at a crossroads, 2050";
-  } else if (delta("waterSecurity") < -10) {
-    photo = PHOTOS.waterCrisis; verdictAlt = "The water runs low, Teluk Nusa 2050";
-  } else if (delta("floodResilience") < -10) {
-    photo = PHOTOS.floodRisk; verdictAlt = "Homes on stilts, Teluk Nusa 2050";
-  } else if (!happy) {
-    photo = PHOTOS.struggling; verdictAlt = "Fishermen at dawn, Teluk Nusa 2050";
-  }
-
+  const photo = happy ? SUNSET_PHOTO : DAWN_PHOTO;
   const verdict = happy
     ? "Teluk Nusa held its own."
     : "Teluk Nusa is still struggling. That is where most real plans begin.";
