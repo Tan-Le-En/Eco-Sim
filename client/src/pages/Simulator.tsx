@@ -170,7 +170,7 @@ export default function Simulator() {
 
       {/* ── Instrument bar: year · budget · mission target ── */}
       <div className="border-b border-border">
-        <div className="px-6 sm:px-10 lg:px-14 py-3 flex flex-wrap items-center justify-between gap-3">
+        <div className="px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-6">
             <div>
               <div className="font-data text-[10px] tracking-[0.16em] uppercase text-muted-foreground">Year</div>
@@ -261,15 +261,15 @@ export default function Simulator() {
         </div>
       </div>
 
-      <main className="flex-1 px-6 sm:px-10 lg:px-14 py-5 grid lg:grid-cols-[1fr_360px] gap-5 max-w-[1500px] w-full">
+      <main className="flex-1 px-4 sm:px-6 lg:px-8 py-3 grid lg:grid-cols-[1fr_340px] gap-4 max-w-[1500px] w-full h-[calc(100vh-8.5rem)] overflow-hidden">
         {/* Left: mood → map → indicators → trajectory */}
-        <div className="space-y-4 min-w-0">
+        <div className="space-y-3 min-w-0 flex flex-col overflow-hidden">
           {indicatorsAtDisplay && <TownMood indicators={indicatorsAtDisplay} year={displayYear} />}
           <CityMap controls={controls} indicators={indicatorsAtDisplay} year={displayYear} />
 
           {indicatorsAtDisplay && (
-            <div>
-              <div className="flex items-baseline justify-between gap-4 mb-2">
+            <div className="shrink-0">
+              <div className="flex items-baseline justify-between gap-4 mb-1">
                 <span className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground">Registers · {displayYear}</span>
                 <span className="font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground hidden sm:block">
                   tap a row for the plain-language reading
@@ -283,9 +283,11 @@ export default function Simulator() {
             </div>
           )}
 
-          <div>
-            <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-2">Trajectory · {chartData[0]?.year ?? 2026} – {displayYear}</div>
-            <TimelineChart data={chartData} />
+          <div className="flex-1 min-h-0">
+            <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-1">Trajectory · {chartData[0]?.year ?? 2026} – {displayYear}</div>
+            <div className="h-full">
+              <TimelineChart data={chartData} className="h-full flex flex-col" />
+            </div>
           </div>
 
           {finished && (
@@ -353,8 +355,8 @@ export default function Simulator() {
         </div>
 
         {/* Right: decision ledger */}
-        <aside className="lg:sticky lg:top-14 lg:self-start lg:h-[calc(100vh-3.5rem)] lg:overflow-y-auto pr-1 pb-4">
-          <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-2">Decisions · each year</div>
+        <aside className="lg:sticky lg:top-14 lg:self-start lg:h-[calc(100vh-8.5rem)] lg:overflow-y-auto pr-1 pb-2 shrink-0">
+          <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-1">Decisions · each year</div>
           <ControlPanel controls={controls} onChange={setControl} onReset={resetControls} />
           <div className="mt-3 px-1">
             <p className="text-[11px] text-muted-foreground leading-relaxed">

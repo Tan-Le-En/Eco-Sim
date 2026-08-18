@@ -218,13 +218,33 @@ function burdenFloodExposure(coastalDevelopment: number, t: number): number {
   return ((coastalDevelopment / 30) * 0.45 + t * 0.004) * 10;
 }
 
-/* ---------- events: deterministic warnings across the timeline ---------- */
+/* ---------- events: deterministic but varied warnings across the timeline ---------- */
+/** A simple deterministic hash of the controls so each unique policy mix
+ *  produces different event years (not just the same triggers every run). */
+function hashControls(controls: Controls): number {
+  const vals = Object.values(controls).join(",");
+  let h = 0;
+  for (let i = 0; i < vals.length; i++) {
+    h = ((h << 5) - h + vals.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h);
+}
+
 function generateEvents(years: SimYear[], controls: Controls): SimEvent[] {
   const events: SimEvent[] = [];
+  const h = hashControls(controls);
+  // Deterministic pseudo-random per-control offsets so each policy mix
+  // shifts which years trigger events.
+  const waterOffset = h % 4;
+  const floodYears = [2033 + (h % 6), 2042 + (h % 5)];
+  const habitatOffset = h % 3;
+  const equityOffset = h % 3;
+  const healthOffset = h % 3;
+
   for (const y of years) {
     const i = y.indicators;
     if (y.year <= START_YEAR) continue;
-    if (i.waterSecurity < 50 && y.year % 2 === 0)
+    if (i.waterSecurity < 50 && y.year % 2 === waterOffset)
       events.push({
         year: y.year,
         type: "water_stress_warning",
@@ -238,28 +258,28 @@ function generateEvents(years: SimYear[], controls: Controls): SimEvent[] {
         severity: "critical",
         message: `The dams run dry. Water board trucks park on Jalan Utama and residents queue with every container they own. The school closes early.`,
       });
-    if (i.floodResilience < 40 && (y.year === 2037 || y.year === 2047))
+    if (i.floodResilience < 40 && floodYears.includes(y.year))
       events.push({
         year: y.year,
         type: "coastal_flood",
         severity: "critical",
         message: `A monsoon surge pushes the sea past the seawall. In the kampung, a grandmother carries her cat onto the roof and waits for a boat.`,
       });
-    if (i.biodiversity < 40 && y.year % 3 === 0)
+    if (i.biodiversity < 40 && y.year % 3 === habitatOffset)
       events.push({
         year: y.year,
         type: "habitat_loss_warning",
         severity: "warning",
         message: `The bakau trees on the estuary bank are gone. Fishermen say the nets come back lighter every year.`,
       });
-    if (i.equity < 40 && y.year % 2 === 0)
+    if (i.equity < 40 && y.year % 2 === equityOffset)
       events.push({
         year: y.year,
         type: "equity_warning",
         severity: "warning",
         message: `The flats by the river have no lift and the bus route stops at the main road. Residents walk 40 minutes to the clinic.`,
       });
-    if (i.publicHealth < 45 && y.year % 2 === 0)
+    if (i.publicHealth < 45 && y.year % 2 === healthOffset)
       events.push({
         year: y.year,
         type: "health_warning",

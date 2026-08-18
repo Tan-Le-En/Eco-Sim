@@ -82,19 +82,18 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light" switchable>
         <TooltipProvider>
-          <Toaster />
-          <SimProvider>
-            <ScrollRestoration />
-            <Boot />
-            <SkipToContent />
-            <ScrollProgress />
-            <PageEntrance>
-              <Router />
-            </PageEntrance>
-            <CookieBanner />
-
-          </SimProvider>
-        </TooltipProvider>
+            <Toaster />
+            <SimProvider>
+              <ScrollRestoration />
+              <Boot />
+              <SkipToContent />
+              <ScrollProgress />
+              <PageEntrance>
+                <Router />
+              </PageEntrance>
+              <CookieBanner />
+            </SimProvider>
+          </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

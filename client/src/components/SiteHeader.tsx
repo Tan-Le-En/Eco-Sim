@@ -7,9 +7,8 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Menu, X, Sun, Moon, Search } from "lucide-react";
+import { ArrowLeft, Menu, X, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
-import SiteSearch from "@/components/SiteSearch";
 
 export const NAV = [
   { href: "/", label: "Home" },
@@ -24,7 +23,7 @@ export default function SiteHeader({ backHref, bare }: { backHref?: string; bare
   const [location] = useLocation();
   const { theme, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
+
 
   // Close the mobile drawer on route change (single-screen habit)
   useEffect(() => {
@@ -81,13 +80,6 @@ export default function SiteHeader({ backHref, bare }: { backHref?: string; bare
             </Link>
           ))}
           <button
-            onClick={() => setSearchOpen(true)}
-            className="btn-press inline-flex items-center gap-1.5 font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground border border-transparent hover:border-border hover:text-foreground px-3 py-2 transition-colors"
-            aria-label="Open site search"
-          >
-            <Search className="w-3.5 h-3.5" />
-          </button>
-          <button
             onClick={toggleTheme}
             className="btn-press inline-flex items-center font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground border border-transparent hover:border-border hover:text-foreground px-3 py-2 transition-colors"
             aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
@@ -99,13 +91,6 @@ export default function SiteHeader({ backHref, bare }: { backHref?: string; bare
 
         {/* Mobile controls */}
         <div className="flex md:hidden items-center gap-1">
-          <button
-            onClick={() => setSearchOpen(true)}
-            className="btn-press inline-flex items-center p-2 text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Open site search"
-          >
-            <Search className="w-4 h-4" />
-          </button>
           <button
             onClick={toggleTheme}
             className="btn-press inline-flex items-center p-2 text-muted-foreground hover:text-foreground transition-colors"
@@ -160,7 +145,6 @@ export default function SiteHeader({ backHref, bare }: { backHref?: string; bare
         )}
       </AnimatePresence>
 
-      <SiteSearch open={searchOpen} onOpenChange={setSearchOpen} />
     </header>
   );
 }
