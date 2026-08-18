@@ -64,7 +64,8 @@ export default function Simulator() {
     let last = performance.now();
     const loop = (now: number) => {
       if (!playingRef.current) return;
-      const interval = speedRef.current === 25 ? 110 : 420 / speedRef.current;
+      // Slower playback: 1y = 300ms per step, 5y = 250ms/step, Fast(25y) = 80ms/step
+      const interval = speedRef.current === 25 ? 80 : speedRef.current === 5 ? 250 : 300;
       const elapsed = now - last;
       if (elapsed >= interval) {
         const steps = Math.floor(elapsed / interval);

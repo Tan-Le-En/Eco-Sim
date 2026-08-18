@@ -229,49 +229,49 @@ function generateEvents(years: SimYear[], controls: Controls): SimEvent[] {
         year: y.year,
         type: "water_stress_warning",
         severity: "warning",
-        message: "Water demand is beginning to exceed reliable supply.",
+        message: `The Sungai Kedah runs thin by March. Families in the kampungs fetch rainwater in plastic drums.`,
       });
     if (i.waterSecurity < 35)
       events.push({
         year: y.year,
         type: "water_crisis",
         severity: "critical",
-        message: "Water crisis: reservoirs cannot meet demand. Rationing begins.",
+        message: `The dams run dry. Water board trucks park on Jalan Utama and residents queue with every container they own. The school closes early.`,
       });
     if (i.floodResilience < 40 && (y.year === 2037 || y.year === 2047))
       events.push({
         year: y.year,
         type: "coastal_flood",
         severity: "critical",
-        message: "A severe storm surge hits the unprotected coastline.",
+        message: `A monsoon surge pushes the sea past the seawall. In the kampung, a grandmother carries her cat onto the roof and waits for a boat.`,
       });
     if (i.biodiversity < 40 && y.year % 3 === 0)
       events.push({
         year: y.year,
         type: "habitat_loss_warning",
         severity: "warning",
-        message: "Ecosystem loss is accelerating: mangroves and wetlands shrinking.",
+        message: `The bakau trees on the estuary bank are gone. Fishermen say the nets come back lighter every year.`,
       });
     if (i.equity < 40 && y.year % 2 === 0)
       events.push({
         year: y.year,
         type: "equity_warning",
         severity: "warning",
-        message: "Low-income districts carry a growing share of risks and costs.",
+        message: `The flats by the river have no lift and the bus route stops at the main road. Residents walk 40 minutes to the clinic.`,
       });
     if (i.publicHealth < 45 && y.year % 2 === 0)
       events.push({
         year: y.year,
         type: "health_warning",
         severity: "warning",
-        message: "Heat waves and air pollution are raising hospital admissions.",
+        message: `Hospital admissions for asthma and heat exhaustion climb. The ward runs out of beds by September.`,
       });
     if (y.budgetRemaining <= 0 && !events.some((e) => e.year === y.year && e.type === "budget_deficit"))
       events.push({
         year: y.year,
         type: "budget_deficit",
         severity: "critical",
-        message: "The city budget is exhausted. Projects stall and approval drops.",
+        message: `The town hall stops funding projects. A bridge half-finished over the mouth of the Sungai Kedah. Approval for the mayor drops to its lowest since 2026.`,
       });
   }
   return events;
