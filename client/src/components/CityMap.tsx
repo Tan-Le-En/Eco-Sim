@@ -9,7 +9,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { buildCityMap, CELL_COLORS, CELL_LABELS, MapCell } from "@/lib/sim/cityMap";
 import { Controls, Indicators } from "@/lib/sim/types";
 
-const ILLUSTRATED_MAP = "/manus-storage/teluk-nusa-map_68653673.png";
+const ILLUSTRATED_MAP = "/manus-storage/teluk-nusa-map-real_042467eb.jpg";
 
 interface CityMapProps {
   controls: Controls;
@@ -49,18 +49,26 @@ const OVERLAY_LEGEND: [string, string][] = [
  *  shows through, with colored tints only where the data changes something. */
 function overlayTint(cell: MapCell, controls: Controls, indicators: Indicators | null, t: number): string {
   const rollout = Math.min(1, t / 10);
+  const isLate = t > 18; // near 2050: overlays become more dramatic for the consequence reveal
+  const intensity = isLate ? 0.75 : 0.55;
+
+  // Mangrove restoration: green overlay grows with investment
   if (cell.type === "mangrove") {
     const boost = (controls.mangroveRestoration / 30) * rollout;
-    return boost > 0.3 ? "rgba(47,122,72,0.55)" : "transparent";
+    if (boost > 0.3) return `rgba(34,120,60,${boost > 0.7 && isLate ? 0.7 : intensity})`;
   }
+
+  // Coastal development: brown overlay shows built-over coast
   if (cell.type === "beach" || cell.type === "residentialLow") {
-    if ((controls.coastalDevelopment / 30) * rollout > 0.5) return "rgba(185,154,107,0.6)";
+    if ((controls.coastalDevelopment / 30) * rollout > 0.5) return `rgba(185,154,107,${isLate ? 0.7 : 0.6})`;
   }
   if (cell.type === "wetland") {
-    if ((controls.coastalDevelopment / 30) * rollout > 0.4) return "rgba(168,148,106,0.55)";
+    if ((controls.coastalDevelopment / 30) * rollout > 0.4) return `rgba(168,148,106,${isLate ? 0.65 : 0.55})`;
   }
+
+  // Flood consequence: orange-red overlay on low-resilience areas near 2050
   if (indicators && cell.type === "residentialLow" && indicators.floodResilience < 45 && t > 10) {
-    return "rgba(201,107,66,0.55)";
+    return `rgba(201,107,66,${isLate ? 0.7 : 0.55})`;
   }
   return "transparent";
 }
@@ -119,17 +127,21 @@ export default function CityMap({ controls, indicators, year, className }: CityM
           {hover ? `${CELL_LABELS[hover.cell.type]} · elev ${hover.cell.elevationM} m${hover.cell.population > 0 ? ` · pop ~${hover.cell.population.toLocaleString()}` : ""}` : "Pointer over map to survey"}
         </span>
       </div>
-      <div className="border border-border bg-card p-1.5">
+      <div className="border border-border bg-card p-1.5 overflow-hidden">
         <div
           ref={containerRef}
           className="relative select-none aspect-[4/3] min-h-[180px] bg-[oklch(0.88_0.02_80)] dark:bg-[oklch(0.25_0.015_75)]"
           onPointerMove={onMove}
           onPointerLeave={onLeave}
+          style={{
+            transition: "transform 800ms cubic-bezier(0.23, 1, 0.32, 1)",
+            transform: year >= 2050 ? "scale(1.05)" : "scale(1)",
+          }}
         >
           {/* Base layer: illustrated field map of Teluk Nusa */}
           <img
             src={ILLUSTRATED_MAP}
-            alt="Illustrated field map of Teluk Nusa — sea, river, mangroves, town, forest"
+            alt="Aerial photograph of Teluk Nusa — estuary, coastal settlement, and forest"
             loading="lazy"
             decoding="async"
             className="absolute inset-0 w-full h-full object-cover"
@@ -157,12 +169,14 @@ export default function CityMap({ controls, indicators, year, className }: CityM
             ))}
           </svg>
           {/* Hover indicator: thin outline cell */}
-          {hover && (
+          {hover && containerRef.current && (
             <div
-              className="pointer-events-none absolute w-[6%] h-[6%] border border-foreground/80 bg-foreground/10"
+              className="pointer-events-none absolute border border-foreground/80 bg-foreground/10"
               style={{
-                left: `${((hover.x / containerRef.current!.getBoundingClientRect().width) * 100 / cellWidth) * cellWidth}%`,
-                top: `${((hover.y / containerRef.current!.getBoundingClientRect().height) * 100 / cellHeight) * cellHeight}%`,
+                width: `${cellWidth}%`,
+                height: `${cellHeight}%`,
+                left: `${(Math.floor((hover.x / containerRef.current.getBoundingClientRect().width) * COLS) / COLS) * 100}%`,
+                top: `${(Math.floor((hover.y / containerRef.current.getBoundingClientRect().height) * ROWS) / ROWS) * 100}%`,
               }}
             />
           )}

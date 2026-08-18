@@ -13,9 +13,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { BASELINE, KID_GOALS, INDICATOR_META } from "@/lib/sim/types";
 
-const PHOTO = "/manus-storage/hero_fishermen-nets-clean_c209bb82.jpg";
-const RIVER = "/manus-storage/mangrove-river_a2d59747.jpg";
-const JETTY = "/manus-storage/clan-jetty_7ac07e27.jpg";
+const PHOTO = "/manus-storage/fishermen-net-cast-real_a6fc104d.jpg";
+const RIVER = "/manus-storage/merbok-mangrove-real_ccdd2def.jpg";
+const JETTY = "/manus-storage/clan-jetties-aerial-real_f756af5d.jpg";
 
 const CHALLENGES: [string, string][] = [
   ["Smoke", "Most electricity comes from burning fuel."],

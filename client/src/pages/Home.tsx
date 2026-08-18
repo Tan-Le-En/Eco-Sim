@@ -12,11 +12,11 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
 
-const HERO = "/manus-storage/hero_kampung-boats_1b7420b2.jpg";
-const JETTY = "/manus-storage/penang-jetty_1c063f93.jpg";
-const MANGROVE = "/manus-storage/mangrove-aerial_136e988a.jpg";
-const NETS = "/manus-storage/hero_fishermen-nets-clean_c209bb82.jpg";
-const LANGKAWI = "/manus-storage/langkawi-boats_cc225119.jpg";
+const HERO = "/manus-storage/teluk-nusa-map-real_042467eb.jpg";
+const JETTY = "/manus-storage/stilt-houses-real_4d70b8ec.jpg";
+const MANGROVE = "/manus-storage/merbok-mangrove-real_ccdd2def.jpg";
+const NETS = "/manus-storage/fishermen-dawn-nets-real_81f6e009.jpeg";
+const LANGKAWI = "/manus-storage/clan-jetties-aerial-real_f756af5d.jpg";
 
 const FIELD = [
   {
@@ -38,7 +38,7 @@ const FIELD = [
     k: "Try again.",
     t: "You will not find a perfect plan; you will find trade-offs. Every result tells you why things changed, and the full mathematics is published on the transparency page. Come back when a run goes wrong and try a different plan.",
     img: NETS,
-    cap: "Fishermen hauling nets at dawn, East Coast Malaysia",
+    cap: "Fishermen with nets at dawn, Kuala Kedah",
   },
 ];
 
@@ -117,7 +117,7 @@ export default function Home() {
         <div className="relative min-h-[42vh] lg:min-h-0">
           <img
             src={HERO}
-            alt="Real photograph of a Malaysian coastal kampung with boats and stilt houses on the water"
+            alt="Aerial photograph of Kuala Kedah estuary showing the river mouth, coastal settlement, and breakwater"
             className="absolute inset-0 w-full h-full object-cover"
             fetchPriority="high"
             decoding="async"
@@ -125,7 +125,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-t from-background/85 via-background/10 to-transparent dark:from-background dark:via-background/10" />
           <div className="absolute bottom-0 left-0 right-0 px-6 sm:px-10 py-5">
             <div className="plate-caption !bg-transparent !border-transparent !text-background/90 !font-semibold">
-              <span>Boats and stilt houses, Kuala Kedah</span>
+              <span>Aerial view, Kuala Kedah estuary</span>
               <span>Fig. 01</span>
             </div>
           </div>
@@ -195,12 +195,12 @@ export default function Home() {
           <figure className="photo-plate overflow-hidden hidden md:block group cursor-pointer">
             <img
               src={LANGKAWI}
-              alt="Colourful fishing boats in a Langkawi bay"
+              alt="Aerial view of stilt house village on the coast, Penang"
               className="h-52 w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
               loading="lazy"
             />
             <figcaption className="plate-caption">
-              <span>Fishing bay, Langkawi</span>
+              <span>Coastal settlement, Penang</span>
               <span>Fig. 05</span>
             </figcaption>
           </figure>

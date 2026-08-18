@@ -13,11 +13,11 @@ import { ArrowRight } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
 
 const PHOTOS = {
-  riverVillage: "/manus-storage/river-village_7f0fc750.jpg",
-  mangroveRoots: "/manus-storage/mangrove-roots_f89f9365.jpg",
-  fishingCoast: "/manus-storage/hero_beach-sunset_46f82884.jpg",
-  mangroveAerial: "/manus-storage/mangrove-aerial_136e988a.jpg",
-  workingJetty: "/manus-storage/penang-jetty_1c063f93.jpg",
+  riverVillage: "/manus-storage/stilt-houses-real_4d70b8ec.jpg",
+  mangroveRoots: "/manus-storage/mangrove-roots-real_fc3e4c78.jpg",
+  fishingCoast: "/manus-storage/fishermen-net-cast-real_a6fc104d.jpg",
+  mangroveAerial: "/manus-storage/merbok-mangrove-real_ccdd2def.jpg",
+  workingJetty: "/manus-storage/clan-jetties-aerial-real_f756af5d.jpg",
 };
 
 interface Chapter {

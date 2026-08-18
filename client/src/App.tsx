@@ -19,7 +19,7 @@ import Terms from "./pages/Terms";
 import ScrollProgress from "./components/ScrollProgress";
 import SkipToContent from "./components/SkipToContent";
 import CookieBanner from "./components/CookieBanner";
-import FloatingContact from "./components/FloatingContact";
+
 import { initUtm } from "./lib/utm";
 
 function PageEntrance({ children }: { children: React.ReactNode }) {
@@ -92,7 +92,7 @@ function App() {
               <Router />
             </PageEntrance>
             <CookieBanner />
-            <FloatingContact />
+
           </SimProvider>
         </TooltipProvider>
       </ThemeProvider>

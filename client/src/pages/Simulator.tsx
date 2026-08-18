@@ -26,8 +26,8 @@ import { useSim } from "@/contexts/SimContext";
 import { runSimulation } from "@/lib/sim/engine";
 import { INDICATOR_KEYS } from "@/lib/sim/types";
 
-const FINISH_PHOTO = "/manus-storage/hero_beach-sunset_46f82884.jpg";
-const DAWN_PHOTO = "/manus-storage/hero_fishermen-nets-clean_c209bb82.jpg";
+const FINISH_PHOTO = "/manus-storage/fishermen-dawn-nets-real_81f6e009.jpeg";
+const DAWN_PHOTO = "/manus-storage/fishermen-net-cast-real_a6fc104d.jpg";
 
 export default function Simulator() {
   const { controls, setControl, resetControls, run, saveScenario } = useSim();
@@ -289,14 +289,21 @@ export default function Simulator() {
 
           {finished && (
             <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 border border-border bg-card">
-              <figure className="photo-plate overflow-hidden">
+              <figure className="photo-plate overflow-hidden relative">
                 <img
                   src={moodPhoto(previewResult!.score)}
                   alt={moodPhotoAlt(previewResult!.score)}
                   loading="lazy"
                   decoding="async"
-                  className="h-40 w-full"
+                  className="h-40 w-full object-cover animate-in zoom-in-50 duration-1000"
                 />
+                {/* Weather event overlay: appears based on score */}
+                {previewResult!.score < 58 && (
+                  <div className="absolute inset-0 bg-gradient-to-t from-[rgba(185,154,107,0.4)] via-transparent to-[rgba(201,107,66,0.25)] pointer-events-none animate-in fade-in duration-700 delay-300" />
+                )}
+                {previewResult!.score >= 58 && (
+                  <div className="absolute inset-0 bg-gradient-to-t from-[rgba(47,122,72,0.3)] via-transparent to-[rgba(100,180,140,0.15)] pointer-events-none animate-in fade-in duration-700 delay-300" />
+                )}
               </figure>
               <div className="px-5 py-4 space-y-3">
                 <div className="flex flex-wrap items-center justify-between gap-3">
@@ -406,6 +413,6 @@ function moodPhoto(score: number): string {
 
 function moodPhotoAlt(score: number): string {
   return score >= 58
-    ? "Teluk Nusa at sunset, stable and calm"
-    : "Fishermen at dawn. The town still needs help.";
+    ? "Fishermen with nets at dawn, Kuala Kedah. The town is alive."
+    : "Fisherman casting net at dusk. The town still needs help.";
 }
