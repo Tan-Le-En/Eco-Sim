@@ -162,10 +162,10 @@ export default function Story() {
         </div>
 
         {/* Closing band */}
-        <section className="border-t border-border bg-foreground text-background">
+        <section className="border-t border-border bg-secondary text-secondary-foreground dark:bg-[oklch(0.12_0.01_75)] dark:border-border">
           <div className="px-6 sm:px-10 lg:px-14 py-14 grid lg:grid-cols-[1.4fr_auto] items-center gap-8">
             <div>
-              <div className="font-data text-[11px] tracking-[0.14em] uppercase text-background/60 mb-3">
+              <div className="font-data text-[11px] tracking-[0.14em] uppercase text-secondary-foreground/60 dark:text-[oklch(0.62_0.01_80)] mb-3">
                 End of story · the rest is yours
               </div>
               <p className="font-display italic text-xl sm:text-2xl max-w-xl leading-snug">
@@ -182,7 +182,7 @@ export default function Story() {
               </Link>
               <Link
                 href="/briefing"
-                className="btn-press inline-flex items-center border border-background/40 px-6 py-3.5 font-data text-[11px] tracking-[0.14em] uppercase hover:bg-background hover:text-foreground transition-colors"
+                className="btn-press inline-flex items-center border border-current/40 px-6 py-3.5 font-data text-[11px] tracking-[0.14em] uppercase hover:bg-primary-foreground/10 transition-colors"
               >
                 Mission briefing
               </Link>

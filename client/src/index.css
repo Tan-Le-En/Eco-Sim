@@ -207,7 +207,7 @@ html.dark {
 
   /* Photo loading state: warm paper tone while the image downloads */
   .photo-plate img {
-    background-color: oklch(0.9 0.012 85);
+    background-color: var(--secondary);
   }
 
   /* Paper grain — like a printed field report */
@@ -220,7 +220,14 @@ html.dark {
     inset: 0;
     pointer-events: none;
     opacity: 0.35;
+    mix-blend-mode: multiply;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  html.dark .paper-grain::before {
+    opacity: 0.12;
+    mix-blend-mode: normal;
+    background-color: var(--background);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3Cfilter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
   /* Field-number label: mono uppercase + hairline, the signature mark */

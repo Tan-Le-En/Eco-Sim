@@ -35,14 +35,14 @@ export default function CookieBanner() {
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: 40, opacity: 0 }}
       transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
-      className="fixed bottom-0 left-0 right-0 z-50 bg-foreground text-background border-t border-border"
+      className="fixed bottom-0 left-0 right-0 z-50 bg-secondary text-secondary-foreground border-t border-border dark:bg-[oklch(0.2_0.012_75)] dark:border-border"
       data-no-print="true"
       role="dialog"
       aria-label="Cookie notice"
     >
       <div className="px-6 sm:px-10 py-4 max-w-[1400px] mx-auto flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <p className="flex-1 text-[13px] leading-relaxed">
-          <span className="font-data text-[10px] tracking-[0.16em] uppercase block mb-1 text-background/70">
+          <span className="font-data text-[10px] tracking-[0.16em] uppercase block mb-1 text-secondary-foreground/70 dark:text-[oklch(0.62_0.01_80)]">
             Field note · cookies
           </span>
           Your plan choices and theme are stored only on your device. Enabling
@@ -58,7 +58,7 @@ export default function CookieBanner() {
           </button>
           <button
             onClick={() => decide("declined")}
-            className="btn-press border border-background/40 font-data text-[11px] tracking-[0.14em] uppercase px-5 py-2.5 text-background hover:bg-background/10 transition-colors"
+            className="btn-press border border-current/40 font-data text-[11px] tracking-[0.14em] uppercase px-5 py-2.5 hover:bg-primary-foreground/10 transition-colors"
           >
             Decline
           </button>

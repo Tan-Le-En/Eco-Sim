@@ -99,7 +99,7 @@ export default function Home() {
             fetchPriority="high"
             decoding="async"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/85 via-background/10 to-transparent dark:from-background dark:via-background/10" />
           <div className="absolute bottom-0 left-0 right-0 px-6 sm:px-10 py-5">
             <div className="plate-caption !bg-transparent !border-transparent !text-background/90 !font-semibold">
               <span>Boats and stilt houses, Kuala Kedah</span>
@@ -186,7 +186,7 @@ export default function Home() {
             </Link>
             <Link
               href="/briefing"
-              className="btn-press inline-flex items-center border border-foreground px-8 py-3.5 font-data text-[11px] tracking-[0.14em] uppercase hover:bg-foreground hover:text-background transition-colors"
+              className="btn-press inline-flex items-center border border-current px-8 py-3.5 font-data text-[11px] tracking-[0.14em] uppercase hover:bg-primary-foreground/10 transition-colors"
             >
               Mission briefing
             </Link>

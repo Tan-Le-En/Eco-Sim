@@ -73,7 +73,7 @@ export default function SiteHeader({ backHref, bare }: { backHref?: string; bare
               href={n.href}
               className={`btn-press inline-flex font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 transition-colors ${
                 location === n.href
-                  ? "bg-foreground text-background"
+                  ? "bg-secondary text-secondary-foreground dark:bg-[oklch(0.24_0.012_75)]"
                   : "text-muted-foreground hover:text-foreground border border-transparent hover:border-border"
               }`}
             >
