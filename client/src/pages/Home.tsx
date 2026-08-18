@@ -7,6 +7,7 @@
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import SiteHeader from "@/components/SiteHeader";
 
 const HERO = "/manus-storage/real-kampung-boats_57e6e432.jpg";
 const JETTY = "/manus-storage/real-penang-jetty_a82ca28d.jpg";
@@ -45,38 +46,7 @@ export default function Home() {
       <section className="relative flex-1 grid lg:grid-cols-[1.1fr_1fr] min-h-screen">
         {/* Left: typographic hero, offset */}
         <div className="relative paper-grain flex flex-col justify-between px-6 sm:px-10 lg:px-14 py-8 lg:py-10 border-r border-border">
-          <header className="flex flex-col gap-3">
-            <div className="flex items-center justify-between">
-              <Link href="/" className="flex items-baseline gap-1">
-                <span className="font-display italic font-semibold text-2xl tracking-tight">
-                  ECO<span className="text-vermilion">//</span>SIM
-                </span>
-              </Link>
-              <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
-                A field study · 2026–2050
-              </span>
-            </div>
-            <nav className="flex flex-wrap items-center gap-1.5">
-              <Link
-                href="/story"
-                className="btn-press font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 border border-border hover:border-foreground transition-colors"
-              >
-                Story mode
-              </Link>
-              <Link
-                href="/transparency"
-                className="btn-press font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 border border-border hover:border-foreground transition-colors"
-              >
-                Transparency
-              </Link>
-              <Link
-                href="/simulator"
-                className="btn-press font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 bg-foreground text-background hover:bg-vermilion transition-colors"
-              >
-                Enter the field
-              </Link>
-            </nav>
-          </header>
+          <SiteHeader bare />
 
           <motion.div
             initial={{ opacity: 0, y: 14 }}
@@ -218,6 +188,12 @@ export default function Home() {
             >
               Mission briefing
             </Link>
+            <Link
+              href="/faq"
+              className="btn-press inline-flex items-center border border-border px-5 py-3.5 font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground hover:border-foreground hover:text-foreground transition-colors"
+            >
+              FAQ
+            </Link>
           </div>
         </div>
       </section>
@@ -228,7 +204,7 @@ export default function Home() {
             ECO//SIM · Teluk Nusa · an open educational model, not real-world advice
           </span>
           <span className="font-data text-[11px] tracking-[0.12em] uppercase text-muted-foreground">
-            © 2026 · Sayang bumi kita
+            © 2026 · Sayang bumi kita · Last updated · Aug 18, 2026
           </span>
         </div>
       </footer>

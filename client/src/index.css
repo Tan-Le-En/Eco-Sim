@@ -58,6 +58,8 @@
   --font-sans: "Public Sans", sans-serif;
 }
 
+/* Theme tokens are deliberately OUTSIDE @layer so user CSS wins layer ordering.
+   :root = warm paper; .dark = night archive (ink-paper reversed). */
 :root {
   --radius: 0px; /* zero-radius discipline — depth via hairlines & contrast */
   /* Warm paper */
@@ -101,6 +103,49 @@
   --sidebar-accent: oklch(0.93 0.01 85);
   --sidebar-accent-foreground: oklch(0.22 0.012 75);
   --sidebar-border: oklch(0.86 0.01 85);
+  --sidebar-ring: var(--vermilion);
+}
+
+html.dark {
+  --background: oklch(0.16 0.01 75);
+  --foreground: oklch(0.92 0.008 85);
+  --card: oklch(0.2 0.012 75);
+  --card-foreground: oklch(0.92 0.008 85);
+  --popover: oklch(0.2 0.012 75);
+  --popover-foreground: oklch(0.92 0.008 85);
+  --primary: oklch(0.65 0.15 35);
+  --primary-foreground: oklch(0.15 0.01 75);
+  --secondary: oklch(0.24 0.012 75);
+  --secondary-foreground: oklch(0.92 0.008 85);
+  --muted: oklch(0.24 0.012 75);
+  --muted-foreground: oklch(0.62 0.01 80);
+  --accent: oklch(0.65 0.15 35);
+  --accent-foreground: oklch(0.15 0.01 75);
+  --destructive: oklch(0.62 0.16 30);
+  --destructive-foreground: oklch(0.985 0.005 85);
+  --border: oklch(0.3 0.012 75);
+  --input: oklch(0.3 0.012 75);
+  --ring: oklch(0.65 0.15 35);
+
+  --vermilion: oklch(0.65 0.15 35);
+  --deepsea: oklch(0.62 0.06 200);
+  --ink: oklch(0.92 0.008 85);
+  --ink-soft: oklch(0.62 0.01 80);
+  --paper: oklch(0.16 0.01 75);
+
+  --chart-1: var(--vermilion);
+  --chart-2: var(--deepsea);
+  --chart-3: oklch(0.7 0.07 145);
+  --chart-4: oklch(0.72 0.1 78);
+  --chart-5: oklch(0.65 0.02 80);
+
+  --sidebar: oklch(0.18 0.01 75);
+  --sidebar-foreground: oklch(0.92 0.008 85);
+  --sidebar-primary: var(--vermilion);
+  --sidebar-primary-foreground: oklch(0.15 0.01 75);
+  --sidebar-accent: oklch(0.24 0.012 75);
+  --sidebar-accent-foreground: oklch(0.92 0.008 85);
+  --sidebar-border: oklch(0.3 0.012 75);
   --sidebar-ring: var(--vermilion);
 }
 
@@ -158,6 +203,7 @@
       max-width: 1360px;
     }
   }
+
 
   /* Paper grain — like a printed field report */
   .paper-grain {
@@ -239,11 +285,70 @@
   }
 
   .btn-press {
-    transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), background-color 160ms, border-color 160ms, color 160ms;
+    transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), background-color 160ms, border-color 160ms, color 160ms, opacity 160ms;
   }
   .btn-press:active {
     transform: scale(0.97);
   }
+
+  /* Universal hover affordance — flat editorial hover (underline hairline + tone) */
+  a:hover {
+    transition: opacity 160ms;
+  }
+  a:not(.btn-press):hover {
+    opacity: 0.75;
+  }
+
+  /* Card hover: border lifts to foreground — no shadow discipline */
+  .hover-lift {
+    transition: border-color 200ms cubic-bezier(0.23, 1, 0.32, 1), background-color 200ms;
+  }
+  .hover-lift:hover {
+    border-color: var(--foreground);
+    background: var(--card);
+  }
+
+  /* Scroll progress bar (global) */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: var(--scroll-progress, 0%);
+    background: var(--vermilion);
+    z-index: 60;
+    transform-origin: left;
+  }
+
+  /* Skip to content — hidden until focused */
+  .skip-link {
+    position: absolute;
+    top: -100px;
+    left: 0;
+    z-index: 100;
+    background: var(--foreground);
+    color: var(--background);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.75rem 1.25rem;
+  }
+  .skip-link:focus {
+    top: 0;
+  }
+
+  /* Form feedback states */
+  .field-success { border-color: oklch(0.45 0.08 150) !important; }
+  .field-error { border-color: var(--vermilion) !important; }
+  .input-notice {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .notice-success { color: oklch(0.5 0.09 150); }
+  .notice-error { color: var(--vermilion); }
 
   /* Reveal-up entrance */
   @media (prefers-reduced-motion: no-preference) {
@@ -255,4 +360,35 @@
       to { opacity: 1; transform: translateY(0); }
     }
   }
+}
+
+/* ── Print stylesheet: a paper report of the field study ── */
+@media print {
+  @page { margin: 1.8cm 1.6cm; }
+  html, body {
+    background: #fff !important;
+    color: #1a1714 !important;
+  }
+  /* Hide interactive chrome */
+  .no-print,
+  .scroll-progress,
+  .skip-link,
+  header,
+  nav,
+  button,
+  [role="dialog"],
+  [data-no-print="true"] {
+    display: none !important;
+  }
+  main { padding: 0 !important; margin: 0 !important; }
+  /* Keep the editorial voice */
+  .font-display, h1, h2, h3 { font-family: "Newsreader", serif; }
+  a { color: #1a1714 !important; text-decoration: none; }
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.65rem;
+    opacity: 0.6;
+  }
+  .photo-plate img { max-height: 14cm; }
+  * { box-shadow: none !important; }
 }

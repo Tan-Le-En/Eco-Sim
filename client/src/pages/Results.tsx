@@ -16,9 +16,10 @@ import {
   X,
   ChevronDown,
 } from "lucide-react";
-import { toast } from "sonner";
 import SiteHeader from "@/components/SiteHeader";
 import CausalChain from "@/components/CausalChain";
+import CopyButton from "@/components/CopyButton";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import { useSim } from "@/contexts/SimContext";
 import { runSimulation } from "@/lib/sim/engine";
 import { INDICATOR_KEYS, INDICATOR_META, KID_GOALS, KID_INDICATORS, MISSION_TARGETS, SimulationResult } from "@/lib/sim/types";
@@ -84,16 +85,7 @@ export default function Results() {
   });
   const toggle = (k: string) => setExpertOpen((o) => ({ ...o, [k]: !o[k] }));
 
-  const handleShare = async () => {
-    const score = latest.score.toFixed(1);
-    const text = `ECO//SIM — I scored ${score}/100 protecting Teluk Nusa to 2050. Try to beat it!`;
-    try {
-      await navigator.clipboard.writeText(text);
-      toast.success("Result copied to clipboard");
-    } catch {
-      toast.error("Could not copy — clipboard blocked");
-    }
-  };
+  const shareText = `ECO//SIM — I scored ${latest.score.toFixed(1)}/100 protecting Teluk Nusa to 2050. Try to beat it!`;
 
   const handleReplay = () => {
     navigate("/simulator");
@@ -181,12 +173,7 @@ export default function Results() {
               </div>
 
               <div className="flex flex-wrap gap-2 mt-5">
-                <button
-                  onClick={handleShare}
-                  className="btn-press inline-flex items-center gap-1.5 border border-border px-4 py-2 text-[11px] font-data tracking-[0.12em] uppercase hover:border-foreground transition-colors"
-                >
-                  <Share2 className="w-3.5 h-3.5" /> Share score
-                </button>
+                <CopyButton text={shareText} label="Share score" className="gap-1.5 px-4 py-2 text-[11px] tracking-[0.12em]" />
                 <button
                   onClick={handleReplay}
                   className="btn-press inline-flex items-center gap-1.5 bg-vermilion text-primary-foreground px-5 py-2 text-[11px] font-data tracking-[0.12em] uppercase hover:brightness-105 transition-all"
@@ -391,13 +378,20 @@ export default function Results() {
                                 <span className="font-display font-medium text-[13px]">{s.name}</span>
                                 <div className="flex items-center gap-2">
                                   <span className="font-data text-[13px] tabular-nums">{s.result.score.toFixed(1)}</span>
-                                  <button
-                                    onClick={() => deleteScenario(s.id)}
-                                    className="text-muted-foreground hover:text-vermilion transition-colors"
-                                    aria-label={`Delete ${s.name}`}
-                                  >
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                  </button>
+                                  <ConfirmDialog
+                                    trigger={
+                                      <button
+                                        className="btn-press text-muted-foreground hover:text-vermilion transition-colors"
+                                        aria-label={`Delete ${s.name}`}
+                                      >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                      </button>
+                                    }
+                                    title="Delete saved plan?"
+                                    description={`This permanently removes "${s.name}" (score ${s.result.score.toFixed(0)}) from the comparison board.`}
+                                    confirmLabel="Delete"
+                                    onConfirm={() => deleteScenario(s.id)}
+                                  />
                                 </div>
                               </div>
                               <div className="flex flex-wrap gap-x-3 gap-y-0.5">

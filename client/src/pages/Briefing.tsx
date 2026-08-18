@@ -6,6 +6,7 @@
  */
 import { Link } from "wouter";
 import { useState } from "react";
+import SiteHeader from "@/components/SiteHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { BASELINE, KID_GOALS, INDICATOR_META } from "@/lib/sim/types";
@@ -41,20 +42,7 @@ export default function Briefing() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      {/* Top bar */}
-      <header className="border-b border-border">
-        <div className="px-6 sm:px-10 lg:px-14 py-4 flex items-center justify-between">
-          <Link href="/" className="font-display italic font-semibold text-xl tracking-tight">
-            ECO<span className="text-vermilion">//</span>SIM
-          </Link>
-          <Link
-            href="/simulator"
-            className="btn-press font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 border border-foreground hover:bg-foreground hover:text-background transition-colors"
-          >
-            Go to the field
-          </Link>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="flex-1 px-6 sm:px-10 lg:px-14 py-10 grid lg:grid-cols-[1.2fr_1fr] gap-12 max-w-[1400px]">
         {/* ── Left: mission ── */}

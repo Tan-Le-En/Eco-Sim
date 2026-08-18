@@ -7,7 +7,8 @@
  */
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import SiteHeader from "@/components/SiteHeader";
 
 const PHOTOS = {
   riverVillage: "/manus-storage/real-river-village_e8ba4542.jpg",
@@ -103,28 +104,7 @@ const CHAPTERS: Chapter[] = [
 export default function Story() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      {/* Top bar */}
-      <header className="border-b border-border">
-        <div className="px-6 sm:px-10 lg:px-14 py-4 flex items-center justify-between">
-          <Link href="/" className="font-display italic font-semibold text-xl tracking-tight">
-            ECO<span className="text-vermilion">//</span>SIM
-          </Link>
-          <nav className="flex items-center gap-2">
-            <Link
-              href="/briefing"
-              className="btn-press hidden sm:inline-flex items-center gap-2 font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 border border-border hover:border-foreground transition-colors"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" /> Briefing
-            </Link>
-            <Link
-              href="/simulator"
-              className="btn-press font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 bg-foreground text-background hover:bg-vermilion transition-colors"
-            >
-              Go to the field
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader backHref="/" />
 
       <main className="flex-1">
         {/* Chapter masthead */}
@@ -215,6 +195,9 @@ export default function Story() {
         <div className="px-6 sm:px-10 lg:px-14 py-4">
           <span className="font-data text-[11px] tracking-[0.12em] uppercase text-muted-foreground">
             ECO//SIM · fictional town · educational model
+          </span>
+          <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
+            Last updated · Aug 18, 2026
           </span>
         </div>
       </footer>

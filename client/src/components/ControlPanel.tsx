@@ -4,6 +4,7 @@
  * trade-off notes kept as two short annotated lines. Controls stay compact so
  * the whole cockpit fits one viewport.
  */
+import ConfirmDialog from "@/components/ConfirmDialog";
 import {
   Sun,
   Bus,
@@ -107,12 +108,19 @@ export default function ControlPanel({ controls, onChange, onReset }: ControlPan
         );
       })}
       <div className="px-4 py-2.5">
-        <button
-          onClick={onReset}
-          className="btn-press w-full font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground border border-border py-2 px-3 hover:border-foreground hover:text-foreground transition-colors"
-        >
-          Reset all to baseline
-        </button>
+        <ConfirmDialog
+          trigger={
+            <button
+              className="btn-press w-full font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground border border-border py-2 px-3 hover:border-foreground hover:text-foreground transition-colors"
+            >
+              Reset all to baseline
+            </button>
+          }
+          title="Reset every dial?"
+          description="All eight decisions return to the 2026 baseline. Any unsaved choices are lost."
+          confirmLabel="Reset"
+          onConfirm={onReset}
+        />
       </div>
     </div>
   );
