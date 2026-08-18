@@ -112,93 +112,61 @@ export default function CityMap({ controls, indicators, year, className }: CityM
   return (
     <div className={className}>
       <div className="flex items-baseline justify-between gap-4 mb-2">
-        <span className="field-label">
-          Teluk Nusa — town survey · {year}
+        <span className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground">
+          Town Survey · {year}
         </span>
         <span className="font-data text-[11px] tracking-[0.08em] uppercase text-muted-foreground truncate hidden sm:block">
-          {hover ? `${CELL_LABELS[hover.cell.type]} · elev ${hover.cell.elevationM} m${hover.cell.population > 0 ? ` · pop ~${hover.cell.population.toLocaleString()}` : ""}` : "Move the pointer over the town"}
+          {hover ? `${CELL_LABELS[hover.cell.type]} · elev ${hover.cell.elevationM} m${hover.cell.population > 0 ? ` · pop ~${hover.cell.population.toLocaleString()}` : ""}` : "Pointer over map to survey"}
         </span>
       </div>
-      <div className="border border-border bg-card p-3">
-        <div className="flex gap-3">
-          <div
-            ref={containerRef}
-            className="relative flex-1 select-none aspect-[4/3] min-h-[180px] bg-[oklch(0.88_0.02_80)] dark:bg-[oklch(0.25_0.015_75)]"
-            onPointerMove={onMove}
-            onPointerLeave={onLeave}
+      <div className="border border-border bg-card p-1.5">
+        <div
+          ref={containerRef}
+          className="relative select-none aspect-[4/3] min-h-[180px] bg-[oklch(0.88_0.02_80)] dark:bg-[oklch(0.25_0.015_75)]"
+          onPointerMove={onMove}
+          onPointerLeave={onLeave}
+        >
+          {/* Base layer: illustrated field map of Teluk Nusa */}
+          <img
+            src={ILLUSTRATED_MAP}
+            alt="Illustrated field map of Teluk Nusa — sea, river, mangroves, town, forest"
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 w-full h-full object-cover"
+            draggable={false}
+            style={{ background: "oklch(0.88 0.02 80)" }}
+          />
+          {/* Data layer: zone overlay tints driven by controls & indicators */}
+          <svg
+            viewBox={`0 0 100 100`}
+            preserveAspectRatio="none"
+            className="absolute inset-0 w-full h-full"
+            role="img"
+            aria-label="Town data overlay on the map of fictional Teluk Nusa"
           >
-            {/* Base layer: illustrated field map of Teluk Nusa */}
-            <img
-              src={ILLUSTRATED_MAP}
-              alt="Illustrated field map of Teluk Nusa — sea, river, mangroves, town, forest"
-              loading="lazy"
-              decoding="async"
-              className="absolute inset-0 w-full h-full object-cover"
-              draggable={false}
-              style={{ background: "oklch(0.88 0.02 80)" }}
-            />
-            {/* Data layer: zone overlay tints driven by controls & indicators */}
-            <svg
-              viewBox={`0 0 100 100`}
-              preserveAspectRatio="none"
-              className="absolute inset-0 w-full h-full"
-              role="img"
-              aria-label="Town data overlay on the map of fictional Teluk Nusa"
-            >
-              {rects.map((r) => (
-                <rect
-                  key={r.key}
-                  x={r.x + cellWidth * 0.04}
-                  y={r.y + cellHeight * 0.04}
-                  width={cellWidth * 0.92}
-                  height={cellHeight * 0.92}
-                  fill={overlayTint(r.cell, controls, indicators, t)}
-                  style={{ transition: "fill 500ms ease" }}
-                />
-              ))}
-            </svg>
-            {/* Hover indicator: thin outline cell */}
-            {hover && (
-              <div
-                className="pointer-events-none absolute w-[6%] h-[6%] border border-foreground/80 bg-foreground/10"
-                style={{
-                  left: `${((hover.x / containerRef.current!.getBoundingClientRect().width) * 100 / cellWidth) * cellWidth}%`,
-                  top: `${((hover.y / containerRef.current!.getBoundingClientRect().height) * 100 / cellHeight) * cellHeight}%`,
-                }}
+            {rects.map((r) => (
+              <rect
+                key={r.key}
+                x={r.x + cellWidth * 0.04}
+                y={r.y + cellHeight * 0.04}
+                width={cellWidth * 0.92}
+                height={cellHeight * 0.92}
+                fill={overlayTint(r.cell, controls, indicators, t)}
+                style={{ transition: "fill 500ms ease" }}
               />
-            )}
-          </div>
-          <div className="hidden lg:flex flex-col gap-[6px] justify-center pl-1 min-w-[124px]">
-            {LEGEND.map(([k, label]) => (
-              <div key={k} className="flex items-center gap-2">
-                <span
-                  className="w-3.5 h-3.5 border border-border/70 shrink-0"
-                  style={{ backgroundColor: CELL_COLORS[k] }}
-                />
-                <span className="text-[11px] font-data text-muted-foreground">{label}</span>
-              </div>
             ))}
-            <div className="border-t border-border/60 pt-1.5 mt-0.5">
-              <div className="font-data text-[9px] tracking-[0.12em] uppercase text-muted-foreground/70 mb-1">Tints = change</div>
-              {OVERLAY_LEGEND.map(([c, label]) => (
-                <div key={label} className="flex items-center gap-2 mb-1">
-                  <span className="w-3.5 h-3.5 border border-border/70 shrink-0" style={{ backgroundColor: c }} />
-                  <span className="text-[11px] font-data text-muted-foreground">{label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          </svg>
+          {/* Hover indicator: thin outline cell */}
+          {hover && (
+            <div
+              className="pointer-events-none absolute w-[6%] h-[6%] border border-foreground/80 bg-foreground/10"
+              style={{
+                left: `${((hover.x / containerRef.current!.getBoundingClientRect().width) * 100 / cellWidth) * cellWidth}%`,
+                top: `${((hover.y / containerRef.current!.getBoundingClientRect().height) * 100 / cellHeight) * cellHeight}%`,
+              }}
+            />
+          )}
         </div>
-        <div className="flex justify-between px-1 mt-1.5">
-          {["W", "", "", "N", "", "", "", "E"].map((l, i) => (
-            <span key={i} className="font-data text-[9px] text-muted-foreground/60 tracking-[0.2em]">
-              {l}
-            </span>
-          ))}
-        </div>
-      </div>
-      <div className="mt-1.5">
-        <span className="status-chip">Fictional town · educational model</span>
       </div>
     </div>
   );

@@ -132,19 +132,16 @@ export default function Story() {
           {CHAPTERS.map((c, i) => (
             <motion.section
               key={c.n}
-              initial={{ opacity: 0, y: 14 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
-              transition={{ delay: i * 0.04, duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
-              className="grid lg:grid-cols-[1fr_1.15fr] gap-0 min-w-0"
+              transition={{ delay: i * 0.08, duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
+              className="grid lg:grid-cols-[1fr_1.15fr] gap-0 min-w-0 group"
             >
               {/* Voice + lesson */}
               <div className="px-6 sm:px-10 lg:px-14 py-10 lg:py-14 lg:border-r border-border min-w-0">
                 <div className="flex items-baseline gap-4 mb-6">
                   <span className="font-data text-vermilion text-base">{c.n}</span>
-                  <div className="field-label !gap-3">
-                    <span>Chapter {c.n}</span>
-                  </div>
                 </div>
                 <blockquote className="font-display italic text-xl sm:text-2xl leading-snug border-l-2 border-vermilion pl-5 mb-6">
                   {c.voice}
@@ -152,12 +149,12 @@ export default function Story() {
                 <h2 className="font-display font-semibold text-2xl sm:text-3xl tracking-tight mb-4">{c.title}</h2>
                 <p className="text-sm sm:text-[15px] leading-relaxed text-muted-foreground max-w-xl">{c.lesson}</p>
                 <div className="mt-6">
-                  <span className="status-chip">{c.connects}</span>
+                  <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground/70">{c.connects}</span>
                 </div>
               </div>
               {/* Photo plate */}
-              <figure className="photo-plate overflow-hidden m-6 sm:m-8 lg:m-8">
-                <img src={c.photo} alt={c.alt} className="h-full min-h-56 w-full" loading="lazy" />
+              <figure className="photo-plate overflow-hidden m-6 sm:m-8 lg:m-8 group cursor-pointer">
+                <img src={c.photo} alt={c.alt} className="h-full min-h-56 w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]" loading="lazy" />
                 <figcaption className="plate-caption">
                   <span>{c.cap}</span>
                   <span>{c.fig}</span>

@@ -114,7 +114,7 @@ export default function FloatingContact() {
             /* ── Form: validation errors + PW toggle ── */
             <form onSubmit={handleSubmit} className="space-y-4 mt-1" noValidate>
               <div>
-                <label htmlFor="fc-name" className="field-label mb-1.5">Name · required</label>
+                <label htmlFor="fc-name" className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground mb-1.5">Name · required</label>
                 <Input
                   id="fc-name"
                   value={name}
@@ -128,7 +128,7 @@ export default function FloatingContact() {
                 )}
               </div>
               <div>
-                <label htmlFor="fc-email" className="field-label mb-1.5">Email · required</label>
+                <label htmlFor="fc-email" className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground mb-1.5">Email · required</label>
                 <Input
                   id="fc-email"
                   type="email"
@@ -143,7 +143,7 @@ export default function FloatingContact() {
                 )}
               </div>
               <div>
-                <label htmlFor="fc-message" className="field-label mb-1.5">Message · required</label>
+                <label htmlFor="fc-message" className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground mb-1.5">Message · required</label>
                 <Textarea
                   id="fc-message"
                   value={message}
@@ -158,7 +158,7 @@ export default function FloatingContact() {
                 )}
               </div>
               <div>
-                <label htmlFor="fc-secret" className="field-label mb-1.5">
+                <label htmlFor="fc-secret" className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground mb-1.5">
                   Secret code · optional
                 </label>
                 <div className="relative">

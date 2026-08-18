@@ -54,7 +54,6 @@ export default function Briefing() {
       <main className="flex-1 px-6 sm:px-10 lg:px-14 py-10 grid lg:grid-cols-[1.2fr_1fr] gap-12 max-w-[1400px]">
         {/* ── Left: mission ── */}
         <div className="flex flex-col">
-          <div className="field-label mb-6">Mission briefing · Section 00</div>
           <h1 className="font-display font-semibold tracking-tight leading-[0.98] text-[clamp(2.4rem,5.5vw,4.2rem)]">
             Teluk Nusa is yours.
             <br />
@@ -91,7 +90,6 @@ export default function Briefing() {
 
           {/* Challenges: hairline list */}
           <div className="mt-10">
-            <div className="field-label mb-4">What's wrong in 2026</div>
             <div className="grid sm:grid-cols-2 gap-x-10 gap-y-4">
               {CHALLENGES.map((entry, i) => (
                 <motion.div
@@ -128,24 +126,30 @@ export default function Briefing() {
 
         {/* ── Right: datum plate + optional numbers ── */}
         <div className="flex flex-col gap-6">
-          <figure className="photo-plate overflow-hidden">
-            <img src={PHOTO} alt="Malaysian fishermen at dawn" className="h-64 w-full object-cover object-top" loading="lazy" />
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ delay: 0.15, duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
+          >
+          <figure className="photo-plate overflow-hidden group cursor-pointer">
+            <img src={PHOTO} alt="Malaysian fishermen at dawn" className="h-64 w-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.03]" loading="lazy" />
             <figcaption className="plate-caption">
               <span>Fishermen at dawn, East Coast</span>
               <span>Fig. 02</span>
             </figcaption>
           </figure>
 
-          <figure className="photo-plate overflow-hidden hidden lg:block">
-            <img src={RIVER} alt="Mangrove river in Langkawi" className="h-40 w-full" loading="lazy" />
+          <figure className="photo-plate overflow-hidden hidden lg:block group cursor-pointer">
+            <img src={RIVER} alt="Mangrove river in Langkawi" className="h-40 w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]" loading="lazy" />
             <figcaption className="plate-caption">
               <span>Mangrove river, Kilim Geopark</span>
               <span>Fig. 03</span>
             </figcaption>
           </figure>
 
-          <figure className="photo-plate overflow-hidden hidden lg:block">
-            <img src={JETTY} alt="Clan jetty houses on stilts over the sea" className="h-40 w-full object-cover" loading="lazy" />
+          <figure className="photo-plate overflow-hidden hidden lg:block group cursor-pointer">
+            <img src={JETTY} alt="Clan jetty houses on stilts over the sea" className="h-40 w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]" loading="lazy" />
             <figcaption className="plate-caption">
               <span>Where your town lives · clan jetty</span>
               <span>Fig. 04</span>
@@ -191,6 +195,7 @@ export default function Briefing() {
           <span className="font-data text-[11px] tracking-[0.12em] uppercase text-muted-foreground">
             Read this page, then go govern.
           </span>
+          </motion.div>
         </div>
       </main>
 

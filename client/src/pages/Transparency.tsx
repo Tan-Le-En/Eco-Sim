@@ -133,7 +133,7 @@ export default function Transparency() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
         >
-          <div className="field-label mb-2">For teachers, students & professors</div>
+          <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-2">For teachers, students & professors</div>
           <h1 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight mb-3">
             How this game <span className="text-vermilion">actually works</span>
           </h1>
@@ -146,7 +146,7 @@ export default function Transparency() {
 
           {/* Equations */}
           <section className="mb-12">
-            <div className="field-label mb-3">01 · Published equations</div>
+            <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-3">01 · Published equations</div>
             <div className="space-y-3">
               {EQUATIONS.map((eq, i) => (
                 <motion.div
@@ -171,7 +171,7 @@ export default function Transparency() {
 
           {/* Variables */}
           <section className="mb-12">
-            <div className="field-label mb-3">02 · Variables &amp; units</div>
+            <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-3">02 · Variables &amp; units</div>
             <div className="overflow-x-auto border border-border bg-card">
               <table className="w-full text-sm">
                 <thead>
@@ -198,7 +198,7 @@ export default function Transparency() {
 
           {/* Score weights */}
           <section className="mb-12">
-            <div className="field-label mb-3">03 · Score weights, the same for everyone</div>
+            <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-3">03 · Score weights, the same for everyone</div>
             <div className="soft-card p-5 space-y-3">
               {[
                 ["Climate pressure", 0.20, "#f87171"],
@@ -228,7 +228,7 @@ export default function Transparency() {
 
           {/* Sources */}
           <section className="mb-12">
-            <div className="field-label mb-3">05 · Where the real science lives</div>
+            <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-3">05 · Where the real science lives</div>
             <p className="text-sm text-muted-foreground leading-relaxed mb-4 max-w-2xl">
               Teluk Nusa is fictional and every constant above is illustrative.
               But the direction of each relationship is borrowed from real
@@ -258,7 +258,7 @@ export default function Transparency() {
 
           {/* Limits */}
           <section className="mb-12">
-            <div className="field-label mb-3">04 · What this model does <em>not</em> do</div>
+            <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-3">04 · What this model does <em>not</em> do</div>
             <div className="space-y-3">
               {LIMITS.map((lim, i) => (
                 <div key={i} className="border border-border border-l-2 border-l-vermilion bg-card pl-4 py-2.5">

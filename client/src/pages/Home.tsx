@@ -136,39 +136,34 @@ export default function Home() {
       <section className="border-t border-border">
         <div className="grid lg:grid-cols-[1fr_auto] items-end px-6 sm:px-10 lg:px-14 pt-12 pb-8">
           <div>
-            <div className="field-label mb-3">How the study works</div>
             <h2 className="font-display font-semibold text-3xl sm:text-5xl tracking-tight">
               Three things, plainly.
             </h2>
           </div>
-          <span className="hidden lg:block font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground pb-1">
-            Sections 01–03
-          </span>
         </div>
         <div className="grid lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-border border-t border-border">
           {FIELD.map((f, i) => (
             <motion.div
               key={f.n}
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
-              transition={{ delay: i * 0.04, duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
+              transition={{ delay: i * 0.08, duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
               className="group"
             >
               <div className="px-6 sm:px-10 pt-8 pb-4">
                 <div className="flex items-baseline gap-4 mb-4">
-                  <span className="font-data text-vermilion text-sm">{f.n}</span>
                   <span className="font-display italic font-semibold text-xl">{f.k}</span>
                 </div>
                 <p className="text-sm sm:text-[15px] leading-relaxed text-muted-foreground max-w-sm">
                   {f.t}
                 </p>
               </div>
-              <figure className="mx-6 sm:mx-10 mb-10 photo-plate overflow-hidden">
+              <figure className="mx-6 sm:mx-10 mb-10 photo-plate overflow-hidden cursor-pointer">
                 <img
                   src={f.img}
                   alt={f.cap}
-                  className="h-52 w-full object-cover"
+                  className="h-52 w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                   loading="lazy"
                   decoding="async"
                 />
@@ -181,7 +176,13 @@ export default function Home() {
 
       {/* ────────────── CTA band: quote + closing photograph + actions ────────────── */}
       <section className="border-t border-border">
-        <div className="px-6 sm:px-10 lg:px-14 py-14 grid lg:grid-cols-[1.3fr_1fr_auto] items-center gap-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+          className="px-6 sm:px-10 lg:px-14 py-14 grid lg:grid-cols-[1.3fr_1fr_auto] items-center gap-8"
+        >
           <div>
             <p className="font-display italic text-xl sm:text-2xl max-w-xl">
               “When I was young, the bay was full of fish. Can you keep it
@@ -191,11 +192,11 @@ export default function Home() {
               What a fisherman in Teluk Nusa actually wants to know
             </p>
           </div>
-          <figure className="photo-plate overflow-hidden hidden md:block">
+          <figure className="photo-plate overflow-hidden hidden md:block group cursor-pointer">
             <img
               src={LANGKAWI}
               alt="Colourful fishing boats in a Langkawi bay"
-              className="h-52 w-full object-cover"
+              className="h-52 w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
               loading="lazy"
             />
             <figcaption className="plate-caption">
@@ -223,7 +224,7 @@ export default function Home() {
               FAQ
             </Link>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       <SiteFooter />

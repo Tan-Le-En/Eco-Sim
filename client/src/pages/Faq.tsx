@@ -78,9 +78,6 @@ export default function Faq() {
       <SiteHeader />
       <main id="main" className="flex-1">
         <div className="px-6 sm:px-10 lg:px-14 py-10 max-w-[1000px] mx-auto">
-          <div className="field-label mb-3">
-            Common questions · section 09
-          </div>
           <h1 className="font-display text-4xl sm:text-5xl font-semibold tracking-tight leading-[1.05]">
             Asked at the <span className="italic text-vermilion">field desk.</span>
           </h1>

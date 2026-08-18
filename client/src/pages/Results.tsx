@@ -91,6 +91,7 @@ export default function Results() {
     comparison: false,
   });
   const toggle = (k: string) => setExpertOpen((o) => ({ ...o, [k]: !o[k] }));
+  const isAnyExpertOpen = expertOpen.appendix || expertOpen.breakdown || expertOpen.table || expertOpen.comparison;
 
   const shareText = `I scored ${latest.score.toFixed(1)}/100 protecting Teluk Nusa to 2050 on ECO//SIM. Try to beat it.`;
 
@@ -99,7 +100,11 @@ export default function Results() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background">
+      <PageMeta
+        title={`ECO//SIM — Final Report · Score ${Math.round(latest.score)}`}
+        description={`Teluk Nusa 2050 Report: Score ${Math.round(latest.score)}. A summary of environmental and economic outcomes for a fictional Malaysian coastal town.`}
+      />
       <SiteHeader backHref="/simulator" />
       <main className="px-6 sm:px-10 lg:px-14 py-8 flex-1 space-y-8 max-w-[1280px] w-full">
         {/* ── Verdict plate ── */}
@@ -216,30 +221,30 @@ export default function Results() {
 
         {/* ── Causal chain ── */}
         <section>
-          <div className="field-label mb-3">Why it happened: cause and effect</div>
+          <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-3">Why it happened</div>
           <CausalChain links={latest.causalLinks} events={latest.events} eventsToShow={6} />
         </section>
 
-        {/* ── Expert appendix ── */}
+        {/* ── Technical appendix ── */}
         <section className="border-t border-border pt-6">
           <button
-            onClick={() => setExpertOpen((o) => ({ ...o, appendix: !o.appendix }))}
+            onClick={() => toggle("appendix")}
             className="btn-press w-full flex items-center justify-between gap-3 text-left py-2"
           >
             <div>
-              <span className="font-display font-semibold text-lg">Appendix for professors and teachers</span>
+              <span className="font-display font-semibold text-lg">Technical Appendix</span>
               <span className="block font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground mt-0.5">
                 Score breakdown · indicator table · plan comparison
               </span>
             </div>
             <ChevronDown
               className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ${
-                expertOpen.breakdown || expertOpen.table || expertOpen.comparison ? "rotate-180" : ""
+                isAnyExpertOpen ? "rotate-180" : ""
               }`}
             />
           </button>
           <AnimatePresence>
-            {(expertOpen.breakdown || expertOpen.table || expertOpen.comparison) && (
+            {isAnyExpertOpen && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}

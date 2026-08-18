@@ -269,8 +269,8 @@ export default function Simulator() {
           {indicatorsAtDisplay && (
             <div>
               <div className="flex items-baseline justify-between gap-4 mb-2">
-                <span className="field-label">Registers · {displayYear}</span>
-                <span className="font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground">
+                <span className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground">Registers · {displayYear}</span>
+                <span className="font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground hidden sm:block">
                   tap a row for the plain-language reading
                 </span>
               </div>
@@ -283,7 +283,7 @@ export default function Simulator() {
           )}
 
           <div>
-            <div className="field-label mb-2">Trajectory · {chartData[0]?.year ?? 2026} – {displayYear}</div>
+            <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-2">Trajectory · {chartData[0]?.year ?? 2026} – {displayYear}</div>
             <TimelineChart data={chartData} />
           </div>
 
@@ -346,7 +346,7 @@ export default function Simulator() {
 
         {/* Right: decision ledger */}
         <aside className="lg:sticky lg:top-14 lg:self-start lg:h-[calc(100vh-3.5rem)] lg:overflow-y-auto pr-1 pb-4">
-          <div className="field-label mb-2">Eight decisions · each year</div>
+          <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-2">Decisions · each year</div>
           <ControlPanel controls={controls} onChange={setControl} onReset={resetControls} />
           <div className="mt-3 px-1">
             <p className="text-[11px] text-muted-foreground leading-relaxed">
