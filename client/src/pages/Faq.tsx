@@ -12,6 +12,7 @@ import {
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { Link } from "wouter";
+import PageMeta from "@/components/PageMeta";
 
 const FAQS = [
   {
@@ -69,6 +70,11 @@ const FAQS = [
 export default function Faq() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
+
+      <PageMeta
+        title="ECO//SIM — FAQ · asked at the field desk"
+        description="Honest answers about the score, the trade-offs, classrooms, phones, and privacy. If it isn't here, search."
+      />
       <SiteHeader />
       <main id="main" className="flex-1">
         <div className="px-6 sm:px-10 lg:px-14 py-10 max-w-[1000px] mx-auto">

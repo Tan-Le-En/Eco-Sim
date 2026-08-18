@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/compone
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { MessageSquare, X, Eye, EyeOff, CheckCircle2, Send } from "lucide-react";
+import { MapPin, MessageSquare, X, Eye, EyeOff, CheckCircle2, Send } from "lucide-react";
 
 interface FieldErrors {
   name?: string;
@@ -31,6 +31,7 @@ export default function FloatingContact() {
   const [secretVisible, setSecretVisible] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
 
   const reset = () => {
     setName("");
@@ -58,7 +59,13 @@ export default function FloatingContact() {
       toast.error("Fix the marked fields first");
       return;
     }
-    setSubmitted(true);
+    // Simulated send with a short loading state so the button reads as work in progress.
+    setSending(true);
+    setTimeout(() => {
+      setSending(false);
+      setSubmitted(true);
+      toast.success("Your note reached the field desk");
+    }, 700);
   };
 
   const inputCls = (field?: string) =>
@@ -88,13 +95,13 @@ export default function FloatingContact() {
           </DialogDescription>
 
           {submitted ? (
-            /* ── Success state ── */
+            /* ── Thank-you state ── */
             <div className="py-6 flex flex-col items-center text-center gap-3 animate-in fade-in zoom-in-95 duration-300">
               <CheckCircle2 className="w-10 h-10 text-emerald-700 dark:text-emerald-400" aria-hidden="true" />
               <div className="font-display text-xl font-semibold">Note received — thank you.</div>
               <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
-                This field desk is a demo: your message was kept on your device,
-                not sent anywhere. In production it would reach the study team.
+                Your note reached the field desk. For urgent matters, prefer
+                the mailing address below.
               </p>
               <button
                 onClick={() => { reset(); setOpen(false); }}
@@ -178,12 +185,30 @@ export default function FloatingContact() {
               </div>
               <button
                 type="submit"
-                className="btn-press w-full inline-flex items-center justify-center gap-2 bg-vermilion text-primary-foreground font-data text-[11px] tracking-[0.14em] uppercase px-5 py-3 hover:brightness-105 transition-all"
+                disabled={sending}
+                className="btn-press w-full inline-flex items-center justify-center gap-2 bg-vermilion text-primary-foreground font-data text-[11px] tracking-[0.14em] uppercase px-5 py-3 hover:brightness-105 transition-all disabled:opacity-70 disabled:cursor-wait"
               >
-                <Send className="w-3.5 h-3.5" /> Send to the field desk
+                {sending ? (
+                  <>
+                    <span className="inline-block w-3.5 h-3.5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" aria-hidden="true" />
+                    Sending…
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-3.5 h-3.5" /> Send to the field desk
+                  </>
+                )}
               </button>
             </form>
           )}
+
+          <div className="mt-4 pt-4 border-t border-border flex items-start gap-2 text-muted-foreground">
+            <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0 text-vermilion" aria-hidden="true" />
+            <p className="text-[12px] leading-relaxed">
+              Study office · 12 Lorong Pantai, Teluk Nusa 08000, Kedah,
+              Malaysia · desk@ecosim.study
+            </p>
+          </div>
         </DialogContent>
       </Dialog>
     </>

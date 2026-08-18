@@ -4,6 +4,7 @@
  * variable tables, units, score weights, and explicit model limits.
  */
 import { Link } from "wouter";
+import PageMeta from "@/components/PageMeta";
 import SiteFooter from "@/components/SiteFooter";
 import { motion } from "framer-motion";
 import { ArrowRight, FlaskConical, Scale, Ban, FileText } from "lucide-react";
@@ -120,6 +121,11 @@ const LIMITS = [
 export default function Transparency() {
   return (
     <div className="min-h-screen flex flex-col">
+
+      <PageMeta
+        title="ECO//SIM — Transparency · every equation, published"
+        description="The full mathematics: equations, weights, assumptions, limits, and the real science the model is calibrated to."
+      />
       <SiteHeader backHref="/" />
       <main className="container py-10 flex-1 max-w-5xl">
         <motion.div

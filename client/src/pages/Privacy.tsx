@@ -7,6 +7,7 @@
 import { useEffect } from "react";
 import SiteFooter from "@/components/SiteFooter";
 import { Link } from "wouter";
+import PageMeta from "@/components/PageMeta";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
@@ -17,6 +18,11 @@ export default function Privacy() {
 
   return (
     <div className="min-h-screen flex flex-col">
+
+      <PageMeta
+        title="ECO//SIM — Privacy notice"
+        description="What this site keeps and what it does not: nothing is required, analytics is optional, nothing is ever sold."
+      />
       <main className="container py-12 flex-1 max-w-3xl px-6 sm:px-10">
         <motion.div
           initial={{ opacity: 0, y: 12 }}

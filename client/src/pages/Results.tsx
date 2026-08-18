@@ -7,6 +7,7 @@
 import { useMemo, useState } from "react";
 import SiteFooter from "@/components/SiteFooter";
 import { Link, useLocation } from "wouter";
+import PageMeta from "@/components/PageMeta";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
@@ -41,6 +42,11 @@ export default function Results() {
   if (!latest) {
     return (
       <div className="min-h-screen flex flex-col">
+
+      <PageMeta
+        title="ECO//SIM — Your field report · what changed and why"
+        description="Your 2050 score, the causal chain behind every number, and a side-by-side comparison of up to four saved plans."
+      />
         <SiteHeader backHref="/simulator" />
         <main className="px-6 py-16 flex-1 flex flex-col items-center justify-center text-center gap-4">
           <h1 className="font-display text-2xl font-semibold">No report yet</h1>

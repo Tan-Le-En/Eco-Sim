@@ -6,6 +6,8 @@
  */
 import { Link } from "wouter";
 import SiteFooter from "@/components/SiteFooter";
+import PageMeta from "@/components/PageMeta";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
@@ -41,10 +43,30 @@ const FIELD = [
 ];
 
 export default function Home() {
+  // Sticky mobile CTA: once the hero scrolls out of view, offer the main action
+  // from the bottom of the screen on small devices.
+  const [pastHero, setPastHero] = useState(false);
+  useEffect(() => {
+    const el = document.getElementById("home-hero");
+    if (!el) return;
+    const onScroll = () => {
+      const rect = el.getBoundingClientRect();
+      setPastHero(rect.bottom < 0);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
+    <>
+      <PageMeta
+        title="ECO//SIM — A Field Study of a Coastal Town, 2026–2050"
+        description="Change one thing, watch everything change. An interactive field study of Teluk Nusa, a fictional Malaysian coastal town: simple enough for a child, rigorous enough for a professor."
+      />
     <div className="min-h-screen flex flex-col bg-background">
       {/* ────────────── Full-viewport editorial hero ────────────── */}
-      <section className="relative flex-1 grid lg:grid-cols-[1.1fr_1fr] min-h-screen">
+      <section id="home-hero" className="relative flex-1 grid lg:grid-cols-[1.1fr_1fr] min-h-screen">
         {/* Left: typographic hero, offset */}
         <div className="relative paper-grain flex flex-col justify-between px-6 sm:px-10 lg:px-14 py-8 lg:py-10 border-r border-border">
           <SiteHeader bare />
@@ -55,10 +77,10 @@ export default function Home() {
             transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
             className="max-w-xl"
           >
-            <h1 className="font-display font-semibold tracking-tight text-[clamp(3rem,7.5vw,6.5rem)]">
-              <span className="block mb-6 sm:mb-8">One million</span>
-              <span className="block mb-6 sm:mb-8">people.</span>
-              <span className="block mb-6 sm:mb-8">
+            <h1 className="font-display font-semibold tracking-tight text-[clamp(3rem,7.5vw,6.5rem)] leading-[1.02]">
+              <span className="block mb-2 sm:mb-3">One million</span>
+              <span className="block mb-2 sm:mb-3">people.</span>
+              <span className="block">
                 Twenty-five <em className="text-vermilion">years.</em>
               </span>
             </h1>
@@ -145,9 +167,10 @@ export default function Home() {
               <figure className="mx-6 sm:mx-10 mb-10 photo-plate overflow-hidden">
                 <img
                   src={f.img}
-                  alt=""
+                  alt={f.cap}
                   className="h-52 w-full object-cover"
                   loading="lazy"
+                  decoding="async"
                 />
                 <figcaption className="plate-caption">{f.cap}</figcaption>
               </figure>
@@ -205,5 +228,24 @@ export default function Home() {
 
       <SiteFooter />
     </div>
+
+    {/* Sticky mobile CTA bar — appears once the hero has scrolled away */}
+    {pastHero && (
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-50 border-t border-border bg-background/95 backdrop-blur-md px-4 py-3 flex items-center gap-3">
+        <Link
+          href="/simulator"
+          className="btn-press flex-1 inline-flex items-center justify-center gap-2 bg-vermilion text-primary-foreground font-display italic text-base px-5 py-3 hover:brightness-105 transition-all"
+        >
+          Start governing <ArrowRight className="w-4 h-4" />
+        </Link>
+        <Link
+          href="/briefing"
+          className="btn-press inline-flex items-center border border-border px-4 py-3 font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground hover:border-foreground hover:text-foreground transition-colors"
+        >
+          Briefing
+        </Link>
+      </div>
+    )}
+    </>
   );
 }

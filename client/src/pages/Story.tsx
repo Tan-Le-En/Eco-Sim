@@ -6,6 +6,7 @@
  * mono labels, real photography, hairline rules, vermilion accents, no radius.
  */
 import { Link } from "wouter";
+import PageMeta from "@/components/PageMeta";
 import SiteFooter from "@/components/SiteFooter";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
@@ -105,6 +106,11 @@ const CHAPTERS: Chapter[] = [
 export default function Story() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
+
+      <PageMeta
+        title="ECO//SIM — Five Chapters of Teluk Nusa · the story"
+        description="Walk through Teluk Nusa as it is today: five chapters about a town that lives on the water, its mangrove shield, and the people you decide for."
+      />
       <SiteHeader backHref="/" />
 
       <main className="flex-1">

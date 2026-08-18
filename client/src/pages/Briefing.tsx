@@ -5,6 +5,7 @@
  * Real photography, flat hairline rules, mono specimen labels.
  */
 import { Link } from "wouter";
+import PageMeta from "@/components/PageMeta";
 import SiteFooter from "@/components/SiteFooter";
 import { useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
@@ -43,6 +44,11 @@ export default function Briefing() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+
+      <PageMeta
+        title="ECO//SIM — Mission briefing · keep the town alive for 25 years"
+        description="Your mission: govern a fictional Malaysian coastal town from 2026 to 2050. RM 100 a year, eight decisions, seven vital signs."
+      />
       <SiteHeader />
 
       <main className="flex-1 px-6 sm:px-10 lg:px-14 py-10 grid lg:grid-cols-[1.2fr_1fr] gap-12 max-w-[1400px]">

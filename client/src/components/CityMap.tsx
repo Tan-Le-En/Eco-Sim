@@ -123,7 +123,7 @@ export default function CityMap({ controls, indicators, year, className }: CityM
         <div className="flex gap-3">
           <div
             ref={containerRef}
-            className="relative flex-1 select-none aspect-[4/3] min-h-[180px]"
+            className="relative flex-1 select-none aspect-[4/3] min-h-[180px] bg-[oklch(0.88_0.02_80)] dark:bg-[oklch(0.25_0.015_75)]"
             onPointerMove={onMove}
             onPointerLeave={onLeave}
           >
@@ -135,6 +135,7 @@ export default function CityMap({ controls, indicators, year, className }: CityM
               decoding="async"
               className="absolute inset-0 w-full h-full object-cover"
               draggable={false}
+              style={{ background: "oklch(0.88 0.02 80)" }}
             />
             {/* Data layer: zone overlay tints driven by controls & indicators */}
             <svg

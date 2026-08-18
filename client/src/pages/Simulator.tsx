@@ -7,6 +7,7 @@
  */
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
+import PageMeta from "@/components/PageMeta";
 import { Play, Pause, FastForward, Save, Lightbulb, Coins } from "lucide-react";
 import { goalsMetCount } from "@/components/TownMood";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -159,6 +160,11 @@ export default function Simulator() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+
+      <PageMeta
+        title="ECO//SIM — The simulator · govern Teluk Nusa 2026–2050"
+        description="Move the eight policy dials and run 25 years. Watch the sea, the town, and the people respond. Every equation published."
+      />
       <SiteHeader backHref="/briefing" />
 
       {/* ── Instrument bar: year · budget · mission target ── */}
