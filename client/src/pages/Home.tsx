@@ -19,21 +19,21 @@ const FIELD = [
   {
     n: "01",
     k: "Meet your town",
-    t: "Teluk Nusa is a fictional Malaysian town on the Strait. Its problems — fewer fish, flooding monsoons, salt water in the taps — are the real problems of a thousand real towns. The people in these photographs are the people you are deciding for.",
+    t: "Teluk Nusa is a fictional Malaysian town on the Strait of Malacca. Fewer fish, flooding monsoons, salt water in the taps: the real problems of a thousand real towns. The people in these photographs are the people you are deciding for.",
     img: JETTY,
-    cap: "Clan jetty, Penang — houseboats and wooden walkways over the sea",
+    cap: "Clan jetty, Penang. Houseboats and wooden walkways over the sea.",
   },
   {
     n: "02",
-    k: "Change one thing. Watch everything.",
-    t: "Eight decisions. Twenty-five years. Seven things to protect: the sea and air, nature, drinking water, flood safety, public health, prosperity, and fairness. Move one dial and the whole town responds — usually in ways you did not expect.",
+    k: "Change one thing. Watch the town.",
+    t: "Eight decisions shape twenty-five years. Seven things to protect: the sea and air, nature, drinking water, flood safety, public health, prosperity, and fairness. Move one dial and the whole town responds, usually in ways you did not expect.",
     img: MANGROVE,
-    cap: "Mangrove river, Langkawi — nature's own sea wall",
+    cap: "Mangrove river, Langkawi. Nature's own sea wall.",
   },
   {
     n: "03",
-    k: "Try. Fail. Learn. Repeat.",
-    t: "There is no perfect plan — only trade-offs. Every result tells you why things changed, and the full mathematics is published on the transparency page. A five-year-old can play it. A professor can defend it.",
+    k: "Try again.",
+    t: "You will not find a perfect plan; you will find trade-offs. Every result tells you why things changed, and the full mathematics is published on the transparency page. Come back when a run goes wrong and try a different plan.",
     img: NETS,
     cap: "Fishermen hauling nets at dawn, East Coast Malaysia",
   },
@@ -54,7 +54,6 @@ export default function Home() {
             transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
             className="max-w-xl"
           >
-            <div className="field-label mb-6">A field study · fictional Malaysian coastal town · 2026–2050</div>
             <h1 className="font-display font-semibold leading-[0.98] tracking-tight text-[clamp(3rem,7.5vw,6.5rem)]">
               One million
               <br />
@@ -63,9 +62,10 @@ export default function Home() {
               <em className="text-vermilion">years.</em>
             </h1>
             <p className="mt-7 max-w-md text-base sm:text-lg leading-relaxed text-muted-foreground">
-              You govern Teluk Nusa — a small town on the Malaysian coast — from
-              2026 to 2050. Keep the sea alive, the water clean, and the people
-              treated fairly. There is no easy answer, and that is the lesson.
+              You govern Teluk Nusa, a small town on the Malaysian coast,
+              from 2026 to 2050. Keep the sea alive, the water clean, and
+              treat people fairly. That is the whole job, and it has no easy
+              answer.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link
@@ -75,14 +75,14 @@ export default function Home() {
                 Read the story <ArrowRight className="w-4 h-4" />
               </Link>
               <span className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground">
-                Simple enough for a child. Rigorous enough for a professor.
+                All equations published. No black boxes.
               </span>
             </div>
           </motion.div>
 
           <footer className="hidden lg:flex items-center justify-between pt-6 border-t border-border">
             <span className="font-data text-[11px] tracking-[0.12em] uppercase text-muted-foreground">
-              Est. 2026 · Latitude 05.94°N · not a forecast — an open learning model
+              Est. 2026 · Latitude 05.94°N · not a forecast, an open learning model
             </span>
             <span className="font-data text-[11px] tracking-[0.12em] uppercase text-muted-foreground">
               All equations published
@@ -94,7 +94,7 @@ export default function Home() {
         <div className="relative min-h-[42vh] lg:min-h-0">
           <img
             src={HERO}
-            alt="Real photograph of a Malaysian coastal kampung — boats and stilt houses on the water"
+            alt="Real photograph of a Malaysian coastal kampung with boats and stilt houses on the water"
             className="absolute inset-0 w-full h-full object-cover"
             fetchPriority="high"
             decoding="async"
@@ -145,7 +145,7 @@ export default function Home() {
                 <img
                   src={f.img}
                   alt=""
-                  className="h-44 w-full group-hover:scale-[1.02] transition-transform duration-500"
+                  className="h-44 w-full"
                   loading="lazy"
                 />
                 <figcaption className="plate-caption">{f.cap}</figcaption>
@@ -159,10 +159,12 @@ export default function Home() {
       <section className="border-t border-border">
         <div className="px-6 sm:px-10 lg:px-14 py-14 grid lg:grid-cols-[1.3fr_1fr_auto] items-center gap-8">
           <div>
-            <div className="field-label mb-3">The year is 2026</div>
             <p className="font-display italic text-xl sm:text-2xl max-w-xl">
-              "The bay was full of fish when I was young. Young boss — can you
-              fix my town?"
+              “When I was young, the bay was full of fish. Can you keep it
+              that way?”
+            </p>
+            <p className="mt-3 font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground">
+              What a fisherman in Teluk Nusa actually wants to know
             </p>
           </div>
           <figure className="photo-plate overflow-hidden hidden md:block">

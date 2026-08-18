@@ -32,7 +32,7 @@ export default function TownMood({ indicators, year }: TownMoodProps) {
   const verdict = isHappy
     ? { text: "Teluk Nusa is stable today.", tone: "text-foreground" }
     : isOkay
-      ? { text: "Teluk Nusa is under pressure — watch the amber registers.", tone: "text-vermilion" }
+      ? { text: "Teluk Nusa is under pressure. Watch the amber registers.", tone: "text-vermilion" }
       : { text: "Teluk Nusa is in trouble. Red registers need action now.", tone: "text-vermilion" };
 
   const stateDot = isHappy ? "bg-foreground" : isOkay ? "bg-vermilion" : "bg-vermilion";

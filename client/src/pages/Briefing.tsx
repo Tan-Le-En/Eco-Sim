@@ -56,7 +56,7 @@ export default function Briefing() {
           <p className="mt-6 max-w-xl text-base sm:text-lg leading-relaxed text-muted-foreground">
             One million people live in this fictional Malaysian town. You
             receive <strong className="text-foreground">RM 100 every year</strong> to
-            spend on it — energy, buses, trees, mangroves, water, housing. Every
+            spend on it: energy, buses, trees, mangroves, water, housing. Every
             year from 2026 to 2050, the town responds. You win by keeping three
             registers healthy; you lose by neglecting any one of them.
           </p>

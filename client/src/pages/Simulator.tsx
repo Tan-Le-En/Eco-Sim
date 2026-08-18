@@ -296,7 +296,7 @@ export default function Simulator() {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <div className="font-data text-[10px] tracking-[0.16em] uppercase text-muted-foreground">
-                      The year is 2050 — field work complete
+                      The year is 2050. Field work complete.
                     </div>
                     <div className="font-display text-2xl font-semibold tracking-tight mt-0.5">
                       Verdict:{" "}
@@ -345,7 +345,7 @@ export default function Simulator() {
           <div className="mt-3 px-1">
             <p className="text-[11px] text-muted-foreground leading-relaxed">
               Adjust the ledger, re-run the simulation, observe what changed.
-              The model has no perfect answer — only trade-offs.
+              The model has no perfect answer. Only trade-offs.
             </p>
           </div>
           <div className="mt-3 text-center">
@@ -401,5 +401,5 @@ function moodPhoto(score: number): string {
 function moodPhotoAlt(score: number): string {
   return score >= 58
     ? "Teluk Nusa at sunset, stable and calm"
-    : "Fishermen at dawn — the town still needs help";
+    : "Fishermen at dawn. The town still needs help.";
 }

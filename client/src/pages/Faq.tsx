@@ -16,42 +16,42 @@ const FAQS = [
   {
     id: "score",
     q: "How is the final score calculated?",
-    a: "Seven registers are measured in 2050 — sea & air, nature, clean water, flood safety, health, economy, and fairness — and each is scored 0–100. They are combined with published weights (nature 25%, health 20%, flood 15%, water 15%, economy 10%, air 8%, equity 7%) into one number out of 100. The full equation is on the Transparency page.",
+    a: "Seven registers are measured in 2050: sea and air, nature, clean water, flood safety, health, economy, and fairness. Each is scored 0–100. They are combined with published weights (nature 25%, health 20%, flood 15%, water 15%, economy 10%, air 8%, equity 7%) into one number out of 100. The full equation is on the Transparency page.",
   },
   {
     id: "perfect",
     q: "Why can't I reach a score of 100?",
-    a: "Because Teluk Nusa has real trade-offs, like every coastal town. A plan with zero factories, zero fishing, and zero construction keeps the sea clean but collapses the economy to around 32 — the model's own structure caps the mathematical maximum at about 77. That isn't a bug; it's the lesson. A working town of 72 beats a pristine town of 77 on most measures that matter to people.",
+    a: "Because Teluk Nusa has real trade-offs, like every coastal town. A plan with zero factories, zero fishing, and zero construction keeps the sea clean but collapses the economy to around 32. The model's own structure caps the mathematical maximum at about 77. That isn't a bug; it's the lesson. A working town of 72 beats a pristine town of 77 on most measures that matter to people.",
   },
   {
     id: "targets",
     q: "What are the five mission targets?",
-    a: "By 2050 you're aiming for: clean air (pollution below threshold), living nature (biodiversity above threshold), clean water (contamination below threshold), flood-safe homes (resilience above threshold), and fairness (everyone's wellbeing gap below threshold). The Mission chip in the simulator shows how many you're hitting in real time — hover over it to see the exact thresholds.",
+    a: "By 2050 you're aiming for: clean air (pollution below threshold), living nature (biodiversity above threshold), clean water (contamination below threshold), flood-safe homes (resilience above threshold), and fairness (everyone's wellbeing gap below threshold). The Mission chip in the simulator shows how many you are hitting in real time. Hover over it to see the exact thresholds.",
   },
   {
     id: "budget",
     q: "What happens when the town's budget runs out?",
-    a: "When money hits zero, restoration and resilience projects stall and public approval drops. Your income comes mainly from coastal development and industry activity — building by the beach and keeping factories running pay the town's bills, at the environment's expense. Balancing income against spending is the hardest part of governing.",
+    a: "When money hits zero, restoration and resilience projects stall and public approval drops. Your income comes mainly from coastal development and industrial activity: building by the beach and keeping factories running pay the town's bills, at the environment's expense. Balancing income against spending is the hardest part of governing.",
   },
   {
     id: "real",
     q: "Is Teluk Nusa a real town? Are the photos real?",
-    a: "The town is fictional — but the photographs are real images of Malaysia's coasts (Kuala Kedah, Penang, Langkawi, and the East Coast), and the model's numbers are calibrated to published relationships between emissions, deforestation, fishing pressure, and coastal flooding. Nothing here is a forecast; it's an educational model, and every equation is published.",
+    a: "The town is fictional, but the photographs are real images of Malaysia's coasts (Kuala Kedah, Penang, Langkawi, and the East Coast), and the model's numbers are calibrated to published relationships between emissions, deforestation, fishing pressure, and coastal flooding. Nothing here is a forecast; it's an educational model, and every equation is published.",
   },
   {
     id: "kids",
     q: "Can a young child play this?",
-    a: "Yes. The dials use plain language — Clean Power, Buses & Trains, Plant Trees — and each one carries a one-line plain-English consequence. Children can see the town respond immediately: more smoke, angrier storms, cleaner water. The numbers underneath stay rigorous for whoever wants to go deeper.",
+    a: "Yes. The dials use plain language like Clean Power, Buses and Trains, and Plant Trees. Each one carries a one-line plain-English consequence. Children can see the town respond immediately: more smoke, angrier storms, cleaner water. The numbers underneath stay rigorous for whoever wants to go deeper.",
   },
   {
     id: "teachers",
     q: "How can teachers use this in class?",
-    a: "Each student can try the same setup and compare scores — the simulator's plan-save feature lets up to four plans be compared side by side on the Results page. Debrief prompts: Which trade-off surprised you? Why did a \"green\" plan sometimes hurt the poor? What would your town actually choose, and what would it cost?",
+    a: "Each student can try the same setup and compare scores. The simulator's plan-save feature lets up to four plans be compared side by side on the Results page. Debrief prompts: Which trade-off surprised you? Why did a \"green\" plan sometimes hurt the poor? What would your town actually choose, and what would it cost?",
   },
   {
     id: "phone",
     q: "Does it work on a phone?",
-    a: "Yes — every page is built mobile-first. On a phone the simulator stacks into a single column: the map, the seven registers, the trajectory chart, and all eight dials. Dials step by 1% and can be dragged or tapped.",
+    a: "Yes. Every page is built mobile-first. On a phone the simulator stacks into a single column: the map, the seven registers, the trajectory chart, and all eight dials. Dials step by 1% and can be dragged or tapped.",
   },
   {
     id: "privacy",

@@ -76,7 +76,7 @@ export default function Results() {
   const photo = happy ? SUNSET_PHOTO : DAWN_PHOTO;
   const verdict = happy
     ? "Teluk Nusa held its own."
-    : "Teluk Nusa is still struggling — and that is where every plan begins.";
+    : "Teluk Nusa is still struggling. That is where most real plans begin.";
 
   const [expertOpen, setExpertOpen] = useState<Record<string, boolean>>({
     breakdown: false,
@@ -85,7 +85,7 @@ export default function Results() {
   });
   const toggle = (k: string) => setExpertOpen((o) => ({ ...o, [k]: !o[k] }));
 
-  const shareText = `ECO//SIM — I scored ${latest.score.toFixed(1)}/100 protecting Teluk Nusa to 2050. Try to beat it!`;
+  const shareText = `I scored ${latest.score.toFixed(1)}/100 protecting Teluk Nusa to 2050 on ECO//SIM. Try to beat it.`;
 
   const handleReplay = () => {
     navigate("/simulator");
@@ -118,8 +118,8 @@ export default function Results() {
               </h1>
               <p className="text-sm text-muted-foreground mt-3 max-w-lg leading-relaxed">
                 {happy
-                  ? "Your decisions kept the mangroves breathing, the drains holding through the monsoon, and households able to afford clean water. Not a single goal was sacrificed to reach another — the sign of a planner who understood the trade-offs."
-                  : "At least one of the three foundations — the sea, the town, or the people — gave way. Read the causal chain below: the model tells you exactly which decision led where. Adjust one variable and re-run; that is the whole game."}
+                  ? "Your decisions kept the mangroves breathing, the drains holding through the monsoon, and households able to afford clean water. No goal was sacrificed to reach another. That is the sign of a planner who understood the trade-offs."
+                  : "At least one of the three foundations, the sea, the town, or the people, gave way. Read the causal chain below. The model tells you exactly which decision led where. Adjust one variable and run again."}
               </p>
             </div>
 
@@ -209,7 +209,7 @@ export default function Results() {
 
         {/* ── Causal chain ── */}
         <section>
-          <div className="field-label mb-3">Why it happened — the chain of cause and effect</div>
+          <div className="field-label mb-3">Why it happened: cause and effect</div>
           <CausalChain links={latest.causalLinks} events={latest.events} eventsToShow={6} />
         </section>
 
@@ -220,7 +220,7 @@ export default function Results() {
             className="btn-press w-full flex items-center justify-between gap-3 text-left py-2"
           >
             <div>
-              <span className="font-display font-semibold text-lg">Appendix — for professors &amp; teachers</span>
+              <span className="font-display font-semibold text-lg">Appendix for professors and teachers</span>
               <span className="block font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground mt-0.5">
                 Score breakdown · indicator table · plan comparison
               </span>
@@ -404,7 +404,7 @@ export default function Results() {
                             </div>
                           ))}
                           <p className="text-[11px] text-muted-foreground leading-relaxed mt-3">
-                            The model rewards strategies that combine ambition with balance —
+                            The model rewards strategies that combine ambition with balance;
                             one strong investment alone rarely wins. This is an educational
                             model with simplified assumptions, not a prediction about any
                             real city. Full equations on the transparency page.

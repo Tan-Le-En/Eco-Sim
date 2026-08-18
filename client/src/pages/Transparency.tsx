@@ -42,7 +42,7 @@ const EQUATIONS = [
   {
     title: "Public health",
     formula: "health = f(air quality, water quality, heat exposure, service access)",
-    note: "Driven by emissions, transport mode share, urban greening, and equity in service access. Health is the most 'averaged' indicator — it rewards a balanced city.",
+    note: "Driven by emissions, transport mode share, urban greening, and equity in service access. Health is the most 'averaged' indicator: it rewards a balanced city.",
   },
   {
     title: "Equity",
@@ -67,8 +67,49 @@ const VARIABLES = [
   ["industrialActivity", "Industrial activity", "0–100 %", "jobs & output vs. emissions & water use"],
 ];
 
+/* Real-world grounding: the numbers in this educational model are loosely
+ * calibrated against published science. These sources are listed so teachers
+ * can go deeper. The model's constants are still illustrative, not measured. */
+const SOURCES = [
+  {
+    name: "IPCC AR6, Working Group I, Ch. 9: Ocean, Cryosphere and Sea Level Change",
+    where: "Sea level rise",
+    detail:
+      "The model drifts the baseline sea level upward over 2026–2050, loosely against published global-mean projections of roughly 0.3 to 0.6 m by 2100 under mid-range emissions, plus local effects in Southeast Asia.",
+    url: "https://www.ipcc.ch/report/ar6/wg1/chapter/chapter-9/",
+  },
+  {
+    name: "IPCC AR6, Working Group II: Southeast Asia",
+    where: "Coastal flooding and monsoon rainfall",
+    detail:
+      "Coastal flooding risk and heavier rainfall in this model follow the direction of AR6 findings for Southeast Asia, not specific national forecasts.",
+    url: "https://www.ipcc.ch/report/ar6/wg2/",
+  },
+  {
+    name: "Department of Environment Malaysia (DOE), National Inventory Report",
+    where: "Emissions accounting",
+    detail:
+      "The sector breakdown of emissions (power, transport, industry, waste) mirrors the structure of national greenhouse gas inventories, with simplified factors for teaching.",
+    url: "https://www.doe.gov.my/",
+  },
+  {
+    name: "Forest Research Institute Malaysia (FRIM) and MARDI mangrove studies",
+    where: "Mangroves as flood and habitat buffers",
+    detail:
+      "The link between mangrove cover, wave attenuation, fish nursery habitat, and flood resilience follows the direction of published Malaysian mangrove research.",
+    url: "https://www.frim.gov.my/",
+  },
+  {
+    name: "FAO, The State of World Fisheries and Aquaculture",
+    where: "Fishing pressure and stock recovery",
+    detail:
+      "The rule that overfishing today reduces tomorrow's catch, and that reduced pressure allows recovery, is the basic dynamics of fisheries science.",
+    url: "https://www.fao.org/fishery/sofia",
+  },
+];
+
 const LIMITS = [
-  "This model is deliberately simplified. Real cities involve thousands of interacting factors — politics, markets, culture, global trade — that are not represented here.",
+  "This model is deliberately simplified. Real cities involve thousands of interacting factors (politics, markets, culture, global trade) that are not represented here.",
   "Constants (growth rates, emission factors, thresholds) are illustrative values chosen for teaching, not measured estimates for any real place.",
   "The simulation is deterministic: the same inputs always produce the same outputs. It contains no random forecasting; weather variation is a fixed, published pattern.",
   "Relationships are intentionally linear-ish to make trade-offs legible. Real ecosystems have tipping points that this model smooths over.",
@@ -91,8 +132,8 @@ export default function Transparency() {
           </h1>
           <p className="text-muted-foreground leading-relaxed mb-8 max-w-2xl">
             A child can play ECO//SIM without reading this page. But if you want
-            to see the machinery — the equations, the variables, the score
-            weights — everything is published here. If you can't see how a
+            to see the machinery: the equations, the variables, the score
+            weights, everything is published here. If you cannot see how a
             simulation decides its outcomes, it can't teach you anything real.
           </p>
 
@@ -150,7 +191,7 @@ export default function Transparency() {
 
           {/* Score weights */}
           <section className="mb-12">
-            <div className="field-label mb-3">03 · Score weights — the same for everyone</div>
+            <div className="field-label mb-3">03 · Score weights, the same for everyone</div>
             <div className="soft-card p-5 space-y-3">
               {[
                 ["Climate pressure", 0.20, "#f87171"],
@@ -178,6 +219,36 @@ export default function Transparency() {
             </div>
           </section>
 
+          {/* Sources */}
+          <section className="mb-12">
+            <div className="field-label mb-3">05 · Where the real science lives</div>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-4 max-w-2xl">
+              Teluk Nusa is fictional and every constant above is illustrative.
+              But the direction of each relationship is borrowed from real
+              research. These are the published sources the model loosely
+              follows, so you can read the original.
+            </p>
+            <div className="space-y-2">
+              {SOURCES.map((s, i) => (
+                <div key={i} className="soft-card p-4">
+                  <div className="flex items-baseline justify-between gap-3 flex-wrap mb-1">
+                    <h3 className="font-display font-medium text-sm">{s.where}</h3>
+                    <a
+                      href={s.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-data text-[10px] tracking-[0.1em] uppercase text-vermilion hover:underline"
+                    >
+                      Read the source
+                    </a>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground leading-snug mb-1.5">{s.name}</p>
+                  <p className="text-xs text-muted-foreground/80 leading-relaxed">{s.detail}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
           {/* Limits */}
           <section className="mb-12">
             <div className="field-label mb-3">04 · What this model does <em>not</em> do</div>
@@ -200,7 +271,7 @@ export default function Transparency() {
                   (Nusa Bay) with illustrative constants. Nothing here is a
                   real-world forecast, a planning recommendation, or scientific
                   evidence about any actual coastal city. Use it to start
-                  conversations about connected systems — not to make decisions.
+                  conversations about connected systems, not to make decisions.
                 </p>
               </div>
             </div>

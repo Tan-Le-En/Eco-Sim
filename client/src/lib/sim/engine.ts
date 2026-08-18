@@ -344,7 +344,7 @@ export function explainOutcome(controls: Controls, baseline: Indicators, final: 
   const improved = meta.filter((m) => m.better).sort((a, b) => Math.abs(delta(b.k)) - Math.abs(delta(a.k)));
   const worsened = meta.filter((m) => !m.better).sort((a, b) => Math.abs(delta(b.k)) - Math.abs(delta(a.k)));
 
-  let biggestSuccess = "No indicator clearly improved — a balanced-but-stagnant strategy.";
+  let biggestSuccess = "No indicator clearly improved. A balanced, but stagnant, strategy.";
   if (improved.length > 0) {
     const k = improved[0].k;
     const reasons: string[] = [];
@@ -365,7 +365,7 @@ export function explainOutcome(controls: Controls, baseline: Indicators, final: 
     if (k === "economicWellbeing" && controls.industrialActivity > 50)
       reasons.push(`industrial activity created jobs and output`);
     const cause = reasons.length > 0 ? reasons.join(" and ") : "your combined policy mix";
-    biggestSuccess = `${label(k)} improved by ${Math.abs(delta(k)).toFixed(1)} points — driven by ${cause}.`;
+    biggestSuccess = `${label(k)} improved by ${Math.abs(delta(k)).toFixed(1)} points. The main driver: ${cause}.`;
   }
 
   let biggestFailure = "No indicator worsened dramatically.";
@@ -387,7 +387,7 @@ export function explainOutcome(controls: Controls, baseline: Indicators, final: 
     if (k === "publicHealth" && controls.industrialActivity > 60)
       reasons.push("industrial pollution and heat stress compounded");
     const cause = reasons.length > 0 ? reasons[0] : "an unintended side effect of your policy mix";
-    biggestFailure = `${label(k)} fell by ${Math.abs(delta(k)).toFixed(1)} points — the unintended consequence: ${cause}.`;
+    biggestFailure = `${label(k)} fell by ${Math.abs(delta(k)).toFixed(1)} points. The unintended consequence: ${cause}.`;
   }
 
   return { biggestSuccess, biggestFailure };
