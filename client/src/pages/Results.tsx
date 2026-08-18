@@ -24,8 +24,8 @@ import { useSim } from "@/contexts/SimContext";
 import { runSimulation } from "@/lib/sim/engine";
 import { INDICATOR_KEYS, INDICATOR_META, KID_GOALS, KID_INDICATORS, MISSION_TARGETS, SimulationResult } from "@/lib/sim/types";
 
-const SUNSET_PHOTO = "/manus-storage/real-beach-sunset_d533ecf5.jpg";
-const DAWN_PHOTO = "/manus-storage/real-fishermen-nets-clean_bda00363.jpg";
+const SUNSET_PHOTO = "/manus-storage/hero_beach-sunset_46f82884.jpg";
+const DAWN_PHOTO = "/manus-storage/hero_fishermen-nets-clean_c209bb82.jpg";
 
 export default function Results() {
   const { currentResult, controls, scenarios, deleteScenario } = useSim();
@@ -102,7 +102,7 @@ export default function Results() {
           className="grid lg:grid-cols-[46%_1fr] gap-0 border border-border"
         >
             <figure className="photo-plate relative overflow-hidden min-h-[300px] lg:min-h-0 lg:h-full lg:aspect-auto">
-            <img src={photo} alt={happy ? "Teluk Nusa at sunset, 2050" : "Fishermen at dawn, 2050"} className="absolute inset-0 h-full w-full object-cover object-center" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+            <img src={photo} alt={happy ? "Teluk Nusa at sunset, 2050" : "Fishermen at dawn, 2050"} fetchPriority="high" decoding="async" className="absolute inset-0 h-full w-full object-cover object-center" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
             <figcaption className="absolute bottom-0 left-0 right-0 bg-background font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground px-3 py-1.5 whitespace-normal sm:whitespace-nowrap sm:overflow-hidden sm:text-ellipsis">
               Field photograph · {happy ? "Teluk Nusa · December 2050" : "Teluk Nusa · 2050, work ahead"}
             </figcaption>

@@ -9,7 +9,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { buildCityMap, CELL_COLORS, CELL_LABELS, MapCell } from "@/lib/sim/cityMap";
 import { Controls, Indicators } from "@/lib/sim/types";
 
-const ILLUSTRATED_MAP = "/manus-storage/teluk-nusa-map-illustrated_e05d6285.png";
+const ILLUSTRATED_MAP = "/manus-storage/teluk-nusa-map_68653673.png";
 
 interface CityMapProps {
   controls: Controls;
@@ -131,6 +131,8 @@ export default function CityMap({ controls, indicators, year, className }: CityM
             <img
               src={ILLUSTRATED_MAP}
               alt="Illustrated field map of Teluk Nusa — sea, river, mangroves, town, forest"
+              loading="lazy"
+              decoding="async"
               className="absolute inset-0 w-full h-full object-cover"
               draggable={false}
             />

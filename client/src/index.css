@@ -205,6 +205,11 @@ html.dark {
   }
 
 
+  /* Photo loading state: warm paper tone while the image downloads */
+  .photo-plate img {
+    background-color: oklch(0.9 0.012 85);
+  }
+
   /* Paper grain — like a printed field report */
   .paper-grain {
     position: relative;

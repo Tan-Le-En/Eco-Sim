@@ -9,11 +9,11 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
 
-const HERO = "/manus-storage/real-kampung-boats_57e6e432.jpg";
-const JETTY = "/manus-storage/real-penang-jetty_a82ca28d.jpg";
-const MANGROVE = "/manus-storage/real-mangrove-aerial_deefef09.jpg";
-const NETS = "/manus-storage/real-fishermen-nets-clean_bda00363.jpg";
-const LANGKAWI = "/manus-storage/real-langkawi-boats_00027e7a.jpg";
+const HERO = "/manus-storage/hero_kampung-boats_1b7420b2.jpg";
+const JETTY = "/manus-storage/penang-jetty_1c063f93.jpg";
+const MANGROVE = "/manus-storage/mangrove-aerial_136e988a.jpg";
+const NETS = "/manus-storage/hero_fishermen-nets-clean_c209bb82.jpg";
+const LANGKAWI = "/manus-storage/langkawi-boats_cc225119.jpg";
 
 const FIELD = [
   {
@@ -96,6 +96,8 @@ export default function Home() {
             src={HERO}
             alt="Real photograph of a Malaysian coastal kampung — boats and stilt houses on the water"
             className="absolute inset-0 w-full h-full object-cover"
+            fetchPriority="high"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-transparent to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 px-6 sm:px-10 py-5">

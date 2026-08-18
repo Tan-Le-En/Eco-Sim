@@ -25,8 +25,8 @@ import { useSim } from "@/contexts/SimContext";
 import { runSimulation } from "@/lib/sim/engine";
 import { INDICATOR_KEYS } from "@/lib/sim/types";
 
-const FINISH_PHOTO = "/manus-storage/real-beach-sunset_7c0d4a16.jpg";
-const DAWN_PHOTO = "/manus-storage/real-fishermen-nets-clean_bda00363.jpg";
+const FINISH_PHOTO = "/manus-storage/hero_beach-sunset_46f82884.jpg";
+const DAWN_PHOTO = "/manus-storage/hero_fishermen-nets-clean_c209bb82.jpg";
 
 export default function Simulator() {
   const { controls, setControl, resetControls, run, saveScenario } = useSim();
@@ -287,6 +287,8 @@ export default function Simulator() {
                 <img
                   src={moodPhoto(previewResult!.score)}
                   alt={moodPhotoAlt(previewResult!.score)}
+                  loading="lazy"
+                  decoding="async"
                   className="h-40 w-full"
                 />
               </figure>
