@@ -1,22 +1,22 @@
 # v4 photo asset inventory (uploaded, use paths exactly)
 
 ## Newly uploaded (this session)
-- /manus-storage/real-clan-jetty_cc25bfaa.jpg — Penang clan jetty wooden stilt houses over water, wide shot (jetty-town.jpg was same source? no: clan-jetty = 7r2NUHgymzc9 wide jetty; jetty-town = Z3Ih06Ov8ZnQ high-res boats+condos behind)
-- /manus-storage/real-jetty-town_ecd78f2c.jpg — high-res Penang clan jetty with town/condos behind, blue boat, 2600x1950
-- /manus-storage/real-monsoon-sea_1fb07f26.jpg — monsoon storm cloud over sea, NYT underwater-magic article, 2048x1365
-- /manus-storage/real-storm-beach_b8463a69.jpg — dark storm beach East Coast Malaysia, Malay Mail, 1000x665
-- /manus-storage/real-langkawi-boats_1bd7b85d.jpg — colorful fishing boats bay Langkawi, small boat with driver, 539x360
-- /manus-storage/real-mangrove-roots_1515d591.jpg — mangrove prop roots tangle on tidal flat, 1279x720
-- /manus-storage/real-mangrove-forest_9da87f9c.jpg — dense mangrove forest canopy with twisted branches, 1080x720
-- /manus-storage/real-river-village_b342ee6a.jpg — red boats on calm river village, 612x408
+- /storage/real-clan-jetty_cc25bfaa.jpg — Penang clan jetty wooden stilt houses over water, wide shot (jetty-town.jpg was same source? no: clan-jetty = 7r2NUHgymzc9 wide jetty; jetty-town = Z3Ih06Ov8ZnQ high-res boats+condos behind)
+- /storage/real-jetty-town_ecd78f2c.jpg — high-res Penang clan jetty with town/condos behind, blue boat, 2600x1950
+- /storage/real-monsoon-sea_1fb07f26.jpg — monsoon storm cloud over sea, NYT underwater-magic article, 2048x1365
+- /storage/real-storm-beach_b8463a69.jpg — dark storm beach East Coast Malaysia, Malay Mail, 1000x665
+- /storage/real-langkawi-boats_1bd7b85d.jpg — colorful fishing boats bay Langkawi, small boat with driver, 539x360
+- /storage/real-mangrove-roots_1515d591.jpg — mangrove prop roots tangle on tidal flat, 1279x720
+- /storage/real-mangrove-forest_9da87f9c.jpg — dense mangrove forest canopy with twisted branches, 1080x720
+- /storage/real-river-village_b342ee6a.jpg — red boats on calm river village, 612x408
 
 ## Previously uploaded (v3)
 - home hero right: kuala kedah stilt boats (inline in Home.tsx — check exact path)
-- /manus-storage/real-fishermen-dawn_*.jpg — fishermen dawn (briefing FIG.02)
-- /manus-storage/real-mangrove-river_*.jpg — mangrove river Kilim (briefing FIG.03)
+- /storage/real-fishermen-dawn_*.jpg — fishermen dawn (briefing FIG.02)
+- /storage/real-mangrove-river_*.jpg — mangrove river Kilim (briefing FIG.03)
 - home plates: real-penang-jetty, real-mangrove-aerial, real-fishermen-nets
 - results verdict: real-fishermen-dawn probably
-- Check all actual paths: grep -rn "manus-storage" client/src
+- Check all actual paths: grep -rn "storage" client/src
 
 ## Allocation plan (v4)
 - Home hero: kuala kedah (keep)
@@ -28,14 +28,14 @@
 - Transparency: methodology photos (mangrove forest, river village)
 
 ## Re-uploaded (session 2) — hashes now match Results.tsx constants
-- /manus-storage/real-fishermen-dawn_28f5a3e4.jpg — fishermen dawn, 390x280 (DAWN_PHOTO)
-- /manus-storage/real-beach-sunset_d533ecf5.jpg — beach sunset, 900x489 (SUNSET_PHOTO)
+- /storage/real-fishermen-dawn_28f5a3e4.jpg — fishermen dawn, 390x280 (DAWN_PHOTO)
+- /storage/real-beach-sunset_d533ecf5.jpg — beach sunset, 900x489 (SUNSET_PHOTO)
 
 ## Final upload batch (session 2) — all verified live (ff d8 ff JPEG)
-- /manus-storage/real-langkawi-boats_00027e7a.jpg — Home CTA band Fig.05
-- /manus-storage/real-monsoon-sea_1cc09645.jpg — unused, available (story ch2)
-- /manus-storage/real-river-village_e8ba4542.jpg — unused, available (story ch1)
-- /manus-storage/real-mangrove-roots_4e54c47e.jpg — unused, available (story ch3)
+- /storage/real-langkawi-boats_00027e7a.jpg — Home CTA band Fig.05
+- /storage/real-monsoon-sea_1cc09645.jpg — unused, available (story ch2)
+- /storage/real-river-village_e8ba4542.jpg — unused, available (story ch1)
+- /storage/real-mangrove-roots_4e54c47e.jpg — unused, available (story ch3)
 
 ## Fix status (v4-spacing-fixes.md): items 1–8 DONE
 Done: Results photo paths + plate layout; Results goal titles shortened ("Clean & calm sea","Safe & healthy town","Fair for everyone") + nowrap; Control 08 visible via sticky aside scroll (lg:h-[calc(100vh-3.5rem)] overflow-y-auto); control header nowrap w-20; Briefing FIG.04 clan jetty added; Home CTA band Fig.05 langkawi plate added.

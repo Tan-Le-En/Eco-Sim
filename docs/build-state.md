@@ -3,11 +3,11 @@
 ## Key facts
 - Spec file: /home/ubuntu/upload/pasted_content.txt (full ECO//SIM MVP spec; also read fully).
 - Project: /home/ubuntu/ecosim-coastal-city-2050 (web-static, React19+Vite+Tailwind4+shadcn).
-- Dev server preview URL: https://3000-i2o71mkqbcvwhh7m9nzx5-1b799f2e.sg1.manus.computer
+- Dev server preview URL: https://3000-i2o71mkqbcvwhh7m9nzx5-1b799f2e.sg1.Storage.computer
 - Generated image URLs (use as-is):
-  - Hero city: /manus-storage/ecosim-hero-city_bff58f05.png
-  - Landing bg: /manus-storage/ecosim-landing-bg_c20bb61d.png
-  - Logo (transparent): /manus-storage/ecosim-logo_8c68d962.png
+  - Hero city: /storage/ecosim-hero-city_bff58f05.png
+  - Landing bg: /storage/ecosim-landing-bg_c20bb61d.png
+  - Logo (transparent): /storage/ecosim-logo_8c68d962.png
 
 ## Files built so far
 - client/src/lib/sim/types.ts — Controls (8), Indicators (7), BASELINE, MISSION_TARGETS, SavedScenario, SimulationResult

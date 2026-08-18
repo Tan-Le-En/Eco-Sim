@@ -6,7 +6,7 @@
 4. DONE — Control 08 (Industrial Activity) renders: verified 8 rows, aside scrollHeight 1127 > clientHeight; changed aside to lg:h-[calc(100vh-3.5rem)] lg:overflow-y-auto with pb-4 for reliable scroll.
 5. DONE — Control header value wrap: widened to w-20, whitespace-nowrap, removed space after "/".
 6. DONE — Briefing right column: added FIG.04 clan-jetty plate, river figure h-64→h-40; column now fills page end-to-end.
-7. DONE — All manus-storage paths verified (HTTP 206 + ff d8 ff JPEG magic) across client/src.
+7. DONE — All storage paths verified (HTTP 206 + ff d8 ff JPEG magic) across client/src.
 8. Home page verified clean: hero photo-plate caption flush, three-column "how the study works" fine, quote band + 2 CTAs fine.
 9. Remaining (next phase): add langkawi-boats photo plate to Home bottom band; Story Mode layer; mobile responsive pass; story/photo integration on Results goal montage.
 

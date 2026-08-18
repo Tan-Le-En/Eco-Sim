@@ -3,9 +3,9 @@
 User request: "Find a way to make the images load faster. Also, just make the images load faster."
 
 ## Plan
-1. Audit every manus-storage image used across pages (collect paths from grep of `manus-storage` in client/src).
+1. Audit every storage image used across pages (collect paths from grep of `storage` in client/src).
 2. Download originals, convert to optimised WebP/AVIF at reduced resolution (hero ≤1440w, plates ≤1000w, small plates/thumbs ≤640w), quality ~75-80.
-3. Upload optimised versions with manus-upload-file --webdev, record new hashes.
+3. Upload optimised versions with upload-file --webdev, record new hashes.
 4. Code changes:
    - Critical hero images: <link rel="preload" as="image" in index.html for home hero + results verdict? Keep small list.
    - Below-the-fold: loading="lazy" + decoding="async" on all <img>.
@@ -14,7 +14,7 @@ User request: "Find a way to make the images load faster. Also, just make the im
 5. Verify: measure network transfer sizes before/after via curl -s -o /dev/null -w "%{size_download}".
 6. Checkpoint + deliver.
 
-## Current image inventory (manus-storage paths in code) — grep needed; known:
+## Current image inventory (storage paths in code) — grep needed; known:
 - real-kampung-boats_57e6e432.jpg (home hero Fig.01)
 - real-penang-jetty_a82ca28d.jpg (home 01, story ch05)
 - real-mangrove-aerial_deefef09.jpg (home 02)
@@ -46,6 +46,6 @@ Upload size total: ~1.3MB webp / ~1.6MB jpg vs ~3.8MB originals. Dev-server tran
 - All pages verified rendering correctly with new hashes (screenshots OK).
 
 ## Key rules
-- Use manus-upload-file --webdev for storage (auto-hashed, persistent).
+- Use upload-file --webdev for storage (auto-hashed, persistent).
 - Do not keep local media in project dir.
 - Preserve alt text and editorial fig captions.

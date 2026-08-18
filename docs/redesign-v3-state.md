@@ -3,22 +3,22 @@
 ## Done
 - Research: docs/research-antislop.md (Alan West dev.to 4 fixes; UI/UX Pro Max guidelines)
 - Real photos collected + uploaded (10 files, see ideas.md inventory):
-  - hero: /manus-storage/real-kampung-boats_57e6e432.jpg
-  - /manus-storage/real-kelantan-jetty_3efeb546.jpg (briefing plate)
-  - /manus-storage/real-penang-jetty_a82ca28d.jpg (results/landing)
-  - /manus-storage/real-mangrove-aerial_deefef09.jpg (nature)
-  - /manus-storage/real-mangrove-river_4e88bc33.jpg (water)
-  - /manus-storage/real-fishermen-nets_6fb1be29.jpg (controls)
-  - /manus-storage/real-fishermen-dawn_e6a0536d.jpg (results mood)
-  - /manus-storage/real-beach-sunset_7c0d4a16.jpg (CTA/footer)
-  - /manus-storage/real-kuala-kedah_6538ea79.jpg, /manus-storage/real-kuala-kedah2_6ae7337f.jpg (backup)
+  - hero: /storage/real-kampung-boats_57e6e432.jpg
+  - /storage/real-kelantan-jetty_3efeb546.jpg (briefing plate)
+  - /storage/real-penang-jetty_a82ca28d.jpg (results/landing)
+  - /storage/real-mangrove-aerial_deefef09.jpg (nature)
+  - /storage/real-mangrove-river_4e88bc33.jpg (water)
+  - /storage/real-fishermen-nets_6fb1be29.jpg (controls)
+  - /storage/real-fishermen-dawn_e6a0536d.jpg (results mood)
+  - /storage/real-beach-sunset_7c0d4a16.jpg (CTA/footer)
+  - /storage/real-kuala-kedah_6538ea79.jpg, /storage/real-kuala-kedah2_6ae7337f.jpg (backup)
 - index.css rewritten (v3): paper #F4F1EA-ish, ink, vermilion accent oklch(0.55 0.16 35), deepsea oklch(0.42 0.06 195), zero radius, Newsreader/Public Sans/IBM Plex Mono, paper-grain, field-label, photo-plate, plate-caption, status-chip classes.
 - ideas.md v3 written with full direction.
 
 ## Still to do
 - index.html: swap fonts to Newsreader + Public Sans (keep IBM Plex Mono), update title/meta.
 - App.tsx: keep light defaultTheme.
-- Remove references to old AI images in code: /manus-storage/kampung-hero_6340e8df.png, /manus-storage/kampung-bg_d67dbfd0.png, /manus-storage/pakali_3bdfa8db.png, /manus-storage/city-happy_12950284.png, /manus-storage/city-sad_01d243a3.png, /manus-storage/ecosim-logo_8c68d962.png. Replace logo with typographic ECO//SIM (no icon).
+- Remove references to old AI images in code: /storage/kampung-hero_6340e8df.png, /storage/kampung-bg_d67dbfd0.png, /storage/pakali_3bdfa8db.png, /storage/city-happy_12950284.png, /storage/city-sad_01d243a3.png, /storage/ecosim-logo_8c68d962.png. Replace logo with typographic ECO//SIM (no icon).
 - Rewrite pages (single-screen):
   - Home.tsx: full-viewport hero (real photo, asymmetric: headline left-offset, photo right-bleed), field labels 01/02, photo plates, minimal bands.
   - Briefing.tsx: compact one-screen report.
@@ -48,7 +48,7 @@ One checkpoint at the end. Current stable checkpoint: 4d612a2c.
 - Still to rewrite: Simulator.tsx (single viewport: top bar year+budget+play, grid [1fr 380px]; uses SiteHeader, CityMap, ControlPanel, IndicatorStrip, TownMood, TimelineChart, save Dialog; images HAPPY/SAD AI images must be replaced); Results.tsx (story-first, expert deep section; mood photos AI); SiteHeader.tsx (wordmark + nav, backHref prop; teal refs); ControlPanel.tsx (rounded-full, teal refs; kid-friendly labels exist); IndicatorStrip.tsx (grid 7 cards w/ sparklines, open story; round dot, meter bars); TimelineChart.tsx; CityMap.tsx (rounded cells, wave header, BM labels); TownMood.tsx (mood images happy/sad AI, traffic lights goals); Transparency.tsx (restyle only).
 - Component API notes: IndicatorStrip props {indicators, baseline, history, compact?}; TownMood props {indicators, year}; TimelineChart props {data: ChartRow[]}; CityMap props {controls, indicators, year}; ControlPanel props {controls, onChange, onReset}. useSim hook: {controls, setControl, resetControls, run, saveScenario, currentResult, scenarios}.
 - Engine types: INDICATOR_KEYS, INDICATOR_META (label, color, meaning, higherIsBetter), KID_INDICATORS (kidName, kidStory, happy, sad, bm), KID_GOALS (id, title, bm, keys[]), MISSION_TARGETS, BASELINE, runSimulation(controls) returns {years[{year, indicators, budgetRemaining}], baselineYear, score, biggestSuccess, biggestFailure, scoreBreakdown, explanations[{type, causes}], scenarioCompare}.
-- AI images to remove: /manus-storage/city-happy_12950284.png, /manus-storage/city-sad_01d243a3.png, /manus-storage/pakali_3bdfa8db.png, /manus-storage/kampung-hero_6340e8df.png, /manus-storage/kampung-bg_d67dbfd0.png, /manus-storage/ecosim-logo_8c68d962.png.
+- AI images to remove: /storage/city-happy_12950284.png, /storage/city-sad_01d243a3.png, /storage/pakali_3bdfa8db.png, /storage/kampung-hero_6340e8df.png, /storage/kampung-bg_d67dbfd0.png, /storage/ecosim-logo_8c68d962.png.
 - Old AI asset URLs still referenced in Home/SiteHeader/CityMap/TownMood need grep search to find all.
 
 ## Component rewrite progress (phase 16, continued)

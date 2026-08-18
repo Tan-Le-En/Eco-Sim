@@ -9,7 +9,7 @@
 ## Phase 13: Real imagery
 - [ ] Replace AI hero/landscape images with real photos (Malaysian coastal towns, mangroves, fishing villages)
 - [ ] Replace pakali/cartoon portraits with real photographic portraits or remove them
-- [ ] Upload real images via manus-upload-file --webdev
+- [ ] Upload real images via upload-file --webdev
 
 ## Phase 14: New design system
 - [ ] New color/type system in index.css (editorial, international, not generic)

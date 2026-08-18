@@ -15,6 +15,6 @@
 5. ideas.md: append "## Style Decisions" with brief amendments (mood portrait first → 3 traffic lights → expert numbers; map = picture-book play-board; expert = "science exhibit" layer mono).
 
 ## Key files
-- Simulator.tsx: line ~206 main grid; insert mood band before <CityMap>; year readout lines 131-160; city-happy/city-sad images: HAPPY="/manus-storage/city-happy_12950284.png", SAD="/manus-storage/city-sad_01d243a3.png"; moodScore computed at line 103 for finished state only — make a year-independent one.
+- Simulator.tsx: line ~206 main grid; insert mood band before <CityMap>; year readout lines 131-160; city-happy/city-sad images: HAPPY="/storage/city-happy_12950284.png", SAD="/storage/city-sad_01d243a3.png"; moodScore computed at line 103 for finished state only — make a year-independent one.
 - types.ts: KID_GOALS (line ~365), MISSION_TARGETS (line ~141).
 - After changes: screenshot verification (no second style review), checkpoint save, deliver.

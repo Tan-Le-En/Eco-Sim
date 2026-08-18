@@ -28,11 +28,11 @@ import {
 } from "@/lib/sim/types";
 
 const PHOTOS = {
-  riverVillage: "/manus-storage/stilt-houses-real_4d70b8ec.jpg",
-  mangroveRoots: "/manus-storage/mangrove-roots-real_fc3e4c78.jpg",
-  fishingCoast: "/manus-storage/fishermen-net-cast-real_a6fc104d.jpg",
-  mangroveAerial: "/manus-storage/merbok-mangrove-real_ccdd2def.jpg",
-  workingJetty: "/manus-storage/clan-jetties-aerial-real_f756af5d.jpg",
+  riverVillage: "/storage/stilt-houses-real_4d70b8ec.jpg",
+  mangroveRoots: "/storage/mangrove-roots-real_fc3e4c78.jpg",
+  fishingCoast: "/storage/fishermen-net-cast-real_a6fc104d.jpg",
+  mangroveAerial: "/storage/merbok-mangrove-real_ccdd2def.jpg",
+  workingJetty: "/storage/clan-jetties-aerial-real_f756af5d.jpg",
 };
 
 /* ── Chapter definitions for the "before you play" mode ── */

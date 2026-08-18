@@ -52,7 +52,7 @@ export function setMeta({ title, description }: MetaProps) {
     'meta[property="og:image"]',
     "property",
     "og:image",
-    window.location.origin + "/manus-storage/og-image_475a5541.jpg"
+    window.location.origin + "/storage/og-image_475a5541.jpg"
   );
   setOrCreate(
     'meta[name="twitter:card"]',
@@ -76,7 +76,7 @@ export function setMeta({ title, description }: MetaProps) {
     'meta[name="twitter:image"]',
     "name",
     "twitter:image",
-    window.location.origin + "/manus-storage/og-image_475a5541.jpg"
+    window.location.origin + "/storage/og-image_475a5541.jpg"
   );
 }
 

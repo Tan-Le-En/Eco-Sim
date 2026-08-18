@@ -19,7 +19,7 @@
 - /: hero nav wraps to 2 lines; otherwise fine. FIG.03 fishermen plate now clean image.
 
 ## Notes
-- Clean nets image source: search result 8 (6000x4000 unwatermarked fishermen nets dawn), saved /home/ubuntu/webdev-static-assets/real-fishermen-nets-clean.jpg, uploaded -> /manus-storage/real-fishermen-nets-clean_bda00363.jpg
+- Clean nets image source: search result 8 (6000x4000 unwatermarked fishermen nets dawn), saved /home/ubuntu/webdev-static-assets/real-fishermen-nets-clean.jpg, uploaded -> /storage/real-fishermen-nets-clean_bda00363.jpg
 - Old watermarked files: real-fishermen-dawn.jpg and real-fishermen-nets.jpg in /home/ubuntu/webdev-static-assets/ (390x280, shutterstock watermark).
 
 ## Final 375px verification (post-fix)

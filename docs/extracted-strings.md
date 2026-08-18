@@ -316,7 +316,7 @@
 ## CityMap.tsx (alt texts)
 - Check file for map-related strings
 
-## ManusDialog.tsx
+## StorageDialog.tsx
 - Check for contact form strings
 
 ## App.tsx

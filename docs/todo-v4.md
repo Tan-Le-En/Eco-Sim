@@ -9,7 +9,7 @@
 - [ ] Search GitHub: performance/UX repos (e.g. Google Lighthouse perf, Material 3, Apple HIG summaries)
 - [ ] Search Apple HIG, Material Design 3, Meta design guidelines key points
 - [ ] Collect 6-8 additional real photos: mangroves, Penang clan jetty, Kuala Kedah, fishermen sunset, tropical town street, river, school, hospital
-- [ ] Upload all via manus-upload-file --webdev
+- [ ] Upload all via upload-file --webdev
 
 ## Phase 20 — Performance
 - [ ] CityMap: single SVG or canvas OR memoized grid with diff-based updates; no 400 buttons with motion

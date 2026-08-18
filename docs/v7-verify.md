@@ -33,4 +33,4 @@
 4. Checkpoint + deliver.
 
 ## Asset note
-Clean nets photo: /manus-storage/real-fishermen-nets-clean_bda00363.jpg (used Results verdict, Home NETS, Briefing FIG.02)
+Clean nets photo: /storage/real-fishermen-nets-clean_bda00363.jpg (used Results verdict, Home NETS, Briefing FIG.02)

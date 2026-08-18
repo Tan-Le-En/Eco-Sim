@@ -3,17 +3,17 @@
 ## Done
 - Removed FloatingContact (field desk) from App.tsx and deleted component file
 - Replaced ALL AI-generated images with real photography:
-  - CityMap base: `/manus-storage/teluk-nusa-map-real_042467eb.jpg` (Kuala Kedah aerial)
+  - CityMap base: `/storage/teluk-nusa-map-real_042467eb.jpg` (Kuala Kedah aerial)
   - Home HERO: same as map (aerial estuary)
-  - Home JETTY: `/manus-storage/stilt-houses-real_4d70b8ec.jpg`
-  - Home MANGROVE: `/manus-storage/merbok-mangrove-real_ccdd2def.jpg`
-  - Home NETS: `/manus-storage/fishermen-dawn-nets-real_81f6e009.jpeg`
-  - Home LANGKAWI: `/manus-storage/clan-jetties-aerial-real_f756af5d.jpg`
-  - Briefing PHOTO: `/manus-storage/fishermen-net-cast-real_a6fc104d.jpg`
+  - Home JETTY: `/storage/stilt-houses-real_4d70b8ec.jpg`
+  - Home MANGROVE: `/storage/merbok-mangrove-real_ccdd2def.jpg`
+  - Home NETS: `/storage/fishermen-dawn-nets-real_81f6e009.jpeg`
+  - Home LANGKAWI: `/storage/clan-jetties-aerial-real_f756af5d.jpg`
+  - Briefing PHOTO: `/storage/fishermen-net-cast-real_a6fc104d.jpg`
   - Briefing RIVER: merbok mangrove
   - Briefing JETTY: clan jetties aerial
   - Story riverVillage: stilt houses
-  - Story mangroveRoots: `/manus-storage/mangrove-roots-real_fc3e4c78.jpg`
+  - Story mangroveRoots: `/storage/mangrove-roots-real_fc3e4c78.jpg`
   - Story fishingCoast: fishermen net cast
   - Story mangroveAerial: merbok mangrove
   - Story workingJetty: clan jetties aerial

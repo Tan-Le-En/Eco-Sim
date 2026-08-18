@@ -1,12 +1,12 @@
 # Rework state — Kampung Coast v2 (simple-but-hard + Malaysian culture)
 
 ## Asset URLs (generated, use exactly as-is)
-- Hero village scene: /manus-storage/kampung-hero_6340e8df.png (4:3)
-- Light pattern bg: /manus-storage/kampung-bg_d67dbfd0.png (16:9)
-- Happy town: /manus-storage/city-happy_12950284.png (16:9)
-- Sad/storm town: /manus-storage/city-sad_01d243a3.png (16:9)
-- Pak Ali narrator: /manus-storage/pakali_3bdfa8db.png (1:1)
-- Old logo (still used in nav/footer): /manus-storage/ecosim-logo_8c68d962.png
+- Hero village scene: /storage/kampung-hero_6340e8df.png (4:3)
+- Light pattern bg: /storage/kampung-bg_d67dbfd0.png (16:9)
+- Happy town: /storage/city-happy_12950284.png (16:9)
+- Sad/storm town: /storage/city-sad_01d243a3.png (16:9)
+- Pak Ali narrator: /storage/pakali_3bdfa8db.png (1:1)
+- Old logo (still used in nav/footer): /storage/ecosim-logo_8c68d962.png
 
 ## Completed
 - ideas.md rewritten with Kampung Coast direction (light warm theme, kid layer + expert layer)

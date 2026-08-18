@@ -10,9 +10,9 @@
 7. Images roughly the same size, every screen. DONE: FIELD plates h-52 uniform. Verify Story plates + CTA band.
 8. Prepare project for GitHub repo upload. TODO: export via Settings → GitHub (user action) — tell user; also ensure repo-clean state (no local-only assets).
 
-## Assets in use (manus-storage URLs used in code)
-- HERO /manus-storage/hero_kedah-kampung_... (Home right plate, Kuala Kedah)
-- FIELD plates: /manus-storage/penang-jetty_1c063f93.jpg (Clan jetty, Penang), /manus-storage/mangrove-aerial_136e988a.jpg (Langkawi), /manus-storage/fishermen-nets_... (fishermen hailing nets)
+## Assets in use (storage URLs used in code)
+- HERO /storage/hero_kedah-kampung_... (Home right plate, Kuala Kedah)
+- FIELD plates: /storage/penang-jetty_1c063f93.jpg (Clan jetty, Penang), /storage/mangrove-aerial_136e988a.jpg (Langkawi), /storage/fishermen-nets_... (fishermen hailing nets)
 - CTA band: LANGKAWI = fishing bay image
 - Story: river-village_7f0fc750.jpg, mangrove-roots_f89f9365.jpg, hero_beach-sunset_46f82884.jpg, mangrove-aerial_136e988a.jpg, penang-jetty_1c063f93.jpg
 - Results: hero_beach-sunset_46f82884.jpg, hero_fishermen-nets-clean_c209bb82.jpg

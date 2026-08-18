@@ -12,11 +12,11 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
 
-const HERO = "/manus-storage/kuala-kedah-hd_dfd13b90.jpg";
-const JETTY = "/manus-storage/stilt-houses-real_4d70b8ec.jpg";
-const MANGROVE = "/manus-storage/merbok-mangrove-real_ccdd2def.jpg";
-const NETS = "/manus-storage/fishermen-dawn-nets-real_81f6e009.jpeg";
-const LANGKAWI = "/manus-storage/clan-jetties-aerial-real_f756af5d.jpg";
+const HERO = "/storage/kuala-kedah-hd_dfd13b90.jpg";
+const JETTY = "/storage/stilt-houses-real_4d70b8ec.jpg";
+const MANGROVE = "/storage/merbok-mangrove-real_ccdd2def.jpg";
+const NETS = "/storage/fishermen-dawn-nets-real_81f6e009.jpeg";
+const LANGKAWI = "/storage/clan-jetties-aerial-real_f756af5d.jpg";
 
 const FIELD = [
   {

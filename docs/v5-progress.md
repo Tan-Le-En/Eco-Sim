@@ -12,7 +12,7 @@
 4. Also add mission targets explanation (tooltip/list of the 5 targets) near mission chip — add dialog or hover list of target names.
 
 ## Map implementation (done)
-- Generated illustrated map: /manus-storage/teluk-nusa-map-illustrated_e05d6285.png (4:3, reserved URL, no text on it — but check if text rendered; the prompt said no words; it's an image so verify visually).
+- Generated illustrated map: /storage/teluk-nusa-map-illustrated_e05d6285.png (4:3, reserved URL, no text on it — but check if text rendered; the prompt said no words; it's an image so verify visually).
 - CityMap.tsx now layers: absolute-positioned <img> base (object-cover) + SVG overlay of transparent/colored tints (overlayTint() added). cellColor() unchanged but unused now — could delete; kept for hover tooltips? No, hover shows CELL_LABELS only. cellColor is now dead code; remove cellColor fn + rects.fill usage already switched to overlayTint.
 - cityMap.ts geography rewritten: bay curves into southeast (seaEdge = 16+3*sin), wetlands around river mouth, mangroves SE shore, urban core center-west, industrial NE, kampung south (y>=17), forest NW, farmland west. CELL_COLORS/CELL_LABELS unchanged.
 - Added OVERLAY_LEGEND in CityMap (3 tint swatches) — NOT yet rendered in JSX; plan to show under the map plate or next to legend.

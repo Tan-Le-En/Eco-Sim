@@ -27,4 +27,4 @@
 
 ## Notes
 - Existing: FloatingContact.tsx contact form; ErrorBoundary.tsx broadcasts full error; NotFound.tsx 404; index.html needs OG/preload; sitemap/robots go in client/public or Vite build output (static only: public/).
-- Images live under /manus-storage/* URLs (uploaded via manus-upload-file --webdev).
+- Images live under /storage/* URLs (uploaded via upload-file --webdev).

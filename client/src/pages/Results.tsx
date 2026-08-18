@@ -26,8 +26,8 @@ import { useSim } from "@/contexts/SimContext";
 import { runSimulation } from "@/lib/sim/engine";
 import { INDICATOR_KEYS, INDICATOR_META, KID_GOALS, KID_INDICATORS, MISSION_TARGETS, SimulationResult } from "@/lib/sim/types";
 
-const SUNSET_PHOTO = "/manus-storage/fishermen-dawn-nets-real_81f6e009.jpeg";
-const DAWN_PHOTO = "/manus-storage/fishermen-net-cast-real_a6fc104d.jpg";
+const SUNSET_PHOTO = "/storage/fishermen-dawn-nets-real_81f6e009.jpeg";
+const DAWN_PHOTO = "/storage/fishermen-net-cast-real_a6fc104d.jpg";
 
 export default function Results() {
   const { currentResult, controls, scenarios, deleteScenario } = useSim();
