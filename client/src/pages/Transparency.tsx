@@ -4,6 +4,7 @@
  * variable tables, units, score weights, and explicit model limits.
  */
 import { Link } from "wouter";
+import SiteFooter from "@/components/SiteFooter";
 import { motion } from "framer-motion";
 import { ArrowRight, FlaskConical, Scale, Ban, FileText } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
@@ -285,13 +286,7 @@ export default function Transparency() {
           </Link>
         </motion.div>
       </main>
-      <footer className="border-t border-border mt-auto">
-        <div className="container py-5">
-          <span className="font-data text-[11px] text-muted-foreground">
-            ECO//SIM · educational simulation · all values fictional and published above
-          </span>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

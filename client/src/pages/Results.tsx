@@ -5,6 +5,7 @@
  * (breakdown, indicator table, plan comparison). Real photography, no AI art.
  */
 import { useMemo, useState } from "react";
+import SiteFooter from "@/components/SiteFooter";
 import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -419,16 +420,7 @@ export default function Results() {
           </AnimatePresence>
         </section>
       </main>
-      <footer className="border-t border-border mt-auto">
-        <div className="px-6 sm:px-10 lg:px-14 py-5 flex items-center justify-between">
-          <span className="font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground">
-            ECO//SIM · fictional town · educational model
-          </span>
-          <Link href="/transparency" className="font-data text-[10px] tracking-[0.12em] uppercase text-vermilion hover:underline underline-offset-4">
-            How the score is calculated →
-          </Link>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

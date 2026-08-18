@@ -5,6 +5,7 @@
  * Real photography, flat hairline rules, mono specimen labels.
  */
 import { Link } from "wouter";
+import SiteFooter from "@/components/SiteFooter";
 import { useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import { motion, AnimatePresence } from "framer-motion";
@@ -187,13 +188,7 @@ export default function Briefing() {
         </div>
       </main>
 
-      <footer className="border-t border-border">
-        <div className="px-6 sm:px-10 lg:px-14 py-4">
-          <span className="font-data text-[11px] tracking-[0.12em] uppercase text-muted-foreground">
-            ECO//SIM · fictional town · educational model
-          </span>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

@@ -6,6 +6,7 @@
  * mono labels, real photography, hairline rules, vermilion accents, no radius.
  */
 import { Link } from "wouter";
+import SiteFooter from "@/components/SiteFooter";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
@@ -190,16 +191,7 @@ export default function Story() {
         </section>
       </main>
 
-      <footer className="border-t border-border">
-        <div className="px-6 sm:px-10 lg:px-14 py-4">
-          <span className="font-data text-[11px] tracking-[0.12em] uppercase text-muted-foreground">
-            ECO//SIM · fictional town · educational model
-          </span>
-          <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
-            Last updated · Aug 18, 2026
-          </span>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

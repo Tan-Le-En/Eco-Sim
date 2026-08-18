@@ -5,6 +5,7 @@
  * Single screen on desktop — hero fills the viewport, one band below.
  */
 import { Link } from "wouter";
+import SiteFooter from "@/components/SiteFooter";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
@@ -54,14 +55,14 @@ export default function Home() {
             transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
             className="max-w-xl"
           >
-            <h1 className="font-display font-semibold leading-[0.98] tracking-tight text-[clamp(3rem,7.5vw,6.5rem)]">
-              One million
-              <br />
-              people. Twenty-five
-              <br />
-              <em className="text-vermilion">years.</em>
+            <h1 className="font-display font-semibold tracking-tight text-[clamp(3rem,7.5vw,6.5rem)]">
+              <span className="block mb-6 sm:mb-8">One million</span>
+              <span className="block mb-6 sm:mb-8">people.</span>
+              <span className="block mb-6 sm:mb-8">
+                Twenty-five <em className="text-vermilion">years.</em>
+              </span>
             </h1>
-            <p className="mt-7 max-w-md text-base sm:text-lg leading-relaxed text-muted-foreground">
+            <p className="mt-8 sm:mt-10 max-w-md text-base sm:text-lg leading-relaxed text-muted-foreground">
               You govern Teluk Nusa, a small town on the Malaysian coast,
               from 2026 to 2050. Keep the sea alive, the water clean, and
               treat people fairly. That is the whole job, and it has no easy
@@ -80,11 +81,11 @@ export default function Home() {
             </div>
           </motion.div>
 
-          <footer className="hidden lg:flex items-center justify-between pt-6 border-t border-border">
-            <span className="font-data text-[11px] tracking-[0.12em] uppercase text-muted-foreground">
-              Est. 2026 · Latitude 05.94°N · not a forecast, an open learning model
+          <footer className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-5 border-t border-border gap-1.5">
+            <span className="font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground">
+              Est. 2026 · 05.94°N · an open learning model, not a forecast
             </span>
-            <span className="font-data text-[11px] tracking-[0.12em] uppercase text-muted-foreground">
+            <span className="hidden sm:block font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground">
               All equations published
             </span>
           </footer>
@@ -145,7 +146,7 @@ export default function Home() {
                 <img
                   src={f.img}
                   alt=""
-                  className="h-44 w-full"
+                  className="h-52 w-full object-cover"
                   loading="lazy"
                 />
                 <figcaption className="plate-caption">{f.cap}</figcaption>
@@ -171,7 +172,7 @@ export default function Home() {
             <img
               src={LANGKAWI}
               alt="Colourful fishing boats in a Langkawi bay"
-              className="h-36 w-full object-cover"
+              className="h-52 w-full object-cover"
               loading="lazy"
             />
             <figcaption className="plate-caption">
@@ -202,16 +203,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="border-t border-border mt-auto">
-        <div className="px-6 sm:px-10 lg:px-14 py-5 flex flex-wrap items-center justify-between gap-3">
-          <span className="font-data text-[11px] tracking-[0.12em] uppercase text-muted-foreground">
-            ECO//SIM · Teluk Nusa · an open educational model, not real-world advice
-          </span>
-          <span className="font-data text-[11px] tracking-[0.12em] uppercase text-muted-foreground">
-            © 2026 · Sayang bumi kita · Last updated · Aug 18, 2026
-          </span>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

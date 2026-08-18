@@ -10,6 +10,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 import { Link } from "wouter";
 
 const FAQS = [
@@ -123,12 +124,7 @@ export default function Faq() {
         </div>
 
         {/* Footer band with last-updated date */}
-        <footer className="border-t border-border mt-auto" data-no-print="true">
-          <div className="px-6 sm:px-10 lg:px-14 py-6 flex flex-wrap items-center justify-between gap-3 font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
-            <div>ECO//SIM · TELUK NUSA · AN OPEN EDUCATIONAL MODEL</div>
-            <div>LAST UPDATED · AUG 18, 2026</div>
-          </div>
-        </footer>
+        <SiteFooter />
       </main>
     </div>
   );

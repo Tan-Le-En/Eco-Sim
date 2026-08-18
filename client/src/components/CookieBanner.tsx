@@ -4,6 +4,7 @@
  * Choice persists in localStorage; banner never returns after a decision.
  */
 import { useEffect, useState } from "react";
+import { Link } from "wouter";
 import { motion } from "framer-motion";
 
 const KEY = "cookie-consent";
@@ -46,8 +47,11 @@ export default function CookieBanner() {
             Field note · cookies
           </span>
           Your plan choices and theme are stored only on your device. Enabling
-          analytics lets this study improve — declining changes nothing about
-          your experience.
+          analytics lets this study improve; declining changes nothing. See our{" "}
+          <Link href="/privacy" className="underline underline-offset-2 hover:text-secondary-foreground/90">
+            privacy notice
+          </Link>
+          .
         </p>
         <div className="flex items-center gap-2 shrink-0">
           <button
