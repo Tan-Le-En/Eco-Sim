@@ -26,7 +26,7 @@ import { runSimulation } from "@/lib/sim/engine";
 import { INDICATOR_KEYS } from "@/lib/sim/types";
 
 const FINISH_PHOTO = "/manus-storage/real-beach-sunset_7c0d4a16.jpg";
-const DAWN_PHOTO = "/manus-storage/real-fishermen-dawn_e6a0536d.jpg";
+const DAWN_PHOTO = "/manus-storage/real-fishermen-nets-clean_bda00363.jpg";
 
 export default function Simulator() {
   const { controls, setControl, resetControls, run, saveScenario } = useSim();

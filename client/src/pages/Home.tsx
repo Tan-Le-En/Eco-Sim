@@ -11,7 +11,7 @@ import { ArrowRight } from "lucide-react";
 const HERO = "/manus-storage/real-kampung-boats_57e6e432.jpg";
 const JETTY = "/manus-storage/real-penang-jetty_a82ca28d.jpg";
 const MANGROVE = "/manus-storage/real-mangrove-aerial_deefef09.jpg";
-const NETS = "/manus-storage/real-fishermen-nets_6fb1be29.jpg";
+const NETS = "/manus-storage/real-fishermen-nets-clean_bda00363.jpg";
 const LANGKAWI = "/manus-storage/real-langkawi-boats_00027e7a.jpg";
 
 const FIELD = [
@@ -45,13 +45,18 @@ export default function Home() {
       <section className="relative flex-1 grid lg:grid-cols-[1.1fr_1fr] min-h-screen">
         {/* Left: typographic hero, offset */}
         <div className="relative paper-grain flex flex-col justify-between px-6 sm:px-10 lg:px-14 py-8 lg:py-10 border-r border-border">
-          <header className="flex items-center justify-between">
-            <Link href="/" className="flex items-baseline gap-1">
-              <span className="font-display italic font-semibold text-2xl tracking-tight">
-                ECO<span className="text-vermilion">//</span>SIM
+          <header className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <Link href="/" className="flex items-baseline gap-1">
+                <span className="font-display italic font-semibold text-2xl tracking-tight">
+                  ECO<span className="text-vermilion">//</span>SIM
+                </span>
+              </Link>
+              <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
+                A field study · 2026–2050
               </span>
-            </Link>
-            <nav className="flex items-center gap-1 sm:gap-2">
+            </div>
+            <nav className="flex flex-wrap items-center gap-1.5">
               <Link
                 href="/story"
                 className="btn-press font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 border border-border hover:border-foreground transition-colors"

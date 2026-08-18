@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { BASELINE, KID_GOALS, INDICATOR_META } from "@/lib/sim/types";
 
-const PHOTO = "/manus-storage/real-fishermen-dawn_28f5a3e4.jpg";
+const PHOTO = "/manus-storage/real-fishermen-nets-clean_bda00363.jpg";
 const RIVER = "/manus-storage/real-mangrove-river_4e88bc33.jpg";
 const JETTY = "/manus-storage/real-clan-jetty_cc25bfaa.jpg";
 
@@ -134,7 +134,7 @@ export default function Briefing() {
         {/* ── Right: datum plate + optional numbers ── */}
         <div className="flex flex-col gap-6">
           <figure className="photo-plate overflow-hidden">
-            <img src={PHOTO} alt="Malaysian fishermen at dawn" className="h-64 w-full" loading="lazy" />
+            <img src={PHOTO} alt="Malaysian fishermen at dawn" className="h-64 w-full object-cover object-top" loading="lazy" />
             <figcaption className="plate-caption">
               <span>Fishermen at dawn, East Coast</span>
               <span>Fig. 02</span>

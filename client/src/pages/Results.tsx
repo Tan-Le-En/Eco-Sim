@@ -24,7 +24,7 @@ import { runSimulation } from "@/lib/sim/engine";
 import { INDICATOR_KEYS, INDICATOR_META, KID_GOALS, KID_INDICATORS, MISSION_TARGETS, SimulationResult } from "@/lib/sim/types";
 
 const SUNSET_PHOTO = "/manus-storage/real-beach-sunset_d533ecf5.jpg";
-const DAWN_PHOTO = "/manus-storage/real-fishermen-dawn_28f5a3e4.jpg";
+const DAWN_PHOTO = "/manus-storage/real-fishermen-nets-clean_bda00363.jpg";
 
 export default function Results() {
   const { currentResult, controls, scenarios, deleteScenario } = useSim();
@@ -160,13 +160,13 @@ export default function Results() {
               <div className="grid grid-cols-3 mt-5">
                 {KID_GOALS.map((g, i) => (
                   <div key={g.id} className={`px-2 first:pl-0 ${i > 0 ? "border-l border-border" : ""}`}>
-                    <div className="flex items-center gap-1.5 mb-1">
+                    <div className="flex items-center gap-1.5 mb-1 min-w-0">
                       {goalsMet[i] ? (
                         <Check className="w-4 h-4 text-emerald-700 shrink-0" aria-hidden="true" />
                       ) : (
                         <X className="w-4 h-4 text-vermilion shrink-0" aria-hidden="true" />
                       )}
-                      <span className="font-data text-[10px] tracking-[0.08em] uppercase leading-tight whitespace-nowrap">{g.title}</span>
+                      <span className="font-data text-[9px] sm:text-[10px] tracking-[0.06em] uppercase leading-tight whitespace-normal">{g.title}</span>
                     </div>
                     <div className="space-y-0.5">
                       {g.keys.map((k) => (
