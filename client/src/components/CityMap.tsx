@@ -9,7 +9,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { buildCityMap, CELL_COLORS, CELL_LABELS, MapCell } from "@/lib/sim/cityMap";
 import { Controls, Indicators } from "@/lib/sim/types";
 
-const ILLUSTRATED_MAP = "/manus-storage/kuala-kedah-hd_dfd13b90.jpg";
+const ILLUSTRATED_MAP = "/manus-storage/teluk-nusa-map-real_042467eb.jpg";
 
 interface CityMapProps {
   controls: Controls;

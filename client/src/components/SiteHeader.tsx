@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Menu, X, Sun, Moon, Search } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import SiteSearch from "@/components/SiteSearch";
+import LanguageToggle from "@/components/LanguageToggle";
 
 export const NAV = [
   { href: "/", label: "Home" },
@@ -87,6 +88,7 @@ export default function SiteHeader({ backHref, bare }: { backHref?: string; bare
           >
             <Search className="w-3.5 h-3.5" />
           </button>
+          <LanguageToggle className="ml-1 hidden lg:flex" />
           <button
             onClick={toggleTheme}
             className="btn-press inline-flex items-center font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground border border-transparent hover:border-border hover:text-foreground px-3 py-2 transition-colors"
@@ -134,7 +136,10 @@ export default function SiteHeader({ backHref, bare }: { backHref?: string; bare
             transition={{ duration: 0.22, ease: [0.23, 1, 0.32, 1] }}
             className="md:hidden overflow-hidden border-t border-border bg-background"
           >
-            <nav className="px-6 py-4 flex flex-col divide-y divide-border">
+            <div className="px-6 py-3">
+              <LanguageToggle />
+            </div>
+            <nav className="px-6 py-2 flex flex-col divide-y divide-border">
               {NAV.map((n) => (
                 <Link
                   key={n.href}
