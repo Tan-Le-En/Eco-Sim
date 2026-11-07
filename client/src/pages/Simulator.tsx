@@ -77,13 +77,18 @@ export default function Simulator() {
     stepTo(displayYear + delta);
   };
 
-  // Cinematic step-by-step: one year at a time, slowly. Speed only paces the reel.
+  // Playback: cockpit = slow (2s/yr). Reel = fast-forward (0.28s/yr) then
+  // pause on story years so the story can be read.
   useEffect(() => {
     if (!playing) return;
-    // Apple-style patience: quiet years 2s, event years 3s — enough time to read.
     const isEvent = hasEventAt(displayYear);
-    const base = speed === 2 ? 1100 : 2000;
-    const interval = isEvent ? base + 900 : base;
+    let interval: number;
+    if (reelOpen) {
+      interval = isEvent ? (speed === 2 ? 2200 : 3400) : speed === 2 ? 180 : 300;
+    } else {
+      const base = speed === 2 ? 1100 : 2000;
+      interval = isEvent ? base + 900 : base;
+    }
     timerRef.current = setTimeout(() => {
       setDisplayYear((y) => {
         const next = y + 1;
@@ -225,6 +230,37 @@ export default function Simulator() {
     [fullResult, displayYear],
   );
   const progressPct = Math.round(((displayYear - 2026) / 24) * 100);
+
+  // Reel feed: one item per year for the scrolling story list.
+  const feed = useMemo(() => {
+    const years = fullResult.years;
+    return years.map((row, idx) => {
+      const prev = idx > 0 ? years[idx - 1] : null;
+      const evts = eventsByYear.get(row.year) ?? [];
+      const movers = prev
+        ? INDICATOR_KEYS
+            .map((k) => {
+              const delta = row.indicators[k] - prev.indicators[k];
+              const meta = INDICATOR_META[k];
+              const good = meta.higherIsBetter ? delta >= 0 : delta <= 0;
+              return { key: k, delta, good, abs: Math.abs(delta) };
+            })
+            .filter((m) => m.abs >= 0.3)
+            .sort((a, b) => b.abs - a.abs)
+            .slice(0, 3)
+        : [];
+      return { year: row.year, row, events: evts, movers };
+    });
+  }, [fullResult, eventsByYear]);
+
+  const reelScrollRef = useRef<HTMLDivElement | null>(null);
+
+  // Auto-scroll the feed so the current year stays centred.
+  useEffect(() => {
+    if (!reelOpen) return;
+    const el = reelScrollRef.current?.querySelector<HTMLElement>(`[data-reel-year="${displayYear}"]`);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [displayYear, reelOpen]);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -557,43 +593,36 @@ export default function Simulator() {
             role="dialog"
             aria-label="Year reel: watch Teluk Nusa from 2026 to 2050"
           >
-            {/* Slow background: map + mood wash */}
+            {/* Subtle background so white cards stand out */}
             <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
-              <motion.div
-                key={displayYear}
-                initial={{ opacity: 0, scale: 1.04 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                className="h-full w-full opacity-[0.28]"
-              >
+              <div className="h-full w-full opacity-[0.14]">
                 <CityMap controls={controls} indicators={indicatorsAtDisplay} year={displayYear} className="h-full" />
-              </motion.div>
-              <div
-                className="absolute inset-0 transition-colors duration-[1200ms]"
-                style={{
-                  background: indicatorsAtDisplay && goalsMetCount(indicatorsAtDisplay) >= 2
-                    ? "linear-gradient(to bottom, rgba(47,122,72,0.10), transparent 55%, rgba(255,255,255,0.88) 92%)"
-                    : "linear-gradient(to bottom, rgba(201,107,66,0.10), transparent 55%, rgba(255,255,255,0.88) 92%)",
-                }}
-              />
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-transparent to-background/85" />
             </div>
 
-            {/* Reel chrome */}
-            <div className="relative flex items-center justify-between px-4 sm:px-6 py-3 border-b border-border/60 bg-background/60 backdrop-blur-sm">
-              <span className="font-data text-[10px] tracking-[0.16em] uppercase text-muted-foreground">
-                Teluk Nusa · the years
-              </span>
+            {/* Sticky header: odometer year + controls */}
+            <div className="relative flex items-center justify-between gap-3 px-4 sm:px-6 py-3 border-b-2 border-foreground/80 bg-white dark:bg-card shadow-sm">
+              <OdometerYear year={displayYear} />
+              <div className="text-right">
+                <div className="font-data text-[10px] tracking-[0.16em] uppercase text-muted-foreground tabular-nums">
+                  Year {displayYear - 2026 + 1} of 25 · {progressPct}%
+                </div>
+                <div className="font-data text-[10px] tracking-[0.16em] uppercase text-muted-foreground">
+                  {playing ? (eventsHere.length > 0 ? "Story — reading" : "Fast-forward") : "Paused"}
+                </div>
+              </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setSpeed(speed === 1 ? 2 : 1)}
-                  className="btn-press font-data text-[10px] tracking-wider uppercase border border-border px-2.5 py-1.5 text-muted-foreground hover:text-foreground transition-colors"
+                  className="btn-press font-data text-[10px] tracking-wider uppercase border border-border bg-white px-2.5 py-1.5 text-muted-foreground hover:text-foreground transition-colors"
                   title="Toggle speed"
                 >
-                  {speed === 1 ? "Slow" : "Brisk"}
+                  {speed === 1 ? "Slow FF" : "Brisk FF"}
                 </button>
                 <button
                   onClick={() => { setPlaying(false); setReelOpen(false); }}
-                  className="btn-press inline-flex items-center gap-1.5 font-data text-[10px] tracking-wider uppercase border border-border px-2.5 py-1.5 text-muted-foreground hover:text-foreground transition-colors"
+                  className="btn-press inline-flex items-center gap-1.5 font-data text-[10px] tracking-wider uppercase border border-border bg-white px-2.5 py-1.5 text-muted-foreground hover:text-foreground transition-colors"
                   title="Exit to cockpit (Esc)"
                 >
                   <X className="w-3.5 h-3.5" /> Exit
@@ -601,76 +630,87 @@ export default function Simulator() {
               </div>
             </div>
 
-            {/* Centre stage: year flips, story fades */}
-            <div className="relative flex-1 flex flex-col items-center justify-center px-5 py-6 overflow-y-auto">
-              <div className="font-data text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-2">
-                {displayYear} · Year {displayYear - 2026 + 1} of 25
-              </div>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={displayYear}
-                  initial={{ opacity: 0, y: 28 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -18 }}
-                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                  className="flex flex-col items-center text-center max-w-2xl w-full"
-                >
-                  <h2 className="font-display font-semibold tracking-tight leading-none text-[clamp(5rem,14vw,10rem)] tabular-nums">
-                    {displayYear}
-                  </h2>
-                  <div className="mt-4 min-h-[7.5rem] flex flex-col items-center justify-start">
-                    {displayYear === 2026 ? (
-                      <>
-                        <p className="font-display italic text-2xl sm:text-3xl leading-snug max-w-xl">The town begins.</p>
-                        <p className="mt-2 text-sm text-muted-foreground max-w-md">One million people. 100 points a year. Press play and live it, year by year.</p>
-                      </>
-                    ) : (
-                      <>
-                        {eventsHere.length > 0 ? (
-                          <div className="space-y-2">
-                            {eventsHere.map((e, i) => (
-                              <p key={i} className={`font-display italic text-2xl sm:text-[2rem] leading-tight max-w-xl ${e.severity === "info" ? "text-emerald-700" : e.severity === "critical" ? "text-vermilion" : "text-foreground"}`}>
-                                {e.message}
-                              </p>
-                            ))}
-                          </div>
-                        ) : displayYear === 2050 ? (
-                          <>
-                            <p className="font-display italic text-2xl sm:text-[2rem] leading-tight max-w-xl">2050. The record closes.</p>
-                            <p className="mt-2 text-sm text-muted-foreground max-w-md">{previewResult ? `${previewResult.biggestSuccess} ${previewResult.biggestFailure}` : "The town has spoken."}</p>
-                          </>
-                        ) : (
-                          <p className="font-display italic text-2xl sm:text-[2rem] leading-tight max-w-xl">{quietLine(displayYear)}</p>
-                        )}
-                        {yearMovers.length > 0 && (
-                          <div className="mt-3 flex flex-wrap justify-center gap-1.5">
-                            {yearMovers.map((m) => (
-                              <span key={m.key} className={`inline-flex items-center gap-1 border px-2 py-1 font-data text-[11px] tabular-nums ${m.good ? "border-emerald-700/40 text-emerald-700" : "border-vermilion/40 text-vermilion"}`}>
-                                {KID_INDICATORS[m.key].kidName} {m.delta > 0 ? "+" : ""}{m.delta.toFixed(1)}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                        <p className="mt-2 font-data text-[11px] tracking-[0.1em] uppercase text-muted-foreground tabular-nums">
-                          {yearRow ? `Budget ${yearRow.budgetRemaining.toFixed(0)} pts · Pop ${yearRow.population.toLocaleString()}` : ""}
-                        </p>
-                      </>
-                    )}
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-              <div className="w-full max-w-md mt-4">
-                <div className="h-1 bg-secondary" role="progressbar" aria-valuenow={progressPct} aria-valuemin={0} aria-valuemax={100} aria-label="Reel progress">
-                  <div className="h-full bg-vermilion transition-[width] duration-700" style={{ width: `${progressPct}%` }} />
-                </div>
-                <div className="mt-1.5 flex justify-between font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground tabular-nums">
-                  <span>2026</span><span>{progressPct}%</span><span>2050</span>
-                </div>
+            {/* Scrolling feed: whole timeline, auto-scrolls down */}
+            <div ref={reelScrollRef} className="relative flex-1 overflow-y-auto px-4 sm:px-6 py-6 scroll-smooth">
+              <div className="mx-auto max-w-md w-full space-y-3 pb-10">
+                <p className="font-data text-[11px] tracking-[0.12em] uppercase text-muted-foreground text-center">
+                  Fast-forward until a story year. Story pauses. Then fast-forward again.
+                </p>
+                {feed.map((item) => {
+                  const isActive = item.year === displayYear;
+                  const isPast = item.year < displayYear;
+                  const isFuture = item.year > displayYear;
+                  const hasStory = item.events.length > 0 || item.year === 2026 || item.year === 2050;
+                  return (
+                    <motion.div
+                      key={item.year}
+                      data-reel-year={item.year}
+                      initial={{ opacity: 0, y: 18 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: "-40px" }}
+                      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                      className={`bg-white dark:bg-card border-2 shadow-sm px-4 py-3.5 transition-all duration-300 ${
+                        isActive
+                          ? item.events.some((e) => e.severity === "critical")
+                            ? "border-vermilion scale-[1.02]"
+                            : item.events.some((e) => e.severity === "info")
+                              ? "border-emerald-700 scale-[1.02]"
+                              : "border-foreground scale-[1.02]"
+                          : isPast
+                            ? "border-border opacity-80"
+                            : "border-border bg-white/70 opacity-40"
+                      }`}
+                      role="article"
+                      aria-label={`Year ${item.year}`}
+                    >
+                      <div className="flex items-baseline justify-between gap-3">
+                        <span className={`font-data text-xl tabular-nums font-semibold ${isActive ? "text-foreground" : "text-muted-foreground"}`}>
+                          {item.year}
+                        </span>
+                        <span className={`font-data text-[10px] tracking-[0.12em] uppercase tabular-nums ${isActive ? "text-foreground" : "text-muted-foreground"}`}>
+                          Budget {item.row.budgetRemaining.toFixed(0)} · Pop {item.row.population.toLocaleString()}
+                        </span>
+                      </div>
+                      {isFuture ? (
+                        <p className="mt-1 text-sm text-muted-foreground">…</p>
+                      ) : item.year === 2026 ? (
+                        <p className="mt-1 text-[15px] leading-snug font-medium text-foreground">The town begins. One million people, 100 points a year.</p>
+                      ) : hasStory ? (
+                        <div className="mt-1.5 space-y-1.5">
+                          {item.events.map((e, i) => (
+                            <p key={i} className={`text-[15px] leading-snug font-semibold ${e.severity === "info" ? "text-emerald-800" : e.severity === "critical" ? "text-vermilion" : "text-foreground"}`}>
+                              {e.message}
+                            </p>
+                          ))}
+                          {item.year === 2050 && previewResult && (
+                            <p className="text-sm text-muted-foreground leading-snug">{previewResult.biggestSuccess} {previewResult.biggestFailure}</p>
+                          )}
+                          {item.movers.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 pt-1">
+                              {item.movers.map((m) => (
+                                <span key={m.key} className={`inline-flex items-center gap-1 border px-1.5 py-0.5 font-data text-[10px] tabular-nums ${m.good ? "border-emerald-700/50 text-emerald-800" : "border-vermilion/50 text-vermilion"}`}>
+                                  {KID_INDICATORS[m.key].kidName} {m.delta > 0 ? "+" : ""}{m.delta.toFixed(1)}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <p className="mt-1 text-sm leading-snug text-muted-foreground">{quietLine(item.year)}</p>
+                      )}
+                      {isActive && (
+                        <div className="mt-2 font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
+                          {eventsHere.length > 0 ? "Story year — pausing to read" : "Fast-forwarding…"}
+                        </div>
+                      )}
+                    </motion.div>
+                  );
+                })}
               </div>
             </div>
 
             {/* Reel transport */}
-            <div className="relative px-4 sm:px-6 py-3 border-t border-border/60 bg-background/60 backdrop-blur-sm flex flex-wrap items-center justify-center gap-2">
+            <div className="relative px-4 sm:px-6 py-3 border-t-2 border-foreground/80 bg-white dark:bg-card flex flex-wrap items-center justify-center gap-2">
               <button
                 onClick={() => stepBy(-1)}
                 disabled={displayYear <= 2026}
@@ -776,4 +816,28 @@ function quietLine(year: number): string {
     "Nothing breaks. Nothing soars. It holds.",
   ];
   return lines[year % lines.length]!;
+}
+
+function OdometerYear({ year }: { year: number }) {
+  const digits = String(year).padStart(4, "0").split("");
+  return (
+    <div className="flex items-center gap-1" aria-label={`Year ${year}`}>
+      {digits.map((d, i) => (
+        <span key={i} className="inline-block overflow-hidden border-2 border-foreground bg-white px-1.5 py-0.5">
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.span
+              key={d}
+              initial={{ y: 14, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -14, opacity: 0 }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              className="block font-display font-semibold text-2xl leading-none tabular-nums text-foreground"
+            >
+              {d}
+            </motion.span>
+          </AnimatePresence>
+        </span>
+      ))}
+    </div>
+  );
 }
