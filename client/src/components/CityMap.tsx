@@ -40,6 +40,7 @@ const LEGEND: [keyof typeof CELL_COLORS, string][] = [
 
 // Colored swatches shown on the illustrated base map while the data changes
 const OVERLAY_LEGEND: [string, string][] = [
+  ["rgba(47,157,191,0.85)", "Sungai Kedah (River)"],
   ["rgba(47,122,72,0.8)", "Mangrove restored"],
   ["rgba(185,154,107,0.9)", "Coast built over"],
   ["rgba(201,107,66,0.9)", "Flood-prone kampung"],
@@ -51,6 +52,14 @@ function overlayTint(cell: MapCell, controls: Controls, indicators: Indicators |
   const rollout = Math.min(1, t / 10);
   const isLate = t > 18; // near 2050: overlays become more dramatic for the consequence reveal
   const intensity = isLate ? 0.75 : 0.55;
+
+  // River corridor: Sungai Kedah
+  if (cell.type === "river") {
+    if (indicators && indicators.waterSecurity < 45) {
+      return "rgba(185,145,100,0.65)"; // dry / muddy in drought
+    }
+    return "rgba(47,157,191,0.65)"; // clear river water
+  }
 
   // Mangrove restoration: green overlay grows with investment
   if (cell.type === "mangrove") {
@@ -163,6 +172,20 @@ export default function CityMap({ controls, indicators, year, className }: CityM
                 style={{ transition: "fill 500ms ease" }}
               />
             ))}
+            {/* River marker & label */}
+            <g className="pointer-events-none select-none">
+              <text
+                x="28"
+                y="48"
+                fill="#ffffff"
+                stroke="rgba(0,0,0,0.6)"
+                strokeWidth="0.5"
+                paintOrder="stroke"
+                className="font-data text-[3.4px] font-bold tracking-[0.16em] uppercase"
+              >
+                ~ Sungai Kedah (River) ~
+              </text>
+            </g>
           </svg>
           {/* Hover indicator: thin outline cell */}
           {hover && containerRef.current && (

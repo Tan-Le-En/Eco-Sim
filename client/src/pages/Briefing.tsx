@@ -18,10 +18,10 @@ const RIVER = "/storage/merbok-mangrove-real_ccdd2def.jpg";
 const JETTY = "/storage/clan-jetties-aerial-real_f756af5d.jpg";
 
 const CHALLENGES: [string, string][] = [
-  ["Smoke", "Most electricity comes from burning fuel."],
-  ["Monsoon", "Stronger storms put seafront homes at risk."],
-  ["Fewer fish", "Too many boats; the mangroves are shrinking."],
-  ["Dry taps", "Water demand is growing faster than supply."],
+  ["Smoke", "Most power burns fuel."],
+  ["Monsoon", "Storms threaten seafront homes."],
+  ["Fewer fish", "Too many boats. Mangroves shrink."],
+  ["Dry taps", "Demand grows faster than supply."],
 ];
 
 const DATUM: [string, string][] = [
@@ -60,11 +60,7 @@ export default function Briefing() {
             <em className="text-vermilion">Keep it alive</em> for 25 years.
           </h1>
           <p className="mt-6 max-w-xl text-base sm:text-lg leading-relaxed text-muted-foreground">
-            One million people live in this fictional Malaysian town. You
-            receive <strong className="text-foreground">100 budget points every year</strong> to
-            spend on it: energy, buses, trees, mangroves, water, housing. Every
-            year from 2026 to 2050, the town responds. You win by keeping three
-            registers healthy; you lose by neglecting any one of them.
+            One million people. <strong className="text-foreground">100 budget points a year</strong> for energy, buses, trees, water, housing. Keep three registers healthy for 25 years.
           </p>
 
           {/* The three registers */}

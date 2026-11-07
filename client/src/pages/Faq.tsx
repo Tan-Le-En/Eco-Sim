@@ -18,52 +18,52 @@ const FAQS = [
   {
     id: "score",
     q: "How is the final score calculated?",
-    a: "Seven registers are measured in 2050: climate pressure (20%), nature (15%), clean water (15%), flood resilience (15%), health (15%), economy (10%), and fairness (10%). Penalties apply if vital systems collapse. The full mathematics and penalty thresholds are published on the Transparency page.",
+    a: "Seven registers in 2050, weighted: climate 20%, nature 15%, water 15%, flood 15%, health 15%, economy 10%, fairness 10%. Penalties apply if a system collapses. Full maths on the Transparency page.",
   },
   {
     id: "perfect",
     q: "Why can't I reach a score of 100?",
-    a: "Because Teluk Nusa has real trade-offs, like every coastal town. A plan with zero factories, zero fishing, and zero construction keeps the sea clean but collapses the economy to around 32. The model's own structure caps the mathematical maximum at about 77. That isn't a bug; it's the lesson. A working town of 72 beats a pristine town of 77 on most measures that matter to people.",
+    a: "Trade-offs are real. Zero factories, fishing, and building keeps the sea clean but collapses the economy. The model caps near 77. That is the lesson: a working town beats a pristine one.",
   },
   {
     id: "targets",
     q: "What are the five mission targets?",
-    a: "By 2050 you're aiming for: clean air (pollution below threshold), living nature (biodiversity above threshold), clean water (contamination below threshold), flood-safe homes (resilience above threshold), and fairness (everyone's wellbeing gap below threshold). The Mission chip in the simulator shows how many you are hitting in real time. Hover over it to see the exact thresholds.",
+    a: "By 2050: air, nature, water, flood safety, and fairness above their thresholds. The Mission chip shows how many you hit live. Hover it for the numbers.",
   },
   {
     id: "budget",
     q: "What happens when the town's budget runs out?",
-    a: "When money hits zero, restoration and resilience projects stall and public approval drops. Your income comes mainly from coastal development and industrial activity: building by the beach and keeping factories running pay the town's bills, at the environment's expense. Balancing income against spending is the hardest part of governing.",
+    a: "Projects stall. Income comes from building and factories, at the environment's expense. Balancing money against nature is the hardest part.",
   },
   {
     id: "real",
     q: "Is Teluk Nusa a real town? Are the photos real?",
-    a: "The town is fictional, but the photographs are real images of Malaysia's coasts (Kuala Kedah, Penang, Langkawi, and the East Coast), and the model's numbers are calibrated to published relationships between emissions, deforestation, fishing pressure, and coastal flooding. Nothing here is a forecast; it's an educational model, and every equation is published.",
+    a: "Town is fictional. Photos are real Malaysian coasts. Numbers follow published relationships. Educational model, not a forecast.",
   },
   {
     id: "kids",
     q: "Can a young child play this?",
-    a: "Yes. The dials use plain language like Clean Power, Buses and Trains, and Plant Trees. Each one carries a one-line plain-English consequence. Children can see the town respond immediately: more smoke, angrier storms, cleaner water. The numbers underneath stay rigorous for whoever wants to go deeper.",
+    a: "Yes. Plain dial names, one-line effects. The town responds at once. Rigour stays underneath for anyone who wants it.",
   },
   {
     id: "teachers",
     q: "How can teachers use this in class?",
-    a: "Each student can try the same setup and compare scores. The simulator's plan-save feature lets up to four plans be compared side by side on the Results page. Debrief prompts: Which trade-off surprised you? Why did a \"green\" plan sometimes hurt the poor? What would your town actually choose, and what would it cost?",
+    a: "Save up to four plans and compare them on Results. Debrief: which trade-off surprised you? Why did a \"green\" plan hurt the poor?",
   },
   {
     id: "phone",
     q: "Does it work on a phone?",
-    a: "Yes. Every page is built mobile-first. On a phone the simulator stacks into a single column: the map, the seven registers, the trajectory chart, and all eight dials. Dials step by 1% and can be dragged or tapped.",
+    a: "Yes. One column on phones: map, registers, chart, dials. Drag or tap the dials.",
   },
   {
     id: "privacy",
     q: "Do you track me?",
-    a: "Minimal. Your plan choices and theme are kept only on your own device. There is a simple cookie banner for optional analytics, and any anonymous visit counters are handled by the hosting platform. No accounts, no email collection is stored anywhere.",
+    a: "No accounts. Plans stay on your device. Optional analytics only.",
   },
   {
     id: "dark",
     q: "Is there a dark mode?",
-    a: "Yes. The sun/moon icon in the header switches between the paper-light field study and the night archive. Your choice is remembered between visits.",
+    a: "Yes. Sun/moon icon in the header. Remembered between visits.",
   },
 ];
 

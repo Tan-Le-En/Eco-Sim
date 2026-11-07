@@ -53,10 +53,10 @@ const CHAPTERS: Chapter[] = [
   {
     n: "01",
     voice:
-      "When the river rises, our village rises with it. Some years the water comes back down. It did not come back down the year of my wedding.",
+      "When the river rises, our village rises with it.",
     title: "A town that lives on the water",
     lesson:
-      "Most of Teluk Nusa was built beside the sea and the river: homes, markets, roads. That is also the town's biggest risk. The sea rises a little every year, and the rain comes heavier. Building closer to the water means building more of the town's defence.",
+      "Built beside the sea and river: homes, markets, roads. Also the biggest risk. Sea rises a little. Rain comes heavier.",
     photo: PHOTOS.riverVillage,
     alt: "Colourful boats moored in a calm Malaysian river village",
     cap: "River village, fictional Teluk Nusa",
@@ -67,10 +67,10 @@ const CHAPTERS: Chapter[] = [
   {
     n: "02",
     voice:
-      "My grandmother said the mangroves were a wall. We cut most of them down. Now the waves knock at the door.",
+      "My grandmother said the mangroves were a wall. We cut them down. Now waves knock at the door.",
     title: "The wall we cut down",
     lesson:
-      "Mangroves grow in salt water. Their roots hold the soil, slow the waves, and give baby fish a place to hide. Clear them to build, and flooding gets worse while the fish count falls. Plant them back, and both recover. Slowly, but for sure.",
+      "Mangrove roots hold soil, slow waves, shelter baby fish. Clear them: more flooding, fewer fish. Plant them: both recover.",
     photo: PHOTOS.mangroveRoots,
     alt: "Mangrove prop roots tangled on a tidal flat",
     cap: "Mangrove roots on a tidal flat",
@@ -81,10 +81,10 @@ const CHAPTERS: Chapter[] = [
   {
     n: "03",
     voice:
-      "I leave before the sun. Some days the nets are heavy. Some days I bring home stories instead.",
+      "I leave before the sun. Some days the nets are heavy. Some days I bring home stories.",
     title: "The nets that come home lighter",
     lesson:
-      "Fishing feeds this town: boats, markets, dinners. The sea only gives what it has. Catch too many fish today and there are fewer parents to make babies tomorrow. The dial called How Much We Fish is the hardest one. Take less now and the sea rewards you for years. Take more now and the sea goes quiet.",
+      "The sea only gives what it has. Catch too many today and there are fewer fish tomorrow. The hardest dial.",
     photo: PHOTOS.fishingCoast,
     alt: "Fishing boats on the coast at dusk",
     cap: "The fishing coast, dusk",
@@ -94,10 +94,10 @@ const CHAPTERS: Chapter[] = [
   {
     n: "04",
     voice:
-      "From up here you can see the bargain the town made: where the green ends, the roofs begin.",
+      "Where the green ends, the roofs begin.",
     title: "The whole town from above",
     lesson:
-      "Everything here is connected. The roads bring smoke, the smoke changes the air, the air changes the rain, the rain fills the river, and the river decides whose floor gets wet. One dial pulls on every thread. That is why we watch seven things at once, not just one.",
+      "One dial pulls every thread: roads, smoke, air, rain, river, floors. That is why we watch seven registers.",
     photo: PHOTOS.mangroveAerial,
     alt: "Aerial view of mangrove forest meeting coastal development",
     cap: "Aerial view of the coast",
@@ -107,10 +107,10 @@ const CHAPTERS: Chapter[] = [
   {
     n: "05",
     voice:
-      "The old boss always said there was no money. You have 100 budget points a year. Don't spend it on what looks good. Spend it on what lasts.",
+      "You have 100 budget points a year. Spend on what lasts.",
     title: "The town hands you the keys",
     lesson:
-      "You start in 2026 with 100 budget points a year, which is not much. That is the whole game: choose where the money goes, then live with the answer for 25 years. The town will tell you what worked and what did not. Fail safely here, and you will learn something that holds in the real world.",
+      "2026, 100 points a year, 25 years. Choose where money goes. Then live with the answer.",
     photo: PHOTOS.workingJetty,
     alt: "Clan jetty — houses and work over the water",
     cap: "Life and work on the jetty",
@@ -224,9 +224,7 @@ function WhatHappened({ result }: { result: SimulationResult }) {
             Here is what the town remembers.
           </h1>
           <p className="mt-6 max-w-2xl text-base sm:text-lg leading-relaxed text-muted-foreground">
-            This story is built from your actual run. Every event below really
-            happened in the model. Every number below is what your dials
-            produced.
+            Built from your run. Every event below happened in the model.
           </p>
           <div className="mt-6 flex items-center gap-4">
             <span className="font-data text-[11px] tracking-[0.12em] uppercase px-4 py-2 border border-border bg-card">
@@ -411,13 +409,10 @@ function Chapters() {
         {/* Chapter masthead */}
         <section className="px-6 sm:px-10 lg:px-14 pt-12 pb-10 border-b border-border">
           <h1 className="font-display font-semibold tracking-tight leading-[0.98] text-[clamp(2.4rem,5.5vw,4.2rem)] max-w-3xl">
-            Five chapters. <em className="text-vermilion">No numbers.</em> The
-            town tells you what is wrong.
+            Five chapters. <em className="text-vermilion">No numbers.</em>
           </h1>
           <p className="mt-6 max-w-2xl text-base sm:text-lg leading-relaxed text-muted-foreground">
-            Before you touch a dial, walk through Teluk Nusa as it is today.
-            Listen to the people. When you run the simulation afterward, you
-            will already know why each decision matters.
+            Meet the town first. The dials will make sense after.
           </p>
         </section>
 

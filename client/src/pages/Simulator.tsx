@@ -8,10 +8,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import PageMeta from "@/components/PageMeta";
-import { Play, Pause, FastForward, Save, Lightbulb, Coins } from "lucide-react";
+import { Play, Pause, FastForward, Save, Lightbulb, Coins, ChevronLeft, ChevronRight, AlertTriangle } from "lucide-react";
 import { goalsMetCount } from "@/components/TownMood";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { MISSION_TARGETS } from "@/lib/sim/types";
+import { MISSION_TARGETS, INDICATOR_META, KID_INDICATORS } from "@/lib/sim/types";
 import { toast } from "sonner";
 import SiteHeader from "@/components/SiteHeader";
 import CityMap from "@/components/CityMap";
@@ -36,17 +36,11 @@ export default function Simulator() {
   const [previewResult, setPreviewResult] = useState<ReturnType<typeof runSimulation> | null>(null);
   const [playing, setPlaying] = useState(false);
   const [displayYear, setDisplayYear] = useState(2026);
-  const [speed, setSpeed] = useState<1 | 5 | 25>(25);
+  const [speed, setSpeed] = useState<1 | 2 | 5>(1);
+  const [pauseOnEvents, setPauseOnEvents] = useState(true);
   const [saveOpen, setSaveOpen] = useState(false);
   const [saveName, setSaveName] = useState("");
-  const rafRef = useRef<number | null>(null);
-  const playingRef = useRef(playing);
-  const speedRef = useRef(speed);
-  const [lastTick, setLastTick] = useState(0);
-
-  // Keep refs in sync with state for the animation loop.
-  playingRef.current = playing;
-  speedRef.current = speed;
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Precompute the full simulation once per controls change; every other
   // read is a plain array lookup (no re-run).
@@ -56,46 +50,63 @@ export default function Simulator() {
     setPreviewResult(fullResult);
   }, [fullResult]);
 
-  // RAF-driven playback: steps years at a fixed wall-clock cadence, so "Fast"
-  // advances several years per frame and the UI never queues up.
-  useEffect(() => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    if (!playing) return;
-    let last = performance.now();
-    const loop = (now: number) => {
-      if (!playingRef.current) return;
-      // Slower playback: 1y = 300ms per step, 5y = 250ms/step, Fast(25y) = 80ms/step
-      const interval = speedRef.current === 25 ? 80 : speedRef.current === 5 ? 250 : 300;
-      const elapsed = now - last;
-      if (elapsed >= interval) {
-        const steps = Math.floor(elapsed / interval);
-        setLastTick((t) => t + 1);
-        setDisplayYear((y) => {
-          const next = Math.min(2050, y + steps * speedRef.current);
-          if (next >= 2050) {
-            setPlaying(false);
-            return 2050;
-          }
-          return next;
-        });
-        last = now;
-      }
-      rafRef.current = requestAnimationFrame(loop);
-    };
-    rafRef.current = requestAnimationFrame(loop);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
-  }, [playing]);
+  const eventsByYear = useMemo(() => {
+    const m = new Map<number, typeof fullResult.events>();
+    for (const e of fullResult.events) {
+      const list = m.get(e.year) ?? [];
+      list.push(e);
+      m.set(e.year, list);
+    }
+    return m;
+  }, [fullResult]);
 
-  // lastTick is a render trigger during playback.
-  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  lastTick;
+  const hasEventAt = (year: number) => (eventsByYear.get(year)?.length ?? 0) > 0;
+
+  const stepTo = (year: number) => {
+    const clamped = Math.min(2050, Math.max(2026, year));
+    setDisplayYear(clamped);
+    if (pauseOnEvents && playing && clamped < 2050 && hasEventAt(clamped)) {
+      setPlaying(false);
+    }
+  };
+
+  const stepBy = (delta: number) => {
+    setPlaying(false);
+    stepTo(displayYear + delta);
+  };
+
+  // Step-by-step playback: one year per tick, always. Speed only changes pace.
+  useEffect(() => {
+    if (!playing) return;
+    const interval = speed === 5 ? 160 : speed === 2 ? 360 : 700;
+    timerRef.current = setInterval(() => {
+      setDisplayYear((y) => {
+        const next = y + 1;
+        if (next >= 2050) {
+          setPlaying(false);
+          return 2050;
+        }
+        if (pauseOnEvents && hasEventAt(next)) {
+          // Land on the event year, then pause so the player can read it.
+          queueMicrotask(() => setPlaying(false));
+        }
+        return next;
+      });
+    }, interval);
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [playing, speed, pauseOnEvents, eventsByYear]);
 
   const handleRun = () => {
-    setDisplayYear(2026);
-    setPlaying(true);
-    toast("Simulation started", { description: "Teluk Nusa runs from 2026 to 2050." });
+    if (displayYear >= 2050) {
+      setDisplayYear(2026);
+      setPlaying(true);
+      toast("Restarted. 2026 to 2050, one year at a time.");
+    } else {
+      setPlaying(true);
+      toast(displayYear === 2026 ? "Playing. One year at a time." : `Resuming from ${displayYear}.`);
+    }
   };
 
   const handleStop = () => setPlaying(false);
@@ -103,6 +114,20 @@ export default function Simulator() {
     setPlaying(false);
     setDisplayYear(2050);
   };
+
+  // Keyboard: ← / → step, space play-pause (when not typing).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+      if (e.key === "ArrowRight") { e.preventDefault(); stepBy(1); }
+      else if (e.key === "ArrowLeft") { e.preventDefault(); stepBy(-1); }
+      else if (e.key === " ") { e.preventDefault(); setPlaying((p) => !p); }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [displayYear, pauseOnEvents, eventsByYear]);
 
   const indicatorsAtDisplay = useMemo(() => {
     if (!previewResult) return null;
@@ -160,12 +185,43 @@ export default function Simulator() {
     return y.budgetRemaining;
   }, [previewResult, displayYear]);
 
+  const yearRow = useMemo(() => {
+    if (!previewResult) return null;
+    return previewResult.years.find((yr) => yr.year === displayYear) ?? previewResult.years[previewResult.years.length - 1];
+  }, [previewResult, displayYear]);
+
+  const prevRow = useMemo(() => {
+    if (!previewResult || !yearRow) return null;
+    return previewResult.years.find((yr) => yr.year === displayYear - 1) ?? null;
+  }, [previewResult, displayYear, yearRow]);
+
+  const yearMovers = useMemo(() => {
+    if (!yearRow || !prevRow) return [];
+    return INDICATOR_KEYS
+      .map((k) => {
+        const delta = yearRow.indicators[k] - prevRow.indicators[k];
+        const meta = INDICATOR_META[k];
+        const good = meta.higherIsBetter ? delta >= 0 : delta <= 0;
+        return { key: k, delta, good, abs: Math.abs(delta) };
+      })
+      .filter((m) => m.abs >= 0.3)
+      .sort((a, b) => b.abs - a.abs)
+      .slice(0, 3);
+  }, [yearRow, prevRow]);
+
+  const eventsHere = useMemo(() => eventsByYear.get(displayYear) ?? [], [eventsByYear, displayYear]);
+  const eventsSoFar = useMemo(
+    () => fullResult.events.filter((e) => e.year <= displayYear),
+    [fullResult, displayYear],
+  );
+  const progressPct = Math.round(((displayYear - 2026) / 24) * 100);
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
 
       <PageMeta
         title="ECO//SIM — The simulator · govern Teluk Nusa 2026–2050"
-        description="Move the eight policy dials and run 25 years. Watch the sea, the town, and the people respond. Every equation published."
+        description="Eight dials. 25 years. Step one year at a time."
       />
       <SiteHeader backHref="/briefing" />
 
@@ -221,13 +277,32 @@ export default function Simulator() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Step first: one year at a time */}
+            <div className="flex border border-border" role="group" aria-label="Step through years">
+              <button
+                onClick={() => stepBy(-1)}
+                disabled={displayYear <= 2026}
+                className="btn-press inline-flex items-center gap-1 px-3 py-2.5 font-data text-[10px] tracking-wider uppercase text-muted-foreground hover:text-foreground transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                title="Back 1 year (←)"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" /> Back
+              </button>
+              <button
+                onClick={() => stepBy(1)}
+                disabled={displayYear >= 2050}
+                className="btn-press inline-flex items-center gap-1 border-l border-border px-3 py-2.5 font-data text-[10px] tracking-wider uppercase hover:bg-secondary/60 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                title="Next year (→)"
+              >
+                Next <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
             {!playing ? (
               <button
                 onClick={handleRun}
                 className="btn-press inline-flex items-center gap-2 bg-vermilion text-primary-foreground font-data text-[11px] tracking-[0.14em] uppercase px-5 py-2.5 hover:brightness-105 transition-all"
               >
-                <Play className="w-3.5 h-3.5" /> {displayYear > 2026 ? "Re-run 2026–2050" : "Run simulation"}
+                <Play className="w-3.5 h-3.5" /> {displayYear > 2026 && displayYear < 2050 ? `Play from ${displayYear}` : displayYear >= 2050 ? "Restart" : "Play"}
               </button>
             ) : (
               <button
@@ -246,18 +321,28 @@ export default function Simulator() {
               <FastForward className="w-3 h-3" /> To 2050
             </button>
             <div className="flex border border-border" role="group" aria-label="Playback speed">
-              {([1, 5, 25] as const).map((s) => (
+              {([1, 2, 5] as const).map((s) => (
                 <button
                   key={s}
                   onClick={() => setSpeed(s)}
                   className={`btn-press px-2.5 py-2 font-data text-[10px] tracking-wider uppercase transition-colors ${
                     speed === s ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
                   }`}
+                  title={s === 1 ? "Slow: ~0.7s per year" : s === 2 ? "Medium: ~0.35s per year" : "Fast: ~0.15s per year"}
                 >
-                  {s === 25 ? "Fast" : `${s}y`}
+                  {s === 1 ? "1x" : `${s}x`}
                 </button>
               ))}
             </div>
+            <label className="inline-flex items-center gap-1.5 font-data text-[10px] tracking-wider uppercase text-muted-foreground cursor-pointer select-none" title="Pause automatically when an event happens">
+              <input
+                type="checkbox"
+                checked={pauseOnEvents}
+                onChange={(e) => setPauseOnEvents(e.target.checked)}
+                className="accent-vermilion w-3.5 h-3.5"
+              />
+              Pause on events
+            </label>
           </div>
         </div>
       </div>
@@ -266,6 +351,64 @@ export default function Simulator() {
         {/* Left: mood → map → indicators → trajectory */}
         <div className="space-y-3 min-w-0 flex flex-col lg:overflow-hidden">
           {indicatorsAtDisplay && <TownMood indicators={indicatorsAtDisplay} year={displayYear} />}
+
+          {/* This year — digest + what happened */}
+          <div className="border border-border bg-card">
+            <div className="px-4 py-2 flex flex-wrap items-center justify-between gap-2 border-b border-border/60">
+              <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
+                {displayYear} — Year {displayYear - 2026 + 1} of 25
+              </span>
+              <span className="font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground tabular-nums">
+                {progressPct}% · {eventsSoFar.length} events so far
+              </span>
+            </div>
+            <div className="h-1 bg-secondary" role="progressbar" aria-valuenow={progressPct} aria-valuemin={0} aria-valuemax={100} aria-label="Run progress">
+              <div className="h-full bg-vermilion transition-[width] duration-300" style={{ width: `${progressPct}%` }} />
+            </div>
+            <div className="px-4 py-2.5 text-[12px] leading-snug">
+              {displayYear === 2026 ? (
+                <p className="text-muted-foreground">Baseline year. Press <strong className="text-foreground">Next</strong> or <strong className="text-foreground">Play</strong> to step through 2027. Arrow keys work too.</p>
+              ) : (
+                <>
+                  {eventsHere.length > 0 ? (
+                    <div className="space-y-1.5">
+                      {eventsHere.map((e, i) => (
+                        <p key={i} className={e.severity === "critical" ? "text-vermilion font-medium" : e.severity === "warning" ? "text-foreground" : "text-emerald-700 font-medium"}>
+                          <AlertTriangle className={`w-3 h-3 inline mr-1 -mt-0.5 ${e.severity === "info" ? "hidden" : ""}`} aria-hidden="true" />
+                          <span className="font-data text-[10px] tracking-[0.12em] uppercase opacity-70 mr-1.5">{e.severity}</span>{e.message}
+                        </p>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground">A quiet year. No event. The town drifts a little.</p>
+                  )}
+                  {yearMovers.length > 0 && (
+                    <div className="mt-1.5 flex flex-wrap gap-1.5">
+                      {yearMovers.map((m) => (
+                        <span key={m.key} className={`inline-flex items-center gap-1 border px-1.5 py-0.5 font-data text-[10px] tabular-nums ${m.good ? "border-emerald-700/40 text-emerald-700" : "border-vermilion/40 text-vermilion"}`}>
+                          {KID_INDICATORS[m.key].kidName} {m.delta > 0 ? "+" : ""}{m.delta.toFixed(1)}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+            {eventsSoFar.length > 0 && (
+              <div className="px-4 py-2 border-t border-border/60 max-h-28 overflow-y-auto">
+                <div className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground mb-1">Events so far</div>
+                <div className="space-y-1">
+                  {eventsSoFar.slice(-5).map((e, i) => (
+                    <div key={i} className="flex items-baseline gap-2 text-[11px]">
+                      <span className="font-data tabular-nums text-muted-foreground w-8 shrink-0">{e.year}</span>
+                      <span className={e.severity === "critical" ? "text-vermilion" : e.severity === "info" ? "text-emerald-700" : "text-foreground/80"}>{e.message}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
           <CityMap controls={controls} indicators={indicatorsAtDisplay} year={displayYear} />
 
           {indicatorsAtDisplay && (
@@ -285,7 +428,27 @@ export default function Simulator() {
           )}
 
           <div className="flex-1 min-h-0">
-            <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-1">Trajectory · {chartData[0]?.year ?? 2026} – {displayYear}</div>
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
+              <span className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground">
+                Trajectory · {chartData[0]?.year ?? 2026} – {displayYear}
+              </span>
+              <div className="flex items-center gap-2">
+                <span className="font-data text-[10px] uppercase text-muted-foreground">Scrub year:</span>
+                <input
+                  type="range"
+                  min={2026}
+                  max={2050}
+                  value={displayYear}
+                  onChange={(e) => {
+                    setPlaying(false);
+                    setDisplayYear(Number(e.target.value));
+                  }}
+                  className="w-24 sm:w-32 h-1.5 accent-vermilion bg-secondary rounded-none cursor-pointer"
+                  aria-label="Timeline year scrubber"
+                />
+                <span className="font-data text-[11px] tabular-nums font-semibold text-foreground w-10 text-right">{displayYear}</span>
+              </div>
+            </div>
             <div className="h-full">
               <TimelineChart data={chartData} className="h-full flex flex-col" />
             </div>
@@ -361,8 +524,7 @@ export default function Simulator() {
           <ControlPanel controls={controls} onChange={setControl} onReset={resetControls} />
           <div className="mt-3 px-1">
             <p className="text-[11px] text-muted-foreground leading-relaxed">
-              Adjust the ledger, re-run the simulation, observe what changed.
-              The model has no perfect answer. Only trade-offs.
+              Turn a dial. Step a year. Watch what changed.
             </p>
           </div>
           <div className="mt-3 text-center">

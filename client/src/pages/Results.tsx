@@ -83,7 +83,7 @@ export default function Results() {
   const photo = happy ? SUNSET_PHOTO : DAWN_PHOTO;
   const verdict = happy
     ? "Teluk Nusa held its own."
-    : "Teluk Nusa is struggling. Adjust one dial and run again.";
+    : "Teluk Nusa struggled.";
 
   const [expertOpen, setExpertOpen] = useState<Record<string, boolean>>({
     appendix: false,
@@ -131,8 +131,8 @@ export default function Results() {
               </h1>
               <p className="text-sm text-muted-foreground mt-3 max-w-lg leading-relaxed">
                 {happy
-                  ? "Your decisions kept the mangroves breathing, the drains holding through the monsoon, and households able to afford clean water. No goal was sacrificed to reach another. That is the sign of a planner who understood the trade-offs."
-                  : "At least one of the three foundations, the sea, the town, or the people, gave way. Read the causal chain below. The model tells you exactly which decision led where. Adjust one variable and run again."}
+                  ? "Sea, water, and fairness protected to 2050."
+                  : "A threshold broke. See what caused it below."}
               </p>
             </div>
 

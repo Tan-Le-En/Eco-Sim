@@ -22,23 +22,23 @@ const FIELD = [
   {
     n: "01",
     k: "Meet your town",
-    t: "Teluk Nusa is a fictional Malaysian town on the Strait of Malacca. Fewer fish, flooding monsoons, salt water in the taps: the real problems of a thousand real towns. The people in these photographs are the people you are deciding for.",
+    t: "A fictional town on the Strait of Malacca. Real photos, real problems. These are the people you decide for.",
     img: JETTY,
-    cap: "Clan jetty, Penang. Houseboats and wooden walkways over the sea.",
+    cap: "Clan jetty, Penang. Houses over the sea.",
   },
   {
     n: "02",
     k: "Change one thing. Watch the town.",
-    t: "Eight decisions shape twenty-five years. Seven things to protect: the sea and air, nature, drinking water, flood safety, public health, prosperity, and fairness. Move one dial and the whole town responds, usually in ways you did not expect.",
+    t: "Eight dials, 25 years, seven registers to protect. Move one dial. The whole town responds.",
     img: MANGROVE,
-    cap: "Mangrove river, Langkawi. Nature's own sea wall.",
+    cap: "Mangrove river, Langkawi. Nature's sea wall.",
   },
   {
     n: "03",
     k: "Try again.",
-    t: "You will not find a perfect plan; you will find trade-offs. Every result tells you why things changed, and the full mathematics is published on the transparency page. Come back when a run goes wrong and try a different plan.",
+    t: "No perfect plan. Only trade-offs. Every run tells you why. Then try a different one.",
     img: NETS,
-    cap: "Fishermen with nets at dawn, Kuala Kedah",
+    cap: "Fishermen at dawn, Kuala Kedah",
   },
 ];
 
@@ -85,10 +85,7 @@ export default function Home() {
               </span>
             </h1>
             <p className="mt-8 sm:mt-10 max-w-md text-base sm:text-lg leading-relaxed text-muted-foreground">
-              You govern Teluk Nusa, a small town on the Malaysian coast,
-              from 2026 to 2050. Keep the sea alive, the water clean, and
-              treat people fairly. That is the whole job, and it has no easy
-              answer.
+              Govern Teluk Nusa, 2026 to 2050. Keep the sea clean, the water flowing, and people treated fairly.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link

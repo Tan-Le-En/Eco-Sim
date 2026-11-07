@@ -84,7 +84,7 @@ function CausalTooltip({
       </div>
       {year > 2026 && (
         <p className="mt-2 pt-2 border-t border-border text-[10px] text-muted-foreground leading-relaxed">
-          Deltas show change from 2026 starting conditions. Green indicates positive town progress.
+          Change vs 2026. Green is better.
         </p>
       )}
     </div>

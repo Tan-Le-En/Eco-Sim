@@ -14,47 +14,47 @@ const EQUATIONS = [
   {
     title: "Population growth",
     formula: "P(t+1) = P(t) × (1 + r),  r = 0.012",
-    note: "Plus a migration bonus when industrial activity pulls workers into the city. The growth rate r is fixed, not controlled.",
+    note: "Fixed growth plus a migration bonus from industry.",
   },
   {
     title: "Renewable share of the grid",
     formula: "R(t) = R₀ + (target − R₀) × min(1, t / 10)",
-    note: "The grid transitions over a 10-year rollout window toward your target share, held back slightly by heavy industry.",
+    note: "10-year rollout toward your target, held back by heavy industry.",
   },
   {
     title: "Emissions accounting",
     formula: "E = E_ele + E_transport + E_industry + E_waste",
-    note: "Each sector has an emission factor (kg CO2e per unit of activity). Climate pressure aggregates total emissions against the city's fictional 2026 baseline of ~8 Mt CO2e.",
+    note: "Summed sectors vs ~8 Mt CO2e baseline.",
   },
   {
     title: "Water balance",
     formula: "security = supply − demand(fishing, industry, households) × efficiency",
-    note: "Supply also varies with rainfall. Drought years (2034, 2043 in this model) and low efficiency can tip the city into water stress.",
+    note: "Rain varies. Drought years 2034 and 2043.",
   },
   {
     title: "Flood resilience",
     formula: "resilience = natural defences(mangroves, wetlands) + investment − exposure(development, sea-level drift)",
-    note: "Mangrove restoration adds coastal buffering; coastal development erodes it. Sea level rises slowly over the whole period.",
+    note: "Mangroves buffer. Development erodes. Seas rise slowly.",
   },
   {
     title: "Biodiversity",
     formula: "B(t+1) = B(t) + habitat gain − habitat loss − pollution loss",
-    note: "Mangroves, wetlands, and riparian corridors add habitat. Coastal development, runoff, and overfishing remove it. Ecosystems recover slowly and degrade fast.",
+    note: "Recover slowly, degrade fast.",
   },
   {
     title: "Public health",
     formula: "health = f(air quality, water quality, heat exposure, service access)",
-    note: "Driven by emissions, transport mode share, urban greening, and equity in service access. Health is the most 'averaged' indicator: it rewards a balanced city.",
+    note: "Rewards a balanced city.",
   },
   {
     title: "Equity",
     formula: "equity = equal distribution of benefits − unequal exposure to flood & heat risk",
-    note: "Benefits of your policies are shared; exposure stays concentrated in low-income coastal districts unless transit, health, and housing policies address it.",
+    note: "Exposure stays coastal unless transit and housing reach it.",
   },
   {
     title: "Overall score",
     formula: "score = Σ weight_i × value_i − penalties",
-    note: "Weights: climate 0.20, biodiversity 0.15, water 0.15, flood resilience 0.15, health 0.15, economy 0.10, equity 0.10. Penalties apply for system collapse: biodiversity below 30 (−10), water security below 25 (−8), equity below 35 (−6).",
+    note: "Climate 0.20, biodiversity 0.15, water 0.15, flood 0.15, health 0.15, economy 0.10, equity 0.10. Penalties: biodiversity <30 (−10), water <25 (−8), equity <35 (−6).",
   },
 ];
 
@@ -138,10 +138,7 @@ export default function Transparency() {
             How this game <span className="text-vermilion">actually works</span>
           </h1>
           <p className="text-muted-foreground leading-relaxed mb-8 max-w-2xl">
-            A child can play ECO//SIM without reading this page. But if you want
-            to see the machinery: the equations, the variables, the score
-            weights, everything is published here. If you cannot see how a
-            simulation decides its outcomes, it can't teach you anything real.
+            Play without this page. Read this page to see the machinery.
           </p>
 
           {/* Equations */}

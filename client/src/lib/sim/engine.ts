@@ -242,68 +242,211 @@ function hashControls(controls: Controls): number {
 function generateEvents(years: SimYear[], controls: Controls): SimEvent[] {
   const events: SimEvent[] = [];
   const h = hashControls(controls);
-  // Deterministic pseudo-random per-control offsets so each policy mix
-  // shifts which years trigger events.
-  const waterOffset = h % 4;
-  const floodYears = [2033 + (h % 6), 2042 + (h % 5)];
-  const habitatOffset = h % 3;
-  const equityOffset = h % 3;
-  const healthOffset = h % 3;
+  const floodYears = [2033 + (h % 5), 2043 + (h % 4)];
+  const lastYear: Record<string, number> = {};
+  const seen: Record<string, number> = {};
+  const usedMessages = new Set<string>();
+  let deficitStreak = 0;
+  const firedOnce = new Set<string>();
+
+  // Short, varied lines: each type rotates so the same sentence never repeats.
+  const LINES: Record<string, string[]> = {
+    budget_deficit: [
+      "Budget empty. Road repairs pause.",
+      "Treasury dry. New projects freeze.",
+      "Funds gone. Bridge work stops.",
+      "Monsoon drains wait. No money.",
+      "Contractors unpaid. Work slows.",
+      "Town hall trims plans. Shortfall hits.",
+    ],
+    budget_austerity: [
+      "Cuts bite. Bus routes shorten.",
+      "Austerity: clinic hours trimmed.",
+      "Savings gone. Services shrink.",
+      "Lights dim. Library closes early.",
+      "Crews cut. Parks go unkept.",
+      "Shorter hours. Longer queues.",
+    ],
+    budget_debt: [
+      "Debt stalls upkeep. Drains clog.",
+      "Seawall repairs wait. Costs pile up.",
+      "Maintenance stops. Potholes spread.",
+      "Borrowed time. Pumps fail more.",
+      "Loans mount. Safety spending ends.",
+      "Crumbling upkeep. Warnings grow.",
+    ],
+    coastal_flood: [
+      "Monsoon surge floods the jetty homes.",
+      "Sea wall breached. Boats rest on roofs.",
+      "High tide invades the kampung lanes.",
+      "Rain plus tide. Roads turn to rivers.",
+      "Wave tops wall. Fish rest in houses.",
+      "Surge soaks the markets by morning.",
+    ],
+    water_crisis: [
+      "Taps dry. Tankers queue on Jalan Utama.",
+      "Reservoirs empty. School closes early.",
+      "Pipes cough air. Drums fill up.",
+      "Night supply only. Jerrycans line up.",
+      "Taps run brown. Filters clog fast.",
+      "Kampung taps fail. Wells run low.",
+    ],
+    water_stress: [
+      "Sungai Kedah runs low. Rationing starts.",
+      "Dry season: river thin, taps weak.",
+      "Water pressure drops. Half-day supply.",
+      "Low river. Fields take less water.",
+      "Throttled supply. Showers go short.",
+      "Dry months bite. Reservoirs shrink.",
+    ],
+    habitat_loss: [
+      "Bakau gone. Nets come back light.",
+      "Nurseries empty. Fish grow scarce.",
+      "Estuary quiet. Birds leave early.",
+      "Shoreline bare. Waves hit harder.",
+      "Crabs vanish. Night catches fail.",
+      "Mudflats silent. Children find less.",
+    ],
+    health_warning: [
+      "Haze days. Clinics fill by noon.",
+      "Heat and smoke send kids to the ward.",
+      "Coughs rise as air thickens.",
+      "Smog wakes. Chest clinics bustle.",
+      "Heatwave. Elders struggle at home.",
+      "Dust and fever sweep the flats.",
+    ],
+    equity_warning: [
+      "Kampung lanes miss out again.",
+      "Buses stop short. Long walks to clinic.",
+      "Flats lack lifts. Costs hit the poor.",
+      "Works go downtown first. Back lanes wait.",
+      "Same flood. Slower help for kampung.",
+      "Tariffs climb. Poor homes pay most.",
+    ],
+    nature_recovery: [
+      "Bakau takes hold. Fish nurseries return.",
+      "Mangroves root. Shoreline greens again.",
+    ],
+    clean_air: [
+      "Air clears. Skies stay blue.",
+      "Less smoke. Kids play outside again.",
+    ],
+    jobs_up: [
+      "Factory jobs grow. Pay packets rise.",
+      "Work steady. Families breathe easier.",
+    ],
+    fair_share: [
+      "Buses reach every kampung now.",
+      "Fair tariffs. Poor homes save more.",
+    ],
+    dry_spell: [
+      "Drought month. River mud shows.",
+      "Long dry spell. Wells run low.",
+    ],
+    money_eased: [
+      "Budget recovers. Repairs resume.",
+      "Surplus returns. Projects restart.",
+    ],
+  };
+
+  const pickLine = (type: string, year: number): string => {
+    const variants = LINES[type] ?? [type];
+    const n = seen[type] ?? 0;
+    seen[type] = n + 1;
+    for (let k = 0; k < variants.length; k++) {
+      const cand = variants[(n + year + h + k) % variants.length]!;
+      if (!usedMessages.has(cand)) {
+        usedMessages.add(cand);
+        return cand;
+      }
+    }
+    // Variants exhausted (rare): escalate with a fresh prefix instead of repeating.
+    const base = variants[n % variants.length]!;
+    const fallback = `Still unresolved. ${base}`;
+    usedMessages.add(fallback);
+    return fallback;
+  };
+
+  const canFire = (key: string, year: number, cooldown: number) =>
+    !lastYear[key] || year - lastYear[key]! >= cooldown;
+  const mark = (key: string, year: number) => { lastYear[key] = year; };
+
+  const push = (year: number, type: string, severity: SimEvent["severity"], lineKey?: string) => {
+    events.push({ year, type, severity, message: pickLine(lineKey ?? type, year) });
+  };
 
   for (const y of years) {
     const i = y.indicators;
     if (y.year <= START_YEAR) continue;
-    if (i.waterSecurity < 50 && y.year % 2 === waterOffset)
-      events.push({
-        year: y.year,
-        type: "water_stress_warning",
-        severity: "warning",
-        message: `The Sungai Kedah runs thin by March. Families in the kampungs fetch rainwater in plastic drums.`,
-      });
-    if (i.waterSecurity < 35)
-      events.push({
-        year: y.year,
-        type: "water_crisis",
-        severity: "critical",
-        message: `The dams run dry. Water board trucks park on Jalan Utama and residents queue with every container they own. The school closes early.`,
-      });
-    if (i.floodResilience < 40 && floodYears.includes(y.year))
-      events.push({
-        year: y.year,
-        type: "coastal_flood",
-        severity: "critical",
-        message: `A monsoon surge pushes the sea past the seawall. In the kampung, a grandmother carries her cat onto the roof and waits for a boat.`,
-      });
-    if (i.biodiversity < 40 && y.year % 3 === habitatOffset)
-      events.push({
-        year: y.year,
-        type: "habitat_loss_warning",
-        severity: "warning",
-        message: `The bakau trees on the estuary bank are gone. Fishermen say the nets come back lighter every year.`,
-      });
-    if (i.equity < 40 && y.year % 2 === equityOffset)
-      events.push({
-        year: y.year,
-        type: "equity_warning",
-        severity: "warning",
-        message: `The flats by the river have no lift and the bus route stops at the main road. Residents walk 40 minutes to the clinic.`,
-      });
-    if (i.publicHealth < 45 && y.year % 2 === healthOffset)
-      events.push({
-        year: y.year,
-        type: "health_warning",
-        severity: "warning",
-        message: `Hospital admissions for asthma and heat exhaustion climb. The ward runs out of beds by September.`,
-      });
-    if (y.budgetRemaining <= 0 && !events.some((e) => e.year === y.year && e.type === "budget_deficit"))
-      events.push({
-        year: y.year,
-        type: "budget_deficit",
-        severity: "critical",
-        message: `The town hall stops funding projects. A bridge half-finished over the mouth of the Sungai Kedah. Approval for the mayor drops to its lowest since 2026.`,
-      });
+
+    // Budget: one alert per streak milestone, never yearly spam.
+    if (y.budgetRemaining <= 0) {
+      deficitStreak++;
+      if (deficitStreak === 1) push(y.year, "budget_deficit", "critical");
+      else if (deficitStreak === 4) push(y.year, "budget_austerity", "warning");
+      else if (deficitStreak === 8) push(y.year, "budget_debt", "critical");
+    } else {
+      if (deficitStreak > 0 && !firedOnce.has("recovered")) {
+        firedOnce.add("recovered");
+        push(y.year, "money_eased", "info");
+      }
+      deficitStreak = 0;
+    }
+
+    if (i.floodResilience < 45 && floodYears.includes(y.year) && canFire("flood", y.year, 7)) {
+      push(y.year, "coastal_flood", "critical");
+      mark("flood", y.year);
+    }
+
+    if (i.waterSecurity < 35 && canFire("water", y.year, 4)) {
+      push(y.year, "water_crisis", "critical");
+      mark("water", y.year);
+    } else if (i.waterSecurity < 50 && canFire("water", y.year, 5)) {
+      push(y.year, "water_stress", "warning");
+      mark("water", y.year);
+    }
+
+    // Drought years with low water: a distinct short event (max once per drought).
+    if ((y.year === 2034 || y.year === 2043) && i.waterSecurity < 55 && !firedOnce.has(`dry_${y.year}`)) {
+      firedOnce.add(`dry_${y.year}`);
+      push(y.year, "dry_spell", "warning");
+    }
+
+    if (i.biodiversity < 40 && canFire("bio", y.year, 5)) {
+      push(y.year, "habitat_loss", "warning");
+      mark("bio", y.year);
+    }
+
+    if (i.publicHealth < 45 && canFire("health", y.year, 5)) {
+      push(y.year, "health_warning", "warning");
+      mark("health", y.year);
+    }
+
+    if (i.equity < 40 && canFire("equity", y.year, 5)) {
+      push(y.year, "equity_warning", "warning");
+      mark("equity", y.year);
+    }
+
+    // Good-news crossings fire once, so balanced runs get variety too.
+    if (i.biodiversity >= 70 && !firedOnce.has("nature")) {
+      firedOnce.add("nature");
+      push(y.year, "nature_recovery", "info");
+    }
+    if (i.climatePressure <= 45 && !firedOnce.has("air")) {
+      firedOnce.add("air");
+      push(y.year, "clean_air", "info");
+    }
+    if (i.economicWellbeing >= 75 && !firedOnce.has("jobs")) {
+      firedOnce.add("jobs");
+      push(y.year, "jobs_up", "info");
+    }
+    if (i.equity >= 65 && !firedOnce.has("fair")) {
+      firedOnce.add("fair");
+      push(y.year, "fair_share", "info");
+    }
   }
-  return events;
+
+  return events.sort((a, b) => a.year - b.year);
 }
 
 /* ---------- causal link engine (rules-based, deterministic) ---------- */

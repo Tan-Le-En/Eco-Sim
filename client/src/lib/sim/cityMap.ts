@@ -283,7 +283,7 @@ export const CELL_COLORS: Record<CellType, string> = {
 
 export const CELL_LABELS: Record<CellType, string> = {
   ocean: "Laut (Sea)",
-  river: "Sungai (River)",
+  river: "Sungai Kedah (River)",
   mangrove: "Bakau (Mangrove)",
   wetland: "Wetlands",
   beach: "Pantai (Beach)",
