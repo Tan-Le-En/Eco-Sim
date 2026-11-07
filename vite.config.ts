@@ -1,28 +1,29 @@
-import { jsxLocPlugin } from "@builder.io/vite-plugin-jsx-loc";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { defineConfig, type Plugin, type ViteDevServer } from "vite";
 
+/**
+ * Dev-only storage middleware. When Forge credentials exist, /storage/:key
+ * redirects to a presigned URL; otherwise (no env configured) it falls
+ * through to Vite's static handler so client/public/storage files just work.
+ */
 function vitePluginStorageProxy(): Plugin {
   return {
     name: "storage-proxy",
     configureServer(server: ViteDevServer) {
-      server.middlewares.use("/storage", async (req, res) => {
-        const key = req.url?.replace(/^\//, "");
+      server.middlewares.use("/storage", async (req, res, next) => {
+        const key = req.url?.replace(/^\//, "").replace(/\?.*$/, "");
         if (!key) {
-          res.writeHead(400, { "Content-Type": "text/plain" });
-          res.end("Missing storage key");
-          return;
+          return res.writeHead(400, { "Content-Type": "text/plain" }).end("Missing storage key");
         }
 
         const forgeBaseUrl = (process.env.BUILT_IN_FORGE_API_URL || "").replace(/\/+$/, "");
         const forgeKey = process.env.BUILT_IN_FORGE_API_KEY;
 
+        // Not configured: serve the committed file from public/ instead.
         if (!forgeBaseUrl || !forgeKey) {
-          res.writeHead(500, { "Content-Type": "text/plain" });
-          res.end("Storage proxy not configured");
-          return;
+          return next();
         }
 
         try {
@@ -57,43 +58,48 @@ function vitePluginStorageProxy(): Plugin {
   };
 }
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginStorageProxy()];
+export default defineConfig(({ command }) => {
+  const isDev = command === "serve";
+  const plugins = [
+    react(),
+    tailwindcss(),
+    ...(isDev ? [vitePluginStorageProxy()] : []),
+  ];
 
-export default defineConfig({
-  plugins,
-  resolve: {
-    alias: {
-      "@": path.resolve(import.meta.dirname, "client", "src"),
-      "@shared": path.resolve(import.meta.dirname, "shared"),
-      "@assets": path.resolve(import.meta.dirname, "attached_assets"),
+  return {
+    plugins,
+    resolve: {
+      alias: {
+        "@": path.resolve(import.meta.dirname, "client", "src"),
+      },
     },
-  },
-  envDir: path.resolve(import.meta.dirname),
-  root: path.resolve(import.meta.dirname, "client"),
-  build: {
-    outDir: path.resolve(import.meta.dirname, "dist/public"),
-    emptyOutDir: true,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ["react", "react-dom", "wouter"],
-          charts: ["recharts"],
-          motion: ["framer-motion"],
+    envDir: path.resolve(import.meta.dirname),
+    root: path.resolve(import.meta.dirname, "client"),
+    build: {
+      outDir: path.resolve(import.meta.dirname, "dist/public"),
+      emptyOutDir: true,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ["react", "react-dom", "wouter"],
+            charts: ["recharts"],
+            motion: ["framer-motion"],
+          },
         },
       },
     },
-  },
-  server: {
-    port: 3000,
-    strictPort: false, // Will find next available port if 3000 is busy
-    host: true,
-    allowedHosts: [
-      "localhost",
-      "127.0.0.1",
-    ],
-    fs: {
-      strict: true,
-      deny: ["**/.*"],
+    server: {
+      port: 3000,
+      strictPort: false, // Will find next available port if 3000 is busy
+      host: true,
+      allowedHosts: [
+        "localhost",
+        "127.0.0.1",
+      ],
+      fs: {
+        strict: true,
+        deny: ["**/.*"],
+      },
     },
-  },
+  };
 });

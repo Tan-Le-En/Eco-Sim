@@ -26,7 +26,7 @@ export default function SiteFooter() {
             Terms
           </Link>
           <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
-            © 2026 · Last updated · Aug 18, 2026
+            © 2026 Tan-Le-En
           </span>
         </nav>
       </div>

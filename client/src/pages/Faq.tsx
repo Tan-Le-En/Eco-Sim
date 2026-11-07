@@ -3,6 +3,7 @@
  * Expandable question plates, mono field labels, hairline rules.
  * Honest answers — no marketing filler.
  */
+import { useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -28,12 +29,12 @@ const FAQS = [
   {
     id: "targets",
     q: "What are the five mission targets?",
-    a: "By 2050: air, nature, water, flood safety, and fairness above their thresholds. The Mission chip shows how many you hit live. Hover it for the numbers.",
+    a: "By 2050: heat-loaded air pressure below its cap (45), and nature, water, flood safety, and fairness above their floors (70, 60, 65, 60). The Mission chip shows how many you hit live. Hover it for the numbers.",
   },
   {
     id: "budget",
     q: "What happens when the town's budget runs out?",
-    a: "Projects stall. Income comes from building and factories, at the environment's expense. Balancing money against nature is the hardest part.",
+    a: "Projects stall and approval drops. The treasury starts with 100 points for all 25 years; income walks in at 1–6 points a year, and only when factories work. Every policy spends. Balancing money against nature is the hardest part.",
   },
   {
     id: "real",
@@ -58,7 +59,7 @@ const FAQS = [
   {
     id: "privacy",
     q: "Do you track me?",
-    a: "No accounts. Plans stay on your device. Optional analytics only.",
+    a: "No accounts. Plans stay on your device. Nothing is collected today — any future analytics stays optional.",
   },
   {
     id: "dark",
@@ -68,32 +69,35 @@ const FAQS = [
 ];
 
 export default function Faq() {
+  // Deep-linked answers (e.g. /faq#budget) start open.
+  const [initialOpen] = useState(() => window.location.hash.replace(/^#/, ""));
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
-
       <PageMeta
         title="ECO//SIM — FAQ · asked at the field desk"
         description="Honest answers about the score, the trade-offs, classrooms, phones, and privacy. If it isn't here, search."
       />
       <SiteHeader />
-      <main id="main" className="flex-1">
+      <main id="main" tabIndex={-1} className="flex-1 outline-none">
         <div className="px-6 sm:px-10 lg:px-14 py-10 max-w-[1000px] mx-auto">
           <h1 className="font-display text-4xl sm:text-5xl font-semibold tracking-tight leading-[1.05]">
             Asked at the <span className="italic text-vermilion">field desk.</span>
           </h1>
           <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
             Honest answers, published like everything else on this site. If the
-            answer you need isn't here, use the search bar above.
+            answer you need isn't here, use the search above
+            (<kbd className="font-data text-[11px] border border-border px-1.5 py-0.5">⌘K</kbd>).
           </p>
 
           <div className="mt-10">
-            <Accordion type="single" collapsible className="border-t border-border">
-              {FAQS.map((f) => (
-                <AccordionItem key={f.id} value={f.id} className="border-b border-border">
+            <Accordion type="single" collapsible defaultValue={initialOpen || undefined} className="border-t border-border">
+              {FAQS.map((f, i) => (
+                <AccordionItem key={f.id} value={f.id} id={f.id} className="border-b border-border scroll-mt-20">
                   <AccordionTrigger className="py-5 text-left font-display text-lg sm:text-xl hover:no-underline hover:text-vermilion transition-colors">
                     <span className="flex items-baseline gap-3">
                       <span className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground">
-                        {f.id.toUpperCase().padStart(2, "0")}
+                        {String(i + 1).padStart(2, "0")}
                       </span>
                       {f.q}
                     </span>
@@ -125,10 +129,9 @@ export default function Faq() {
             </Link>
           </div>
         </div>
-
-        {/* Footer band with last-updated date */}
-        <SiteFooter />
       </main>
+
+      <SiteFooter />
     </div>
   );
 }

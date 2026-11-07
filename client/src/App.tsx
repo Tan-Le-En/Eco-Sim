@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
@@ -22,21 +22,34 @@ import CookieBanner from "./components/CookieBanner";
 
 import { initUtm } from "./lib/utm";
 
-function PageEntrance({ children }: { children: React.ReactNode }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.32, ease: [0.23, 1, 0.32, 1] }}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
+/**
+ * On route change: scroll to the top, unless the URL carries a hash
+ * (e.g. /faq#targets) — then bring that anchor into view after the
+ * new page has mounted.
+ */
 function ScrollRestoration() {
   const [location] = useLocation();
   useEffect(() => {
+    const hash = window.location.hash.replace(/^#/, "");
+    if (hash) {
+      // Two frames: one for the router, one for the page's own content.
+      const scroll = () => {
+        const el = document.getElementById(hash);
+        if (el) {
+          el.scrollIntoView({ block: "start" });
+          return true;
+        }
+        requestAnimationFrame(scroll);
+        return false;
+      };
+      let attempts = 0;
+      const tryScroll = () => {
+        attempts += 1;
+        if (!scroll() && attempts < 5) requestAnimationFrame(tryScroll);
+      };
+      requestAnimationFrame(tryScroll);
+      return;
+    }
     window.scrollTo({ top: 0 });
   }, [location]);
   return null;
@@ -52,22 +65,31 @@ function Boot() {
 
 function Router() {
   const [location] = useLocation();
+  const reducedMotion = useReducedMotion();
+
   return (
     <AnimatePresence mode="wait">
-      <Switch key={location} location={location}>
-        <Route path={"/"} component={Home} />
-        <Route path={"/briefing"} component={Briefing} />
-        <Route path={"/simulator"} component={Simulator} />
-        <Route path={"/results"} component={Results} />
-        <Route path={"/story"} component={Story} />
-        <Route path={"/transparency"} component={Transparency} />
-        <Route path={"/faq"} component={Faq} />
-        <Route path={"/privacy"} component={Privacy} />
-        <Route path={"/terms"} component={Terms} />
-        <Route path={"/404"} component={NotFound} />
-        {/* Final fallback route */}
-        <Route component={NotFound} />
-      </Switch>
+      <motion.div
+        key={location}
+        initial={reducedMotion ? { opacity: 1 } : { opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={reducedMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
+        transition={{ duration: reducedMotion ? 0 : 0.28, ease: [0.23, 1, 0.32, 1] }}
+      >
+        <Switch location={location}>
+          <Route path={"/"} component={Home} />
+          <Route path={"/briefing"} component={Briefing} />
+          <Route path={"/simulator"} component={Simulator} />
+          <Route path={"/results"} component={Results} />
+          <Route path={"/story"} component={Story} />
+          <Route path={"/transparency"} component={Transparency} />
+          <Route path={"/faq"} component={Faq} />
+          <Route path={"/privacy"} component={Privacy} />
+          <Route path={"/terms"} component={Terms} />
+          {/* Final fallback route */}
+          <Route component={NotFound} />
+        </Switch>
+      </motion.div>
     </AnimatePresence>
   );
 }
@@ -82,18 +104,16 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light" switchable>
         <TooltipProvider>
-            <Toaster />
-            <SimProvider>
-              <ScrollRestoration />
-              <Boot />
-              <SkipToContent />
-              <ScrollProgress />
-              <PageEntrance>
-                <Router />
-              </PageEntrance>
-              <CookieBanner />
-            </SimProvider>
-          </TooltipProvider>
+          <Toaster />
+          <SimProvider>
+            <ScrollRestoration />
+            <Boot />
+            <SkipToContent />
+            <ScrollProgress />
+            <Router />
+            <CookieBanner />
+          </SimProvider>
+        </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

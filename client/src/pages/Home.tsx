@@ -64,7 +64,12 @@ export default function Home() {
         title="ECO//SIM — A Field Study of a Coastal Town, 2026–2050"
         description="Change one thing, watch everything change. An interactive field study of Teluk Nusa, a fictional Malaysian coastal town: simple enough for a child, rigorous enough for a professor."
       />
-    <div className="min-h-screen flex flex-col bg-background">
+    <div
+      className={
+        `min-h-screen flex flex-col bg-background` + (pastHero ? ` pb-[72px] md:pb-0` : ``)
+      }
+    >
+      <main id="main" tabIndex={-1} className="flex-1 flex flex-col outline-none">
       {/* ────────────── Full-viewport editorial hero ────────────── */}
       <section id="home-hero" className="relative flex-1 grid lg:grid-cols-[1.1fr_1fr] min-h-screen">
         {/* Left: typographic hero, offset */}
@@ -157,7 +162,7 @@ export default function Home() {
                   {f.t}
                 </p>
               </div>
-              <figure className="mx-6 sm:mx-10 mb-10 photo-plate overflow-hidden cursor-pointer">
+              <figure className="mx-6 sm:mx-10 mb-10 photo-plate overflow-hidden">
                 <img
                   src={f.img}
                   alt={f.cap}
@@ -190,7 +195,7 @@ export default function Home() {
               What a fisherman in Teluk Nusa actually wants to know
             </p>
           </div>
-          <figure className="photo-plate overflow-hidden hidden md:block group cursor-pointer">
+          <figure className="photo-plate overflow-hidden hidden md:block group">
             <img
               src={LANGKAWI}
               alt="Aerial view of stilt house village on the coast, Penang"
@@ -199,7 +204,7 @@ export default function Home() {
             />
             <figcaption className="plate-caption">
               <span>Coastal settlement, Penang</span>
-              <span>Fig. 05</span>
+              <span>Fig. 02</span>
             </figcaption>
           </figure>
           <div className="flex flex-wrap gap-3">
@@ -224,6 +229,7 @@ export default function Home() {
           </div>
         </motion.div>
       </section>
+      </main>
 
       <SiteFooter />
     </div>

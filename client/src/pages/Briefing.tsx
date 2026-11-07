@@ -47,11 +47,11 @@ export default function Briefing() {
 
       <PageMeta
         title="ECO//SIM — Mission briefing · keep the town alive for 25 years"
-        description="Your mission: govern a fictional Malaysian coastal town from 2026 to 2050. 100 budget points a year, eight decisions, seven vital signs."
+        description="Your mission: govern a fictional Malaysian coastal town from 2026 to 2050. A 100-point budget across 25 years, eight decisions, seven vital signs."
       />
       <SiteHeader />
 
-      <main className="flex-1 px-6 sm:px-10 lg:px-14 py-10 grid lg:grid-cols-[1.2fr_1fr] gap-12 max-w-[1400px]">
+      <main id="main" tabIndex={-1} className="flex-1 px-6 sm:px-10 lg:px-14 py-10 grid lg:grid-cols-[1.2fr_1fr] gap-12 max-w-[1400px] outline-none">
         {/* ── Left: mission ── */}
         <div className="flex flex-col">
           <h1 className="font-display font-semibold tracking-tight leading-[0.98] text-[clamp(2.4rem,5.5vw,4.2rem)]">
@@ -60,7 +60,7 @@ export default function Briefing() {
             <em className="text-vermilion">Keep it alive</em> for 25 years.
           </h1>
           <p className="mt-6 max-w-xl text-base sm:text-lg leading-relaxed text-muted-foreground">
-            One million people. <strong className="text-foreground">100 budget points a year</strong> for energy, buses, trees, water, housing. Keep three registers healthy for 25 years.
+            One million people. <strong className="text-foreground">100 budget points for all 25 years</strong> — energy, buses, trees, water, housing. Keep three registers healthy throughout.
           </p>
 
           {/* The three registers */}
@@ -128,7 +128,7 @@ export default function Briefing() {
             viewport={{ once: true, margin: "-80px" }}
             transition={{ delay: 0.15, duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
           >
-          <figure className="photo-plate overflow-hidden group cursor-pointer">
+          <figure className="photo-plate overflow-hidden group">
             <img src={PHOTO} alt="Malaysian fishermen at dawn" className="h-64 w-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.03]" loading="lazy" />
             <figcaption className="plate-caption">
               <span>Fishermen at dawn, East Coast</span>
@@ -136,7 +136,7 @@ export default function Briefing() {
             </figcaption>
           </figure>
 
-          <figure className="photo-plate overflow-hidden hidden lg:block group cursor-pointer">
+          <figure className="photo-plate overflow-hidden hidden lg:block group">
             <img src={RIVER} alt="Mangrove river in Langkawi" className="h-40 w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]" loading="lazy" />
             <figcaption className="plate-caption">
               <span>Mangrove river, Kilim Geopark</span>
@@ -144,7 +144,7 @@ export default function Briefing() {
             </figcaption>
           </figure>
 
-          <figure className="photo-plate overflow-hidden hidden lg:block group cursor-pointer">
+          <figure className="photo-plate overflow-hidden hidden lg:block group">
             <img src={JETTY} alt="Clan jetty houses on stilts over the sea" className="h-40 w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]" loading="lazy" />
             <figcaption className="plate-caption">
               <span>Where your town lives · clan jetty</span>

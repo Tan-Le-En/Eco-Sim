@@ -10,6 +10,28 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+const STORAGE_KEY = "theme";
+
+/** Only accept known values; anything else falls back to the default. */
+function readStoredTheme(): Theme | null {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored === "light" || stored === "dark") return stored;
+  } catch {
+    /* storage unavailable */
+  }
+  return null;
+}
+
+/** System preference when the visitor has never chosen a theme. */
+function systemTheme(): Theme {
+  return typeof window !== "undefined" &&
+    window.matchMedia &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+}
+
 interface ThemeProviderProps {
   children: React.ReactNode;
   defaultTheme?: Theme;
@@ -21,38 +43,38 @@ export function ThemeProvider({
   defaultTheme = "light",
   switchable = false,
 }: ThemeProviderProps) {
+  // The index.html pre-paint script already applied the same decision, so
+  // first state and first paint agree — no flash either way.
   const [theme, setTheme] = useState<Theme>(() => {
-    if (switchable) {
-      const stored = localStorage.getItem("theme");
-      return (stored as Theme) || defaultTheme;
-    }
-    return defaultTheme;
+    if (!switchable) return defaultTheme;
+    return readStoredTheme() ?? (defaultTheme === "light" ? systemTheme() : defaultTheme);
   });
 
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
-
+    root.classList.toggle("dark", theme === "dark");
+    root.style.colorScheme = theme;
     if (switchable) {
-      localStorage.setItem("theme", theme);
+      try {
+        localStorage.setItem(STORAGE_KEY, theme);
+      } catch {
+        /* persistence is best-effort */
+      }
     }
   }, [theme, switchable]);
 
   const toggleTheme = switchable
     ? () => {
-        setTheme(prev => (prev === "light" ? "dark" : "light"));
+        setTheme((prev) => (prev === "light" ? "dark" : "light"));
       }
     : undefined;
 
-  return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, switchable }}>
-      {children}
-    </ThemeContext.Provider>
+  const value = React.useMemo(
+    () => ({ theme, toggleTheme, switchable }),
+    [theme, toggleTheme, switchable],
   );
+
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme() {

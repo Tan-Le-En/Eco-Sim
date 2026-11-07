@@ -379,7 +379,7 @@ export default function Simulator() {
         </div>
       </div>
 
-      <main className="flex-1 px-4 sm:px-6 lg:px-8 py-3 grid lg:grid-cols-[1fr_340px] gap-4 max-w-[1500px] w-full lg:h-[calc(100vh-8.5rem)] lg:overflow-hidden overflow-y-auto">
+      <main id="main" tabIndex={-1} className="flex-1 px-4 sm:px-6 lg:px-8 py-3 grid lg:grid-cols-[1fr_340px] gap-4 max-w-[1500px] w-full lg:h-[calc(100vh-8.5rem)] lg:overflow-hidden overflow-y-auto outline-none">
         {/* Left: mood → map → indicators → trajectory */}
         <div className="space-y-3 min-w-0 flex flex-col lg:overflow-hidden">
           {indicatorsAtDisplay && <TownMood indicators={indicatorsAtDisplay} year={displayYear} />}
@@ -637,7 +637,7 @@ export default function Simulator() {
                         {displayYear === 2026 ? (
                           <>
                             <p className="font-display italic text-2xl sm:text-3xl leading-snug">The town begins.</p>
-                            <p className="mt-1 text-sm text-muted-foreground">One million people. 100 points a year.</p>
+                            <p className="mt-1 text-sm text-muted-foreground">One million people. 100 points to spend.</p>
                           </>
                         ) : eventsHere.length > 0 ? (
                           <div className="space-y-1">
@@ -770,7 +770,7 @@ function moodPhoto(score: number): string {
 function moodPhotoAlt(score: number): string {
   return score >= 58
     ? "Fishermen with nets at dawn, Kuala Kedah. The town is alive."
-    : "Fisherman casting net at dusk. The town still needs help.";
+    : "Fisherman casting a net at first light. The town still needs help.";
 }
 
 function quietLine(year: number): string {

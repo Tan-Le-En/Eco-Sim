@@ -2,9 +2,8 @@
  * ECO//SIM — Privacy notice (Editorial Field Study v11)
  * Style: plain, honest, short. Same paper/dossier language as the rest of the
  * site. No legal theatre: state what we collect, what we never collect, and
- * what stays on the device.
+ * what stays on the device. Matches what the app actually does today.
  */
-import { useEffect } from "react";
 import SiteFooter from "@/components/SiteFooter";
 import { Link } from "wouter";
 import PageMeta from "@/components/PageMeta";
@@ -12,18 +11,13 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
 export default function Privacy() {
-  useEffect(() => {
-    document.title = "Privacy · ECO//SIM";
-  }, []);
-
   return (
     <div className="min-h-screen flex flex-col">
-
       <PageMeta
         title="ECO//SIM — Privacy notice"
-        description="What this site keeps and what it does not: nothing is required, analytics is optional, nothing is ever sold."
+        description="What this site keeps and what it does not: nothing is required, nothing is collected today, nothing is ever sold."
       />
-      <main className="container py-12 flex-1 max-w-3xl px-6 sm:px-10">
+      <main id="main" tabIndex={-1} className="container py-12 flex-1 max-w-3xl px-6 sm:px-10 outline-none">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -50,25 +44,27 @@ export default function Privacy() {
 
           <section className="mb-10 space-y-4">
             <h2 className="font-display text-lg font-semibold">
-              2. What analytics records, if you allow it
+              2. What stays on your device
             </h2>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              We use a lightweight privacy-friendly analytics service. If you
-              accept analytics cookies, it records page views and anonymous
-              aggregate usage (for example, how often the simulator is run). It
-              does not collect your name, email, IP address in a way that is
-              linked to you, or any content you type into the contact form.
-              You can decline analytics at any time by clearing this site's
-              storage in your browser settings.
+              Your plans, chosen theme, and cookie preference live in your
+              browser's local storage. Clearing this site's storage in your
+              browser settings erases them completely and instantly.
             </p>
           </section>
 
           <section className="mb-10 space-y-4">
-            <h2 className="font-display text-lg font-semibold">3. The contact form</h2>
+            <h2 className="font-display text-lg font-semibold">
+              3. Analytics: off today, optional later
+            </h2>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              If you send us a message, we receive the text you wrote and the
-              email you chose to include. We do not sell or share it. We only
-              reply about the product you asked about.
+              The site currently sends nothing anywhere: no analytics, no
+              trackers, no cookies for tracking. The banner asks whether
+              we may switch on optional, privacy-friendly analytics in the
+              future — your answer is stored so the choice sticks. If that
+              ever happens, it would record only anonymous aggregate usage
+              (for example, how often the simulator is run), never names,
+              emails, or anything you type into the simulation.
             </p>
           </section>
 
@@ -85,8 +81,12 @@ export default function Privacy() {
           <section className="mb-10 space-y-4">
             <h2 className="font-display text-lg font-semibold">5. Questions</h2>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Any question about privacy can be asked through the contact form
-              on this site, or via the floating contact widget on any page.
+              Every equation and number is published on the{" "}
+              <Link href="/transparency" className="underline underline-offset-2 hover:text-foreground">
+                Transparency page
+              </Link>
+              . There is no contact form today; if that changes, this notice
+              changes first.
             </p>
           </section>
 

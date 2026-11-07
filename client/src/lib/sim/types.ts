@@ -35,6 +35,18 @@ export const DEFAULT_CONTROLS: Controls = {
   industrialActivity: 55,
 };
 
+/** Legal range for each lever; the single source of truth for sliders and validation. */
+export const CONTROL_RANGES: Record<keyof Controls, { min: number; max: number }> = {
+  renewableElectricity: { min: 0, max: 100 },
+  publicTransport: { min: 0, max: 100 },
+  mangroveRestoration: { min: 0, max: 30 },
+  coastalDevelopment: { min: 0, max: 30 },
+  waterEfficiency: { min: 0, max: 60 },
+  wasteRecycling: { min: 0, max: 60 },
+  fishingPressure: { min: 0, max: 100 },
+  industrialActivity: { min: 0, max: 100 },
+};
+
 /** The 7 output indicators (0–100 scale; climate pressure: lower is better). */
 export interface Indicators {
   climatePressure: number; // lower is better

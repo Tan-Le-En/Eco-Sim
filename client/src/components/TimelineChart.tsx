@@ -29,7 +29,12 @@ interface TimelineChartProps {
   highlightKeys?: (keyof Indicators)[];
 }
 
-const TICK = { fontFamily: "IBM Plex Mono", fontSize: 10, fontWeight: 400, fill: "oklch(0.45 0.02 65)" };
+/**
+ * Neutral chart-paper inks. Mid-toned literals (not --ink vars) so they stay
+ * legible on both the light card and the dark archive plate; trace colors
+ * come from INDICATOR_META.
+ */
+const TICK = { fontFamily: "IBM Plex Mono", fontSize: 10, fontWeight: 400, fill: "oklch(0.62 0.015 75)" };
 
 /**
  * Custom tooltip: shows indicator values at the hovered year plus a plain-language
@@ -102,22 +107,22 @@ export default function TimelineChart({ data, className, highlightKeys }: Timeli
     <div className={`border border-border bg-card p-3 ${className ?? ""}`}>
       <ResponsiveContainer width="100%" height={260}>
         <LineChart data={data} margin={{ top: 8, right: 12, left: -18, bottom: 0 }}>
-          <CartesianGrid stroke="oklch(0.235 0.015 65 / 0.1)" strokeDasharray="1 3" />
+          <CartesianGrid stroke="oklch(0.55 0.015 75 / 0.22)" strokeDasharray="1 3" />
           <XAxis
             dataKey="year"
             tick={TICK}
             ticks={[2026, 2030, 2035, 2040, 2045, 2050]}
-            stroke="oklch(0.235 0.015 65 / 0.35)"
+            stroke="oklch(0.55 0.015 75 / 0.45)"
           />
           <YAxis
             domain={[0, 100]}
             tick={TICK}
             ticks={[0, 25, 50, 75, 100]}
-            stroke="oklch(0.235 0.015 65 / 0.35)"
+            stroke="oklch(0.55 0.015 75 / 0.45)"
           />
           <Tooltip
             content={<CausalTooltip baselineRow={baselineRow} />}
-            cursor={{ stroke: "oklch(0.45 0.02 65 / 0.3)", strokeWidth: 1 }}
+            cursor={{ stroke: "oklch(0.55 0.015 75 / 0.5)", strokeWidth: 1 }}
           />
           <Legend
             wrapperStyle={{ paddingTop: 8 }}
@@ -133,7 +138,7 @@ export default function TimelineChart({ data, className, highlightKeys }: Timeli
                     fontFamily: "IBM Plex Mono",
                     fontSize: 10,
                     fontWeight: 500,
-                    color: "oklch(0.35 0.02 65)",
+                    color: "oklch(0.62 0.015 75)",
                     textDecoration: hidden[value as string] ? "line-through" : "none",
                     opacity: hidden[value as string] ? 0.45 : 1,
                   }}
@@ -143,7 +148,7 @@ export default function TimelineChart({ data, className, highlightKeys }: Timeli
               </button>
             )}
           />
-          <ReferenceLine y={50} stroke="oklch(0.235 0.015 65 / 0.18)" strokeDasharray="3 4" />
+          <ReferenceLine y={50} stroke="oklch(0.55 0.015 75 / 0.35)" strokeDasharray="3 4" />
           {keys.map((k) => (
             <Line
               key={k}

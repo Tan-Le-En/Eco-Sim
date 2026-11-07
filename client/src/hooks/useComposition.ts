@@ -1,5 +1,4 @@
-import { useRef } from "react";
-import { usePersistFn } from "./usePersistFn";
+import { useCallback, useRef } from "react";
 
 export interface UseCompositionReturn<
   T extends HTMLInputElement | HTMLTextAreaElement,
@@ -20,6 +19,12 @@ export interface UseCompositionOptions<
 
 type TimerResponse = ReturnType<typeof setTimeout>;
 
+/**
+ * IME-composition guard for text inputs in dialogs (CJK input methods):
+ * while the composition is live, Escape/Enter must not bubble to dialog
+ * handlers, and Safari's compositionend-before-change quirk is absorbed
+ * with a double timeout.
+ */
 export function useComposition<
   T extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement,
 >(options: UseCompositionOptions<T> = {}): UseCompositionReturn<T> {
@@ -33,7 +38,7 @@ export function useComposition<
   const timer = useRef<TimerResponse | null>(null);
   const timer2 = useRef<TimerResponse | null>(null);
 
-  const onCompositionStart = usePersistFn((e: React.CompositionEvent<T>) => {
+  const clearTimers = () => {
     if (timer.current) {
       clearTimeout(timer.current);
       timer.current = null;
@@ -42,35 +47,47 @@ export function useComposition<
       clearTimeout(timer2.current);
       timer2.current = null;
     }
-    c.current = true;
-    originalOnCompositionStart?.(e);
-  });
+  };
 
-  const onCompositionEnd = usePersistFn((e: React.CompositionEvent<T>) => {
-    // 使用两层 setTimeout 来处理 Safari 浏览器中 compositionEnd 先于 onKeyDown 触发的问题
-    timer.current = setTimeout(() => {
-      timer2.current = setTimeout(() => {
-        c.current = false;
+  const onCompositionStart = useCallback(
+    (e: React.CompositionEvent<T>) => {
+      clearTimers();
+      c.current = true;
+      originalOnCompositionStart?.(e);
+    },
+    [originalOnCompositionStart],
+  );
+
+  const onCompositionEnd = useCallback(
+    (e: React.CompositionEvent<T>) => {
+      // Two nested timeouts: Safari fires compositionEnd before the final
+      // change event, so `composing` must stay true a beat longer.
+      timer.current = setTimeout(() => {
+        timer2.current = setTimeout(() => {
+          c.current = false;
+        });
       });
-    });
-    originalOnCompositionEnd?.(e);
-  });
+      originalOnCompositionEnd?.(e);
+    },
+    [originalOnCompositionEnd],
+  );
 
-  const onKeyDown = usePersistFn((e: React.KeyboardEvent<T>) => {
-    // 在 composition 状态下，阻止 ESC 和 Enter（非 shift+Enter）事件的冒泡
-    if (
-      c.current &&
-      (e.key === "Escape" || (e.key === "Enter" && !e.shiftKey))
-    ) {
-      e.stopPropagation();
-      return;
-    }
-    originalOnKeyDown?.(e);
-  });
+  const onKeyDown = useCallback(
+    (e: React.KeyboardEvent<T>) => {
+      // While composing, stop Escape and Enter (without Shift) from bubbling.
+      if (
+        c.current &&
+        (e.key === "Escape" || (e.key === "Enter" && !e.shiftKey))
+      ) {
+        e.stopPropagation();
+        return;
+      }
+      originalOnKeyDown?.(e);
+    },
+    [originalOnKeyDown],
+  );
 
-  const isComposing = usePersistFn(() => {
-    return c.current;
-  });
+  const isComposing = useCallback(() => c.current, []);
 
   return {
     onCompositionStart,

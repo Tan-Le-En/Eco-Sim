@@ -6,7 +6,6 @@
  * debugging; production visitors never see raw errors.
  */
 import { Component, useState } from "react";
-import { cn } from "@/lib/utils";
 import { AlertTriangle, Home, RefreshCw } from "lucide-react";
 
 export default function ErrorBoundary({
@@ -49,7 +48,7 @@ function FriendlyErrorPage({ error }: { error: Error | null }) {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <main className="flex-1 flex items-center justify-center px-6 py-16">
+      <main id="main" tabIndex={-1} className="flex-1 flex items-center justify-center px-6 py-16 outline-none">
         <div className="max-w-md w-full text-center">
           <div className="font-data text-[11px] tracking-[0.16em] uppercase text-muted-foreground mb-5">
             Field report · something broke
@@ -90,19 +89,19 @@ function FriendlyErrorPage({ error }: { error: Error | null }) {
             </button>
           )}
           {showNote && isDev && (
-            <pre className="mt-3 text-left text-[11px] text-muted-foreground bg-secondary text-secondary-foreground p-4 rounded overflow-auto max-h-56">
+            <pre className="mt-3 text-left text-[11px] text-muted-foreground bg-secondary text-secondary-foreground p-4 overflow-auto max-h-56">
               {error?.stack ?? error?.message}
             </pre>
           )}
         </div>
       </main>
-      <footer className={cn("border-t border-border")}>
+      <footer className="border-t border-border">
         <div className="px-6 sm:px-10 lg:px-14 py-5 flex flex-wrap items-center justify-between gap-3">
           <span className="font-data text-[11px] tracking-[0.12em] uppercase text-muted-foreground">
             ECO//SIM · Teluk Nusa · an open educational model, not real-world advice
           </span>
           <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
-            © 2026 · Last updated · Aug 18, 2026
+            © 2026 Tan-Le-En
           </span>
         </div>
       </footer>

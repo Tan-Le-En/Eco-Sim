@@ -17,20 +17,9 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
-import { Controls, KID_CONTROLS } from "@/lib/sim/types";
+import { CONTROL_RANGES, Controls, KID_CONTROLS } from "@/lib/sim/types";
 
 export type ControlKey = keyof Controls;
-
-const SLIDER_RANGES: Record<ControlKey, { min: number; max: number; step: number; defaultVal: number }> = {
-  renewableElectricity: { min: 0, max: 100, step: 1, defaultVal: 30 },
-  publicTransport: { min: 0, max: 100, step: 1, defaultVal: 10 },
-  mangroveRestoration: { min: 0, max: 30, step: 1, defaultVal: 0 },
-  coastalDevelopment: { min: 0, max: 30, step: 1, defaultVal: 10 },
-  waterEfficiency: { min: 0, max: 60, step: 1, defaultVal: 10 },
-  wasteRecycling: { min: 0, max: 60, step: 1, defaultVal: 20 },
-  fishingPressure: { min: 0, max: 100, step: 1, defaultVal: 60 },
-  industrialActivity: { min: 0, max: 100, step: 1, defaultVal: 55 },
-};
 
 const ICONS: Record<ControlKey, LucideIcon> = {
   renewableElectricity: Sun,
@@ -65,7 +54,7 @@ export default function ControlPanel({ controls, onChange, onReset }: ControlPan
     <div className="border border-border bg-card divide-y divide-border/60">
       {(Object.keys(KID_CONTROLS) as ControlKey[]).map((key, idx) => {
         const kid = KID_CONTROLS[key];
-        const r = SLIDER_RANGES[key];
+        const r = CONTROL_RANGES[key];
         const value = controls[key];
         const Ico = ICONS[key];
         return (
@@ -89,7 +78,7 @@ export default function ControlPanel({ controls, onChange, onReset }: ControlPan
               value={[value]}
               min={r.min}
               max={r.max}
-              step={r.step}
+              step={1}
               onValueChange={([v]) => onChange(key, v)}
               className="mt-2"
             />

@@ -34,7 +34,6 @@ interface IndicatorStripProps {
   indicators: Indicators;
   baseline: Indicators;
   history: { indicators: Indicators }[];
-  compact?: boolean;
 }
 
 function sparkPath(values: number[], width: number, height: number): string {
@@ -60,7 +59,8 @@ export default function IndicatorStrip({ indicators, baseline, history }: Indica
         const Icon = ICONS[k];
         const value = indicators[k];
         const baselineVal = baseline[k];
-        const delta = value - baselineVal;
+        // Rounded before sign/format decisions so float noise never prints "−0.0".
+        const delta = Number((value - baselineVal).toFixed(1));
         const good = meta.higherIsBetter ? delta >= 0 : delta <= 0;
         const isGoodNow = meta.higherIsBetter ? value >= 60 : value <= 45;
         const sparkValues = history.map((h) => h.indicators[k]).concat(value).slice(-25);
@@ -70,7 +70,10 @@ export default function IndicatorStrip({ indicators, baseline, history }: Indica
             key={k}
             type="button"
             onClick={() => setOpenKey(isOpen ? null : k)}
+            aria-expanded={isOpen}
+            aria-controls={`indicator-story-${k}`}
             aria-label={`${kid.kidName}: ${value.toFixed(0)}. ${isOpen ? "Close story" : "Tap for the story"}`}
+            data-print-keep="true"
             className={`w-full text-left px-3.5 py-2.5 transition-colors ${isOpen ? "bg-secondary/50" : "hover:bg-secondary/30"}`}
           >
             <div className="flex items-center gap-3">
@@ -78,7 +81,6 @@ export default function IndicatorStrip({ indicators, baseline, history }: Indica
               <span className="font-data text-[11px] tracking-[0.06em] uppercase w-28 sm:w-36 shrink-0">{kid.kidName}</span>
               <span
                 className="font-data text-[15px] tabular-nums font-semibold w-8 text-right"
-                style={{ transition: "opacity 150ms ease" }}
               >
                 {value.toFixed(0)}
               </span>
@@ -112,6 +114,7 @@ export default function IndicatorStrip({ indicators, baseline, history }: Indica
               />
             </div>
             <div
+              id={`indicator-story-${k}`}
               className="grid transition-all duration-200"
               style={{
                 gridTemplateRows: isOpen ? "1fr" : "0fr",

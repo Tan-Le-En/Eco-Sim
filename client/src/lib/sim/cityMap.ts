@@ -1,6 +1,6 @@
 /**
  * ECO//SIM — City map (20×20 grid)
- * Style note: generated deterministic zone map of fictional Nusa Bay.
+ * Style note: generated deterministic zone map of fictional Teluk Nusa.
  * Geography matches the illustrated field map: SEA on the EAST forming a
  * protected bay (teluk) curving into the south; MANGROVE belt hugging the
  * southeast shore; RIVER flowing west→east through the middle and emptying
@@ -22,8 +22,7 @@ export type CellType =
   | "highIncome"
   | "industrial"
   | "agriculture"
-  | "forest"
-  | "park";
+  | "forest";
 
 export interface MapCell {
   id: string;
@@ -115,7 +114,7 @@ function elevationFor(x: number, y: number, type: CellType): number {
   return Math.min(12, 0.8 + (19 - x) * 0.18 + (19 - y) * 0.15);
 }
 
-function floodExposureFor(x: number, y: number, type: CellType): number {
+function floodExposureFor(_x: number, _y: number, type: CellType): number {
   if (type === "ocean") return 0;
   if (type === "river") return 0.5;
   if (type === "mangrove" || type === "wetland") return 0.8;
@@ -137,8 +136,6 @@ function biodiversityFor(type: CellType): number {
       return 0.8;
     case "forest":
       return 0.95;
-    case "park":
-      return 0.6;
     case "river":
       return 0.55;
     case "agriculture":
@@ -201,8 +198,6 @@ function populationFor(type: CellType, x: number, y: number): number {
       return 600;
     case "agriculture":
       return 900;
-    case "park":
-      return 0;
     default:
       return 0;
   }
@@ -215,8 +210,6 @@ function greenCoverFor(type: CellType, rng: () => number): number {
       return 0.9;
     case "wetland":
       return 0.7;
-    case "park":
-      return 0.85;
     case "agriculture":
       return 0.75;
     case "beach":
@@ -255,7 +248,6 @@ function imperviousFor(type: CellType): number {
     case "forest":
     case "mangrove":
     case "wetland":
-    case "park":
       return 0.0;
     case "river":
     case "ocean":
@@ -272,7 +264,6 @@ export const CELL_COLORS: Record<CellType, string> = {
   wetland: "#7cc58f",
   beach: "#f0dba3",
   forest: "#2f8f52",
-  park: "#8fd48f",
   urbanCore: "#e8864a",
   residential: "#c9a87e",
   residentialLow: "#d9a05c",
@@ -288,7 +279,6 @@ export const CELL_LABELS: Record<CellType, string> = {
   wetland: "Wetlands",
   beach: "Pantai (Beach)",
   forest: "Hutan (Forest)",
-  park: "Park",
   urbanCore: "Pusat bandar (City core)",
   residential: "Houses",
   residentialLow: "Kampung houses",

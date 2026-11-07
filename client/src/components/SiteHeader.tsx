@@ -7,8 +7,9 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Menu, X, Sun, Moon } from "lucide-react";
+import { ArrowLeft, Menu, X, Sun, Moon, Search } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import SiteSearch from "@/components/SiteSearch";
 
 export const NAV = [
   { href: "/", label: "Home" },
@@ -23,29 +24,36 @@ export default function SiteHeader({ backHref, bare }: { backHref?: string; bare
   const [location] = useLocation();
   const { theme, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const [searchOpen, setSearchOpen] = useState(false);
 
   // Close the mobile drawer on route change (single-screen habit)
   useEffect(() => {
     setMenuOpen(false);
   }, [location]);
 
-  // Lock scroll while the drawer is open
+  // Lock scroll while the drawer is open — restore whatever was set before.
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
+    if (!menuOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = previous;
     };
   }, [menuOpen]);
 
-  // Keyboard: Escape closes the drawer
+  // Keyboard: Escape closes the drawer (listener only while open)
   useEffect(() => {
+    if (!menuOpen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setMenuOpen(false);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [menuOpen]);
+
+  // In bare/immersive mode the search palette stays unmounted so its
+  // Cmd/Ctrl+K listener can't interrupt reel keyboard controls.
+  const showSearch = !bare;
 
   const dark = theme === "dark";
 
@@ -79,6 +87,17 @@ export default function SiteHeader({ backHref, bare }: { backHref?: string; bare
               {n.label}
             </Link>
           ))}
+          {showSearch && (
+            <button
+              onClick={() => setSearchOpen(true)}
+              className="btn-press inline-flex items-center gap-1.5 font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground border border-transparent hover:border-border hover:text-foreground px-3 py-2 transition-colors"
+              aria-label="Search the field study"
+              title="Search (Cmd/Ctrl+K)"
+            >
+              <Search className="w-3.5 h-3.5" />
+              <span className="hidden xl:inline">Search</span>
+            </button>
+          )}
           <button
             onClick={toggleTheme}
             className="btn-press inline-flex items-center font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground border border-transparent hover:border-border hover:text-foreground px-3 py-2 transition-colors"
@@ -91,6 +110,15 @@ export default function SiteHeader({ backHref, bare }: { backHref?: string; bare
 
         {/* Mobile controls */}
         <div className="flex md:hidden items-center gap-1">
+          {showSearch && (
+            <button
+              onClick={() => setSearchOpen(true)}
+              className="btn-press inline-flex items-center p-2 text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Search the field study"
+            >
+              <Search className="w-4 h-4" />
+            </button>
+          )}
           <button
             onClick={toggleTheme}
             className="btn-press inline-flex items-center p-2 text-muted-foreground hover:text-foreground transition-colors"
@@ -145,6 +173,7 @@ export default function SiteHeader({ backHref, bare }: { backHref?: string; bare
         )}
       </AnimatePresence>
 
+      {showSearch && <SiteSearch open={searchOpen} onOpenChange={setSearchOpen} />}
     </header>
   );
 }

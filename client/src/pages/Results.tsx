@@ -3,17 +3,20 @@
  * A field report: photo verdict plate, mono score register, three goal cells,
  * plain-language worked/failed, causal chain, and collapsed expert appendix
  * (breakdown, indicator table, plan comparison). Real photography, no AI art.
+ *
+ * Honest data rule: the report only ever shows a simulation that actually ran
+ * (this session's run, or a saved plan). Visitors who never ran the
+ * simulator get an explicit empty state — never a fabricated report.
  */
 import { useMemo, useState } from "react";
 import SiteFooter from "@/components/SiteFooter";
 import { Link, useLocation } from "wouter";
 import PageMeta from "@/components/PageMeta";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
   ArrowLeft,
   RefreshCw,
   Trash2,
-  Share2,
   Check,
   X,
   ChevronDown,
@@ -23,35 +26,87 @@ import CausalChain from "@/components/CausalChain";
 import CopyButton from "@/components/CopyButton";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { useSim } from "@/contexts/SimContext";
-import { runSimulation } from "@/lib/sim/engine";
-import { INDICATOR_KEYS, INDICATOR_META, KID_CONTROLS, KID_GOALS, KID_INDICATORS, MISSION_TARGETS, SimulationResult } from "@/lib/sim/types";
+import {
+  CONTROL_RANGES,
+  INDICATOR_KEYS,
+  INDICATOR_META,
+  KID_CONTROLS,
+  KID_GOALS,
+  KID_INDICATORS,
+  MISSION_TARGETS,
+  SimulationResult,
+} from "@/lib/sim/types";
 
-const SUNSET_PHOTO = "/storage/fishermen-dawn-nets-real_81f6e009.jpeg";
-const DAWN_PHOTO = "/storage/fishermen-net-cast-real_a6fc104d.jpg";
+const LIGHT_NETS_PHOTO = "/storage/fishermen-dawn-nets-real_81f6e009.jpeg";
+const NET_CAST_PHOTO = "/storage/fishermen-net-cast-real_a6fc104d.jpg";
+
+interface Derived {
+  base: SimulationResult["baselineYear"]["indicators"];
+  final: SimulationResult["years"][number]["indicators"];
+  budgetFinal: number;
+  populationFinal: number;
+  goalsMet: boolean[];
+}
+
+function deriveResult(latest: SimulationResult): Derived {
+  const base = latest.baselineYear.indicators;
+  const lastYear = latest.years[latest.years.length - 1];
+  const final = lastYear.indicators;
+  const budgetFinal = lastYear.budgetRemaining;
+  const populationFinal = lastYear.population;
+  const goalsMet = KID_GOALS.map((g) =>
+    g.keys.every((k) => {
+      const t = MISSION_TARGETS.find((x) => x.key === k);
+      if (!t) return true; // public health & economy have no hard target
+      const v = final[k];
+      return t.direction === "above" ? v >= t.threshold : v <= t.threshold;
+    }),
+  );
+  return { base, final, budgetFinal, populationFinal, goalsMet };
+}
 
 export default function Results() {
-  const { currentResult, controls, scenarios, deleteScenario } = useSim();
+  const { currentResult, scenarios, deleteScenario } = useSim();
   const [, navigate] = useLocation();
+  const reducedMotion = useReducedMotion();
 
-  // Never call context run() during render — it calls setCurrentResult and
-  // triggers React's setState-during-render guard. Execute the pure engine
-  // directly instead (no side effects).
-  const fallback = useMemo(() => runSimulation(controls), [controls]);
-  const latest = currentResult ?? scenarios[0]?.result ?? fallback;
+  // All hooks run before any conditional return (Rules of Hooks).
+  const [expertOpen, setExpertOpen] = useState<Record<string, boolean>>({
+    appendix: false,
+    breakdown: true,
+    table: false,
+    comparison: false,
+  });
 
-  if (!latest) {
+  // This session's run, else the most recent saved plan — never a fake one.
+  const latest = currentResult ?? scenarios[0]?.result ?? null;
+  const derived = useMemo(() => (latest ? deriveResult(latest) : null), [latest]);
+
+  const toggle = (k: string) => setExpertOpen((o) => ({ ...o, [k]: !o[k] }));
+  const isAnyExpertOpen = Boolean(expertOpen.appendix);
+
+  if (!latest || !derived) {
     return (
-      <div className="min-h-screen flex flex-col">
-
-      <PageMeta
-        title="ECO//SIM — Your field report · what changed and why"
-        description="Your 2050 score, the causal chain behind every number, and a side-by-side comparison of up to four saved plans."
-      />
+      <div className="min-h-screen flex flex-col bg-background">
+        <PageMeta
+          title="ECO//SIM — Final report"
+          description="Run the simulator to 2050 and your field report appears here: the 2050 score, the causal chain behind every number, and plan comparisons."
+        />
         <SiteHeader backHref="/simulator" />
-        <main className="px-6 py-16 flex-1 flex flex-col items-center justify-center text-center gap-4">
-          <h1 className="font-display text-2xl font-semibold">No report yet</h1>
-          <p className="text-muted-foreground text-sm max-w-md">
-            Run the simulation to 2050 first, or return to the simulator to play.
+        <main
+          id="main"
+          tabIndex={-1}
+          className="px-6 py-16 flex-1 flex flex-col items-center justify-center text-center gap-4 outline-none"
+        >
+          <span className="font-data text-[10px] tracking-[0.16em] uppercase text-muted-foreground">
+            Field report · empty folder
+          </span>
+          <h1 className="font-display text-2xl sm:text-3xl font-semibold">No report yet</h1>
+          <p className="text-muted-foreground text-sm max-w-md leading-relaxed">
+            This page fills itself in after you run the town to 2050.
+            Open the simulator, make a few decisions, press <em>Run</em> — and the
+            score, the story, and the causal chain appear here. Saved plans
+            (kept on this device) also open here.
           </p>
           <Link
             href="/simulator"
@@ -60,45 +115,33 @@ export default function Results() {
             Go to simulator <ArrowLeft className="w-4 h-4 rotate-180" />
           </Link>
         </main>
+        <SiteFooter />
       </div>
     );
   }
 
-  const base = latest.baselineYear.indicators;
-  const final = latest.years[latest.years.length - 1].indicators;
-  const budgetFinal = latest.years[latest.years.length - 1].budgetRemaining;
-
-  const goalsMet = useMemo(
-    () =>
-      KID_GOALS.map((g) =>
-        g.keys.every((k) => {
-          const t = MISSION_TARGETS.find((x) => x.key === k);
-          const v = final[k];
-          return t ? (t.direction === "above" ? v >= t.threshold : v <= t.threshold) : true;
-        }),
-      ),
-    [final],
-  );
+  const { base, final, budgetFinal, populationFinal, goalsMet } = derived;
   const happy = goalsMet.filter(Boolean).length >= 2;
-  const photo = happy ? SUNSET_PHOTO : DAWN_PHOTO;
-  const verdict = happy
-    ? "Teluk Nusa held its own."
-    : "Teluk Nusa struggled.";
+  const photo = happy ? LIGHT_NETS_PHOTO : NET_CAST_PHOTO;
+  const verdict = happy ? "Teluk Nusa held its own." : "Teluk Nusa struggled.";
 
-  const [expertOpen, setExpertOpen] = useState<Record<string, boolean>>({
-    appendix: false,
-    breakdown: true,
-    table: false,
-    comparison: false,
-  });
-  const toggle = (k: string) => setExpertOpen((o) => ({ ...o, [k]: !o[k] }));
-  const isAnyExpertOpen = Boolean(expertOpen.appendix);
+  const photoAlt = happy
+    ? "Fishermen working their nets at first light, 2050"
+    : "A fisherman casting a net at first light, 2050";
+  const photoCaption = happy
+    ? "Field photograph · the nets still go out, 2050"
+    : "Field photograph · 2050, work ahead";
 
   const shareText = `I scored ${latest.score.toFixed(1)}/100 protecting Teluk Nusa to 2050 on ECO//SIM. Try to beat it.`;
 
   const handleReplay = () => {
     navigate("/simulator");
   };
+
+  const entrance = (delay = 0) =>
+    reducedMotion
+      ? {}
+      : { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, transition: { delay, duration: 0.35, ease: [0.23, 1, 0.32, 1] as const } };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -107,17 +150,24 @@ export default function Results() {
         description={`Teluk Nusa 2050 Report: Score ${Math.round(latest.score)}. A summary of environmental and economic outcomes for a fictional Malaysian coastal town.`}
       />
       <SiteHeader backHref="/simulator" />
-      <main className="px-6 sm:px-10 lg:px-14 py-8 flex-1 space-y-8 max-w-[1280px] w-full">
+      <main id="main" tabIndex={-1} className="px-6 sm:px-10 lg:px-14 py-8 flex-1 space-y-8 max-w-[1280px] w-full mx-auto outline-none">
         {/* ── Verdict plate ── */}
         <motion.section
-          initial={{ opacity: 0, y: 12 }}
+          initial={reducedMotion ? undefined : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           className="grid lg:grid-cols-[46%_1fr] gap-0 border border-border"
         >
-            <figure className="photo-plate relative overflow-hidden min-h-[300px] lg:min-h-0 lg:h-full lg:aspect-auto">
-            <img src={photo} alt={happy ? "Teluk Nusa at sunset, 2050" : "Fishermen at dawn, 2050"} fetchPriority="high" decoding="async" className="absolute inset-0 h-full w-full object-cover object-center" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+          <figure className="photo-plate relative overflow-hidden min-h-[300px] lg:min-h-0 lg:h-full lg:aspect-auto">
+            <img
+              src={photo}
+              alt={photoAlt}
+              fetchPriority="high"
+              decoding="async"
+              className="absolute inset-0 h-full w-full object-cover object-center"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+            />
             <figcaption className="absolute bottom-0 left-0 right-0 bg-background font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground px-3 py-1.5 whitespace-normal sm:whitespace-nowrap sm:overflow-hidden sm:text-ellipsis">
-              Field photograph · {happy ? "Teluk Nusa · December 2050" : "Teluk Nusa · 2050, work ahead"}
+              {photoCaption}
             </figcaption>
           </figure>
 
@@ -147,7 +197,7 @@ export default function Results() {
                 </div>
                 <div>
                   <div className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">Population 2050</div>
-                  <div className="font-data text-xl tabular-nums">{latest.years[latest.years.length - 1].population.toLocaleString()}</div>
+                  <div className="font-data text-xl tabular-nums">{populationFinal.toLocaleString()}</div>
                 </div>
                 <div>
                   <div className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">Budget remaining</div>
@@ -156,7 +206,7 @@ export default function Results() {
                 <div>
                   <div className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">Goals reached</div>
                   <div className="font-data text-xl tabular-nums">
-                    {goalsMet.filter(Boolean).length} / 3
+                    {goalsMet.filter(Boolean).length} / {KID_GOALS.length}
                     <span className="text-muted-foreground text-xs"> · sea · town · people</span>
                   </div>
                 </div>
@@ -171,19 +221,28 @@ export default function Results() {
                       ) : (
                         <X className="w-4 h-4 text-vermilion shrink-0" aria-hidden="true" />
                       )}
-                      <span className="font-data text-[9px] sm:text-[10px] tracking-[0.06em] uppercase leading-tight whitespace-normal">{g.title}</span>
+                      <span className="font-data text-[10px] sm:text-[11px] tracking-[0.06em] uppercase leading-tight whitespace-normal">{g.title}</span>
                     </div>
                     <div className="space-y-0.5">
                       {g.keys.map((k) => (
                         <div key={k} className="flex items-center justify-between gap-1.5 text-[12px]">
                           <span className="text-muted-foreground truncate">{KID_INDICATORS[k].kidName}</span>
-                          <span className="font-data tabular-nums shrink-0">{final[k].toFixed(0)}</span>
+                          <span className="font-data tabular-nums shrink-0">
+                            {final[k].toFixed(0)}
+                            {!MISSION_TARGETS.some((t) => t.key === k) && (
+                              <span className="text-muted-foreground" title="No hard mission target">·</span>
+                            )}
+                          </span>
                         </div>
                       ))}
                     </div>
                   </div>
                 ))}
               </div>
+
+              <p className="font-data text-[10px] tracking-[0.06em] text-muted-foreground mt-2 leading-relaxed">
+                Healthy people &amp; good jobs (&middot; marks) have no pass/fail gate — they weight the score instead.
+              </p>
 
               <div className="flex flex-wrap gap-2 mt-5">
                 <CopyButton text={shareText} label="Share score" className="gap-1.5 px-4 py-2 text-[11px] tracking-[0.12em]" />
@@ -201,18 +260,14 @@ export default function Results() {
         {/* ── Worked / failed — plain-language account ── */}
         <section className="grid sm:grid-cols-2 gap-4">
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.08 }}
+            {...entrance(0.08)}
             className="border border-border border-l-2 border-l-emerald-700 bg-card p-5"
           >
             <div className="field-label mb-2 !text-emerald-800">Worked</div>
             <p className="text-[13px] leading-relaxed">{latest.biggestSuccess}</p>
           </motion.div>
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.14 }}
+            {...entrance(0.14)}
             className="border border-border border-l-2 border-l-vermilion bg-card p-5"
           >
             <div className="field-label mb-2 !text-vermilion">Failed</div>
@@ -230,6 +285,8 @@ export default function Results() {
         <section className="border-t border-border pt-6">
           <button
             onClick={() => toggle("appendix")}
+            aria-expanded={isAnyExpertOpen}
+            aria-controls="technical-appendix"
             className="btn-press w-full flex items-center justify-between gap-3 text-left py-2"
           >
             <div>
@@ -247,6 +304,7 @@ export default function Results() {
           <AnimatePresence>
             {isAnyExpertOpen && (
               <motion.div
+                id="technical-appendix"
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
@@ -256,13 +314,17 @@ export default function Results() {
                 <div className="border border-border bg-card">
                   <button
                     onClick={() => toggle("breakdown")}
+                    aria-expanded={expertOpen.breakdown}
+                    aria-controls="appendix-breakdown"
                     className="w-full text-left px-4 py-3 flex items-center justify-between font-data text-[11px] tracking-[0.14em] uppercase"
                   >
-                    Score breakdown <ChevronDown className={`w-4 h-4 transition-transform ${expertOpen.breakdown ? "rotate-180" : ""}`} />
+                    Score breakdown
+                    <ChevronDown className={`w-4 h-4 transition-transform ${expertOpen.breakdown ? "rotate-180" : ""}`} />
                   </button>
                   <AnimatePresence>
                     {expertOpen.breakdown && (
                       <motion.div
+                        id="appendix-breakdown"
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
@@ -284,9 +346,9 @@ export default function Results() {
                                 </div>
                                 <div className="h-1.5 bg-secondary">
                                   <motion.div
-                                    initial={{ width: 0 }}
-                                    animate={{ width: `${(row.points / (row.weight * 100)) * 100}%` }}
-                                    transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+                                    initial={reducedMotion ? undefined : { width: 0 }}
+                                    animate={{ width: `${Math.max(0, Math.min(100, (row.points / (row.weight * 100)) * 100))}%` }}
+                                    transition={{ duration: reducedMotion ? 0 : 0.6, ease: [0.23, 1, 0.32, 1] }}
                                     className="h-full"
                                     style={{ backgroundColor: meta.color }}
                                   />
@@ -313,13 +375,17 @@ export default function Results() {
                 <div className="border border-border bg-card">
                   <button
                     onClick={() => toggle("table")}
+                    aria-expanded={expertOpen.table}
+                    aria-controls="appendix-table"
                     className="w-full text-left px-4 py-3 flex items-center justify-between font-data text-[11px] tracking-[0.14em] uppercase"
                   >
-                    Indicator table · baseline → 2050 <ChevronDown className={`w-4 h-4 transition-transform ${expertOpen.table ? "rotate-180" : ""}`} />
+                    Indicator table · baseline → 2050
+                    <ChevronDown className={`w-4 h-4 transition-transform ${expertOpen.table ? "rotate-180" : ""}`} />
                   </button>
                   <AnimatePresence>
                     {expertOpen.table && (
                       <motion.div
+                        id="appendix-table"
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
@@ -338,19 +404,22 @@ export default function Results() {
                             <tbody>
                               {INDICATOR_KEYS.map((k) => {
                                 const meta = INDICATOR_META[k];
-                                const delta = final[k] - base[k];
+                                // Rounded before sign decisions — float noise never prints "−0.0".
+                                const delta = Number((final[k] - base[k]).toFixed(1));
                                 const good = meta.higherIsBetter ? delta >= 0 : delta <= 0;
                                 return (
                                   <tr key={k} className="border-b border-border/40">
-                                    <td className="py-2.5 pr-4 flex items-center gap-2">
-                                      <span className="w-2 h-2 shrink-0" style={{ backgroundColor: meta.color }} />
-                                      <span className="font-data text-[11px] uppercase tracking-wider">{meta.label}</span>
+                                    <td className="py-2.5 pr-4">
+                                      <span className="flex items-center gap-2">
+                                        <span className="w-2 h-2 shrink-0" style={{ backgroundColor: meta.color }} />
+                                        <span className="font-data text-[11px] uppercase tracking-wider">{meta.label}</span>
+                                      </span>
                                     </td>
                                     <td className="text-right tabular-nums text-muted-foreground px-3">{base[k].toFixed(0)}</td>
                                     <td className="text-right tabular-nums px-3">{final[k].toFixed(0)}</td>
                                     <td className="text-right tabular-nums px-3">
                                       <span className={`font-data text-[12px] ${good ? "text-emerald-700" : "text-vermilion"}`}>
-                                        {delta > 0 ? "+" : ""}{delta.toFixed(1)}
+                                        {delta === 0 ? "—" : delta > 0 ? "+" : ""}{delta.toFixed(1)}
                                       </span>
                                     </td>
                                   </tr>
@@ -367,13 +436,17 @@ export default function Results() {
                 <div className="border border-border bg-card">
                   <button
                     onClick={() => toggle("comparison")}
+                    aria-expanded={expertOpen.comparison}
+                    aria-controls="appendix-comparison"
                     className="w-full text-left px-4 py-3 flex items-center justify-between font-data text-[11px] tracking-[0.14em] uppercase"
                   >
-                    Compare saved plans <ChevronDown className={`w-4 h-4 transition-transform ${expertOpen.comparison ? "rotate-180" : ""}`} />
+                    Compare saved plans
+                    <ChevronDown className={`w-4 h-4 transition-transform ${expertOpen.comparison ? "rotate-180" : ""}`} />
                   </button>
                   <AnimatePresence>
                     {expertOpen.comparison && (
                       <motion.div
+                        id="appendix-comparison"
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
@@ -410,8 +483,7 @@ export default function Results() {
                               <div className="flex flex-wrap gap-x-3 gap-y-0.5">
                                 {(Object.entries(s.controls) as [keyof typeof s.controls, number][]).map(([k, v]) => {
                                   const meta = KID_CONTROLS[k];
-                                  const { min, max } = { min: 0, max: k === "mangroveRestoration" || k === "coastalDevelopment" ? 30 : k === "waterEfficiency" || k === "wasteRecycling" ? 60 : 100 };
-                                  const pct = Math.round((v / max) * 100);
+                                  const pct = Math.round((v / CONTROL_RANGES[k].max) * 100);
                                   return (
                                     <span key={k} className="font-data text-[10px] text-muted-foreground">
                                       {meta.kidName}: <span className="tabular-nums text-foreground">{pct}%</span>

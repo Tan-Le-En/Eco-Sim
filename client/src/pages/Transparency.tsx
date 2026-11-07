@@ -1,20 +1,22 @@
 /**
  * ECO//SIM — Scientific transparency page
- * Style: Deep Ocean Console — documentation dossier: published equations,
- * variable tables, units, score weights, and explicit model limits.
+ * Style: documentation dossier: published equations, variable tables, units,
+ * score weights, and explicit model limits. Every number here mirrors
+ * engine.ts — update both together.
  */
 import { Link } from "wouter";
 import PageMeta from "@/components/PageMeta";
 import SiteFooter from "@/components/SiteFooter";
 import { motion } from "framer-motion";
-import { ArrowRight, FlaskConical, Scale, Ban, FileText } from "lucide-react";
+import { ArrowRight, FlaskConical } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
+import { INDICATOR_META, Indicators } from "@/lib/sim/types";
 
 const EQUATIONS = [
   {
     title: "Population growth",
     formula: "P(t+1) = P(t) × (1 + r),  r = 0.012",
-    note: "Fixed growth plus a migration bonus from industry.",
+    note: "Fixed growth plus a small migration bonus when industry is busy.",
   },
   {
     title: "Renewable share of the grid",
@@ -24,37 +26,47 @@ const EQUATIONS = [
   {
     title: "Emissions accounting",
     formula: "E = E_ele + E_transport + E_industry + E_waste",
-    note: "Summed sectors vs ~8 Mt CO2e baseline.",
+    note: "Four sectors summed, vs an ~8 Mt CO2e baseline in 2026.",
   },
   {
     title: "Water balance",
-    formula: "security = supply − demand(fishing, industry, households) × efficiency",
-    note: "Rain varies. Drought years 2034 and 2043.",
+    formula: "security = 100 × supply ÷ demand, then × rainfall factor",
+    note: "Demand = residents + industry (water efficiency trims both; efficiency also expands supply). Supply grows slowly. Drought years: 2034 and 2043.",
   },
   {
     title: "Flood resilience",
-    formula: "resilience = natural defences(mangroves, wetlands) + investment − exposure(development, sea-level drift)",
-    note: "Mangroves buffer. Development erodes. Seas rise slowly.",
+    formula: "resilience = 70 − exposureCoast − seaLevelDrift + mangroveShelter + waterEfficiencyBonus",
+    note: "Development opens the coastline. Mangroves and wetlands shelter it. Early infrastructure only builds after year five.",
   },
   {
     title: "Biodiversity",
-    formula: "B(t+1) = B(t) + habitat gain − habitat loss − pollution loss",
-    note: "Recover slowly, degrade fast.",
+    formula: "B(t) = 62 + habitatGain × 12 − habitatLoss × 12 − pollutionLoss × 12 − drain × t",
+    note: "Habitat from mangroves; loss from coastal building and overfishing; pollution from waste. Recovers slowly, degrades fast.",
   },
   {
     title: "Public health",
-    formula: "health = f(air quality, water quality, heat exposure, service access)",
-    note: "Rewards a balanced city.",
+    formula: "health = 72 − heatRisk − pollutionRisk + transitBonus",
+    note: "Heat rises with urbanisation, falls with tree cover and transit. Pollution follows industry, fossil power, and waste.",
   },
   {
     title: "Equity",
-    formula: "equity = equal distribution of benefits − unequal exposure to flood & heat risk",
-    note: "Exposure stays coastal unless transit and housing reach it.",
+    formula: "equity = 55 + benefitsKampung − burdensKampung",
+    note: "Benefits: transit, flood protection, health. Burdens: pricier renewables during rollout, coastal flood exposure, industrial pollution on the same shore.",
+  },
+  {
+    title: "Economic wellbeing",
+    formula: "wellbeing = 61 + industrialOutput + transitBenefit − infrastructureCost − disasterDamage − overfishingCollapse",
+    note: "Industry pays the town; everything else costs it. A collapsed fishery (pressure above 85 from year 2038) drains it.",
+  },
+  {
+    title: "Treasury",
+    formula: "balance(t+1) = balance(t) + revenue − spend,  revenue = 1 + industry% × 5",
+    note: "You start with 100 budget points in 2026 — the pot for all 25 years, not per year. Revenue only walks in when factories work: 1–6 pts/yr.",
   },
   {
     title: "Overall score",
-    formula: "score = Σ weight_i × value_i − penalties",
-    note: "Climate 0.20, biodiversity 0.15, water 0.15, flood 0.15, health 0.15, economy 0.10, equity 0.10. Penalties: biodiversity <30 (−10), water <25 (−8), equity <35 (−6).",
+    formula: "score = Σ weight_i × value_i(2050) − penalties",
+    note: "Climate pressure counts inverted (100 − value). Weights: climate 0.20, biodiversity 0.15, water 0.15, flood 0.15, health 0.15, economy 0.10, equity 0.10.",
   },
 ];
 
@@ -63,10 +75,22 @@ const VARIABLES = [
   ["publicTransport", "Public transport investment", "0–100 units", "traffic emissions, equity, air quality"],
   ["mangroveRestoration", "Mangrove & tree restoration", "0–30 %", "flood buffering, biodiversity, cooling"],
   ["coastalDevelopment", "Coastal development expansion", "0–30 %", "housing & jobs vs. flood exposure & habitat"],
-  ["waterEfficiency", "Water efficiency improvement", "0–60 %", "water stress, energy use"],
+  ["waterEfficiency", "Water efficiency improvement", "0–60 %", "water stress, flood resilience"],
   ["wasteRecycling", "Recycling & waste management", "0–60 %", "river & ocean pollution, biodiversity"],
-  ["fishingPressure", "Fishing pressure", "0–100 %", "fish stocks, food security, fisher income"],
-  ["industrialActivity", "Industrial activity", "0–100 %", "jobs & output vs. emissions & water use"],
+  ["fishingPressure", "Fishing pressure", "0–100 %", "fish stocks, biodiversity, fisher income"],
+  ["industrialActivity", "Industrial activity", "0–100 %", "jobs & revenue vs. emissions & water use"],
+];
+
+/* Engine truth (engine.ts scoreResult): C 0.20, B 0.15, W 0.15, F 0.15,
+   H 0.15, E 0.10, Q 0.10 — sums to 1.00. */
+const WEIGHTS: [keyof Indicators, number][] = [
+  ["climatePressure", 0.20],
+  ["biodiversity", 0.15],
+  ["waterSecurity", 0.15],
+  ["floodResilience", 0.15],
+  ["publicHealth", 0.15],
+  ["economicWellbeing", 0.10],
+  ["equity", 0.10],
 ];
 
 /* Real-world grounding: the numbers in this educational model are loosely
@@ -121,13 +145,12 @@ const LIMITS = [
 export default function Transparency() {
   return (
     <div className="min-h-screen flex flex-col">
-
       <PageMeta
         title="ECO//SIM — Transparency · every equation, published"
         description="The full mathematics: equations, weights, assumptions, limits, and the real science the model is calibrated to."
       />
       <SiteHeader backHref="/" />
-      <main className="container py-10 flex-1 max-w-5xl">
+      <main id="main" tabIndex={-1} className="container py-10 flex-1 max-w-5xl outline-none">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -155,7 +178,7 @@ export default function Transparency() {
                   className="soft-card p-4"
                 >
                   <div className="flex items-baseline justify-between gap-3 flex-wrap mb-1.5">
-                    <h3 className="font-display font-medium text-sm">{eq.title}</h3>
+                    <h2 className="font-display font-medium text-sm">{eq.title}</h2>
                     <code className="font-data text-[11px] text-vermilion bg-secondary px-2 py-0.5 border border-border">
                       {eq.formula}
                     </code>
@@ -197,29 +220,37 @@ export default function Transparency() {
           <section className="mb-12">
             <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-3">03 · Score weights, the same for everyone</div>
             <div className="soft-card p-5 space-y-3">
-              {[
-                ["Climate pressure", 0.20, "#f87171"],
-                ["Biodiversity", 0.15, "#34d399"],
-                ["Water security", 0.15, "#2dd4bf"],
-                ["Public health", 0.15, "#fbbf24"],
-                ["Economic wellbeing", 0.15, "#a78bfa"],
-                ["Flood resilience", 0.10, "#60a5fa"],
-                ["Equity", 0.10, "#f472b6"],
-              ].map(([label, weight, color]) => (
-                <div key={label as string}>
-                  <div className="flex items-baseline justify-between mb-1">
-                    <span className="font-data text-[11px] uppercase tracking-wider text-muted-foreground">{label}</span>
-                    <span className="font-data text-xs tabular-nums">{(weight as number * 100).toFixed(0)}%</span>
+              {WEIGHTS.map(([key, weight]) => {
+                const meta = INDICATOR_META[key];
+                return (
+                  <div key={key}>
+                    <div className="flex items-baseline justify-between mb-1">
+                      <span className="font-data text-[11px] uppercase tracking-wider text-muted-foreground">{meta.label}</span>
+                      <span className="font-data text-xs tabular-nums">{(weight * 100).toFixed(0)}%</span>
+                    </div>
+                    <div className="h-1.5 bg-secondary">
+                      <div className="h-full" style={{ width: `${weight * 100}%`, backgroundColor: meta.color }} />
+                    </div>
                   </div>
-                  <div className="h-1.5 bg-secondary">
-                    <div className="h-full" style={{ width: `${(weight as number) * 100}%`, backgroundColor: color as string }} />
-                  </div>
+                );
+              })}
+              <p className="text-xs text-muted-foreground pt-2">
+                Judged once, in the final year (2050): biodiversity below 30 subtracts 10
+                points; water security below 25 subtracts 8; equity below 35 subtracts 6.
+                These are the only penalties.
+              </p>
+            </div>
+          </section>
+
+          {/* Limits */}
+          <section className="mb-12">
+            <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-3">04 · What this model does <em>not</em> do</div>
+            <div className="space-y-3">
+              {LIMITS.map((lim, i) => (
+                <div key={i} className="border border-border border-l-2 border-l-vermilion bg-card pl-4 py-2.5">
+                  <p className="text-[12px] leading-relaxed">{lim}</p>
                 </div>
               ))}
-              <p className="text-xs text-muted-foreground pt-2">
-                Penalties: flood resilience below 35 or water security below 35 in any year
-                subtracts 8 points; a fishery collapse subtracts 5.
-              </p>
             </div>
           </section>
 
@@ -236,7 +267,7 @@ export default function Transparency() {
               {SOURCES.map((s, i) => (
                 <div key={i} className="soft-card p-4">
                   <div className="flex items-baseline justify-between gap-3 flex-wrap mb-1">
-                    <h3 className="font-display font-medium text-sm">{s.where}</h3>
+                    <h2 className="font-display font-medium text-sm">{s.where}</h2>
                     <a
                       href={s.url}
                       target="_blank"
@@ -253,26 +284,14 @@ export default function Transparency() {
             </div>
           </section>
 
-          {/* Limits */}
-          <section className="mb-12">
-            <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-3">04 · What this model does <em>not</em> do</div>
-            <div className="space-y-3">
-              {LIMITS.map((lim, i) => (
-                <div key={i} className="border border-border border-l-2 border-l-vermilion bg-card pl-4 py-2.5">
-                  <p className="text-[12px] leading-relaxed">{lim}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-
           <div className="border border-vermilion/40 bg-card p-5 mb-4">
             <div className="flex items-start gap-3">
               <FlaskConical className="w-5 h-5 text-vermilion shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-display font-semibold mb-1">Honest-use notice</h3>
+                <h2 className="font-display font-semibold mb-1">Honest-use notice</h2>
                 <p className="text-sm leading-relaxed text-muted-foreground">
                   ECO//SIM is an educational simulation of a completely fictional city
-                  (Nusa Bay) with illustrative constants. Nothing here is a
+                  (Teluk Nusa) with illustrative constants. Nothing here is a
                   real-world forecast, a planning recommendation, or scientific
                   evidence about any actual coastal city. Use it to start
                   conversations about connected systems, not to make decisions.

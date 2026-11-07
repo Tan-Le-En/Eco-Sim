@@ -1,138 +1,155 @@
 # ECO//SIM — Teluk Nusa Coastal City 2050
 
-> **An Interactive Field Study of Coastal Resilience (2026–2050)**  
+> **An interactive field study of coastal resilience (2026–2050).**
 > _"Change one thing, watch everything change. Simple enough for a child; rigorous enough for a climate researcher."_
 
 ---
 
-## 🌊 Overview
+## What this is
 
-**ECO//SIM** is an interactive ecological and policy simulation engine focused on **Teluk Nusa**, a fictional coastal town situated on the Strait of Malacca. Teluk Nusa faces the real-world climate crises confronting thousands of coastal settlements across Southeast Asia: declining marine fish stocks, intensifying monsoon storm surges, saltwater intrusion in freshwater tables, and shifting socio-economic livelihoods.
+**ECO//SIM** is an educational web simulation of **Teluk Nusa**, a fictional coastal town on the
+Strait of Malacca. You govern it for 25 years (2026–2050) with **eight policy dials**, a
+**100-point budget that must last the whole quarter-century**, and seven registers to keep
+standing: climate pressure, biodiversity, water security, flood resilience, public health,
+economic wellbeing, and equity.
 
-The platform provides a dynamic sandbox where users manage 5 key policy levers over a 25-year timeline (2026–2050) to balance coastal protection, biodiversity, energy transition, clean water supply, and public economic well-being.
+It is a teaching model, not a forecast. Every constant is illustrative; every equation is
+published on the in-app Transparency page. The photographs are real Malaysian coasts; the town
+is invented.
 
----
-
-## ✨ Key Features
-
-- **🎮 Interactive 25-Year Simulator (`/simulator`)**:
-  - Spatial 20×20 city map rendering 400 interactive tiles in real time (60 FPS SVG rendering).
-  - Multi-variable trajectory charts powered by [Recharts](https://recharts.org/).
-  - Real-time event notifications for critical ecological tipping points (e.g., mangrove collapse, storm surges).
-- **🎛️ Policy Lever System**:
-  1. **⚡ Clean Energy Ratio**: Transition power generation from fossil fuels to solar & wind to cut carbon emissions.
-  2. **🛡️ Coastal Sea Wall**: Build hard engineering barriers to absorb monsoon wave energy and reduce flood damage.
-  3. **🌱 Mangrove Restoration**: Replant natural mangrove buffers to protect shorelines and restore fish nurseries.
-  4. **💧 Water Recycling & Desalination**: Expand water treatment to prevent drought and combat aquifer salinization.
-  5. **🐟 Fishing Quotas & Fleet Limits**: Regulate fishing activity to allow marine stocks to replenish.
-- **📊 Scenario Management & Results Scorecard (`/results`)**:
-  - Comprehensive 2050 verdict evaluation across environmental, economic, and social categories.
-  - Side-by-side scenario comparison to save and benchmark different policy strategies.
-  - Visual causal chains highlighting how specific choices led to key outcomes.
-- **📖 Guided Field Story Mode (`/story`)**:
-  - A 5-chapter interactive narrative introducing Teluk Nusa's ecosystem, local community, and environmental vulnerabilities.
-- **🔍 Full Model Transparency (`/transparency`)**:
-  - Complete mathematical formulas, differential equations, baseline values, and tipping point thresholds documented openly.
-- **🎨 Editorial Aesthetic & Design System**:
-  - Crafted with a field-study documentary layout, responsive light/dark themes, clean typography (_Newsreader_, _Public Sans_, _IBM Plex Mono_), and real photography.
+Live: **https://ecosim2050.vercel.app**
 
 ---
 
-## 🛠️ Technology Stack
+## Key features
 
-- **Frontend**: [React 19](https://react.dev/), [TypeScript](https://www.typescriptlang.org/), [Tailwind CSS v4](https://tailwindcss.com/)
-- **State & Routing**: [Wouter](https://github.com/molefrog/wouter) (Client Routing), React Context API
-- **Animations & Icons**: [Framer Motion](https://www.framer.com/motion/), [Lucide React](https://lucide.dev/)
-- **Data Visualization**: [Recharts](https://recharts.org/)
-- **UI Components**: [Radix UI](https://www.radix-ui.com/), Shadcn UI primitives, Sonner toasts
-- **Backend & Server**: Node.js, [Express](https://expressjs.com/)
-- **Build Tooling**: [Vite](https://vitejs.dev/), [Esbuild](https://esbuild.github.io/)
-
----
-
-## 📁 Directory Structure
-
-```
-Eco-Sim/
-├── client/
-│   ├── index.html              # Entry HTML with preloads & Google Fonts
-│   └── src/
-│       ├── components/         # Reusable UI components (CityMap, Header, Footer, Charts)
-│       ├── contexts/           # React Context providers (SimContext, ThemeContext)
-│       ├── lib/
-│       │   └── sim/            # Core Simulation Engine & Mathematical Models
-│       │       ├── engine.ts   # Year-by-year 2026–2050 simulation engine logic
-│       │       ├── cityMap.ts  # 20x20 Tile map generator & spatial updates
-│       │       └── types.ts    # TypeScript definitions for indicators & levers
-│       ├── pages/              # Application pages (Home, Briefing, Simulator, Results, Story, etc.)
-│       ├── App.tsx             # Main App layout & route switchboard
-│       └── index.css           # Design tokens, CSS variables, & typography rules
-├── server/
-│   └── index.ts                # Express production server & static asset handler
-├── shared/                     # Shared type contracts and constants
-├── docs/                       # Development logs & architectural specifications
-├── vite.config.ts              # Vite configuration & storage proxy
-└── package.json                # Dependencies and npm scripts
-```
+- **25-year simulator (`/simulator`)** — year reel, deterministic engine, fixed weather pattern
+  (drought years 2034 & 2043, flood-year rainfall 2037 & 2047), 20×20 survey map, trajectory chart.
+- **Eight policy dials** (0–100 % or capped sub-ranges):
+  1. Renewable electricity target — grid emissions and energy cost.
+  2. Public transport investment — emissions, air quality, equity.
+  3. Mangrove & tree restoration — flood buffering, biodiversity, cooling.
+  4. Coastal development expansion — housing & jobs vs. flood exposure and habitat loss.
+  5. Water efficiency — water stress and flood resilience.
+  6. Recycling & waste management — river and ocean pollution.
+  7. Fishing pressure — fish stocks and fisher income.
+  8. Industrial activity — jobs & treasury revenue vs. emissions, health, and water use.
+- **Budget with real teeth** — 100 points in total for 2026–2050; industry pays in 1–6 points a
+  year; every policy spends. When it runs out, maintenance frays.
+- **Results report (`/results`)** — 2050 score, worked/failed account, causal chain, technical
+  appendix, and up to four saved plans compared side by side (stored locally on the device).
+- **Story mode (`/story`)** — five plain-language chapters before play, or "what happened to
+  Teluk Nusa" built from your actual run after it.
+- **Full transparency (`/transparency`)** — every equation, published weights, model limits, and
+  the real published science each relationship loosely follows.
+- **Design system** — documentary-editorial layout, light "paper" and dark "archive" modes,
+  Newsreader / Public Sans / IBM Plex Mono typography, zero border radius, print stylesheet.
+- **Accessibility** — skip-to-content link on every page, labelled landmarks, `aria-expanded`
+  disclosures, `prefers-reduced-motion` honored throughout, keyboard year-stepping (`←` `→`
+  space) in the simulator.
 
 ---
 
-## 🚀 Getting Started
+## How the score works (engine truth)
+
+Seven registers are judged once, in 2050, by fixed weights:
+
+| Register                     | Weight | Direction            |
+| ---------------------------- | ------ | -------------------- |
+| Climate pressure             | 0.20   | lower is better      |
+| Biodiversity                 | 0.15   | higher is better     |
+| Water security               | 0.15   | higher is better     |
+| Flood resilience             | 0.15   | higher is better     |
+| Public health                | 0.15   | higher is better     |
+| Economic wellbeing           | 0.10   | higher is better     |
+| Equity                       | 0.10   | higher is better     |
+
+Final-year penalties only: biodiversity below 30 −10 points, water security below 25 −8,
+equity below 35 −6. Mission targets by 2050: climate pressure ≤ 45, biodiversity ≥ 70,
+water ≥ 60, flood resilience ≥ 65, equity ≥ 60. Trade-offs mean scores cap somewhere below
+100 — that is the lesson, not a bug.
+
+---
+
+## Technology stack
+
+- **Frontend**: React 19, TypeScript, Tailwind CSS v4
+- **Routing & state**: Wouter, React Context (no store library)
+- **Animation & icons**: Framer Motion (reduced-motion aware), Lucide React
+- **Charts**: Recharts
+- **UI primitives**: Radix UI + Shadcn-style components (only the eight in use)
+- **Build**: Vite 7 (single-page static build → `dist/public`)
+- **Deployment**: Vercel — static site + one serverless function (`api/storage.js`) that serves
+  `/storage/:key` images from a presigned-backend when configured
+
+There is no application server; the production artifact is a static bundle plus the one
+storage function.
+
+---
+
+## Getting started
 
 ### Prerequisites
 
-- **Node.js**: v18.0.0 or higher
-- **Package Manager**: `npm` or `pnpm`
+- **Node.js** 20.11 or newer
+- **pnpm** 10 (or npm — the lockfile ships for pnpm; npm works fine)
 
-### Installation
+### Install & run
 
-1. **Clone the Repository**:
+```bash
+git clone https://github.com/Tan-Le-En/Eco-Sim.git
+cd Eco-Sim
+pnpm install
 
-   ```bash
-   git clone https://github.com/Tan-Le-En/Eco-Sim.git
-   cd Eco-Sim
-   ```
+# development server → http://localhost:3000
+pnpm dev
 
-2. **Install Dependencies**:
+# type-check (strict, no emit)
+pnpm check
 
-   ```bash
-   npm install
-   ```
+# production build → dist/public
+pnpm build
 
-3. **Start Development Server**:
+# preview the production build
+pnpm preview
+```
 
-   ```bash
-   npm run dev
-   ```
+### Project structure
 
-   Open `http://localhost:3000` in your browser.
-
-4. **Build for Production**:
-
-   ```bash
-   npm run build
-   ```
-
-5. **Start Production Server**:
-   ```bash
-   npm start
-   ```
+```
+Eco-Sim/
+├── api/
+│   └── storage.js              # Vercel function: /storage/:key → presigned URL
+├── client/
+│   ├── index.html              # Entry HTML, pre-paint theme script, static social tags
+│   ├── public/                 # robots.txt, sitemap.xml, committed storage images
+│   └── src/
+│       ├── components/         # CityMap, TimelineChart, IndicatorStrip, header/search, …
+│       ├── contexts/           # SimContext (state + persistence), ThemeContext (light/dark)
+│       ├── hooks/              # useComposition (IME guard)
+│       ├── lib/
+│       │   ├── sim/            # engine.ts (the model), cityMap.ts, types.ts
+│       │   ├── utm.ts          # local-only first-touch attribution record
+│       │   └── utils.ts
+│       ├── pages/              # Home, Briefing, Simulator, Results, Story, Transparency, FAQ, legal
+│       ├── App.tsx             # Router, page transitions, scroll restoration
+│       └── index.css           # Design tokens and editorial components
+├── vercel.json                 # SPA rewrites + /storage route, build = npm run build
+├── vite.config.ts
+├── tsconfig.json
+└── package.json
+```
 
 ---
 
-## 📈 Simulation Indicators
+## Honesty notes
 
-| Indicator             | Symbol | Unit      | Baseline (2026) | Target (2050) | Description                                                 |
-| --------------------- | ------ | --------- | --------------- | ------------- | ----------------------------------------------------------- |
-| **Carbon Emissions**  | ⚡     | Mt CO₂/yr | 1.00            | ≤ 0.30        | Annual carbon footprint from power and industry             |
-| **Flood Protection**  | 🌊     | %         | 30%             | ≥ 80%         | Combined protection against high tide & storm surges        |
-| **Fish Biomass**      | 🐟     | Index     | 40              | ≥ 75          | Coastal marine population and nursery health                |
-| **Freshwater Supply** | 💧     | %         | 50%             | ≥ 85%         | Percentage of population with reliable fresh drinking water |
-| **Town Economy**      | 🏙️     | Index     | 50              | ≥ 70          | Local business vitality, eco-tourism, & employment          |
-| **Community Mood**    | 😊     | Index     | 50              | ≥ 75          | Resident happiness, public health, & disaster security      |
+- Teluk Nusa is fictional. No number here is measured data for any real place.
+- The simulation is deterministic: same dials in, same 25 years out.
+- The site collects nothing. Plans, theme, and preferences live in your browser's local
+  storage; the optional-analytics banner stores your answer and nothing else today.
+- The score is a discussion starter, not policy advice.
 
----
+## License
 
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
+[MIT](LICENSE)

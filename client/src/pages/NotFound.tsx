@@ -3,18 +3,19 @@
  * Same paper/editorial voice as the rest of the site. Above the fold: status,
  * plain explanation, and a primary CTA to start the story. No tech jargon.
  */
-import { useEffect } from "react";
 import { Link } from "wouter";
+import { motion } from "framer-motion";
 import { ArrowRight, Compass } from "lucide-react";
+import PageMeta from "@/components/PageMeta";
 
 export default function NotFound() {
-  useEffect(() => {
-    document.title = "404 · Page not found — ECO//SIM";
-  }, []);
-
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <main className="flex-1 flex items-center justify-center px-6 py-16">
+      <PageMeta
+        title="ECO//SIM — 404 · page not found"
+        description="The page you asked for is not here. The town is a few clicks away."
+      />
+      <main id="main" tabIndex={-1} className="flex-1 flex items-center justify-center px-6 py-16 outline-none">
         <div className="max-w-md w-full text-center">
           <div className="font-data text-[11px] tracking-[0.16em] uppercase text-muted-foreground mb-5">
             404 · nowhere on the map

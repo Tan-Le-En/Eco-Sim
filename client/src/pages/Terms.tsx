@@ -3,7 +3,6 @@
  * Style: plain, honest, short. Emphasises the educational nature of the model
  * and the fictional town, so no visitor mistakes the simulator for advice.
  */
-import { useEffect } from "react";
 import SiteFooter from "@/components/SiteFooter";
 import { Link } from "wouter";
 import PageMeta from "@/components/PageMeta";
@@ -11,18 +10,13 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
 export default function Terms() {
-  useEffect(() => {
-    document.title = "Terms of use · ECO//SIM";
-  }, []);
-
   return (
     <div className="min-h-screen flex flex-col">
-
       <PageMeta
         title="ECO//SIM — Terms of use"
         description="The rules: an educational simulation, a fictional town, real photographs, open equations, free classroom use."
       />
-      <main className="container py-12 flex-1 max-w-3xl px-6 sm:px-10">
+      <main id="main" tabIndex={-1} className="container py-12 flex-1 max-w-3xl px-6 sm:px-10 outline-none">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}

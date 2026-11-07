@@ -40,14 +40,6 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
   --color-vermilion: var(--vermilion);
   --color-deepsea: var(--deepsea);
   --color-ink: var(--ink);
@@ -61,7 +53,10 @@
 /* Theme tokens are deliberately OUTSIDE @layer so user CSS wins layer ordering.
    :root = warm paper; .dark = night archive (ink-paper reversed). */
 :root {
+  color-scheme: light;
   --radius: 0px; /* zero-radius discipline — depth via hairlines & contrast */
+  /* Shared paper-grain texture (one data-URI, reused by light & dark) */
+  --paper-grain-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   /* Warm paper */
   --background: oklch(0.962 0.008 85);
   --foreground: oklch(0.22 0.012 75);
@@ -95,18 +90,10 @@
   --chart-3: oklch(0.45 0.05 140);
   --chart-4: oklch(0.65 0.1 75);
   --chart-5: oklch(0.4 0.02 75);
-
-  --sidebar: oklch(0.95 0.008 85);
-  --sidebar-foreground: oklch(0.22 0.012 75);
-  --sidebar-primary: var(--vermilion);
-  --sidebar-primary-foreground: oklch(0.985 0.005 85);
-  --sidebar-accent: oklch(0.93 0.01 85);
-  --sidebar-accent-foreground: oklch(0.22 0.012 75);
-  --sidebar-border: oklch(0.86 0.01 85);
-  --sidebar-ring: var(--vermilion);
 }
 
 html.dark {
+  color-scheme: dark;
   --background: oklch(0.16 0.01 75);
   --foreground: oklch(0.92 0.008 85);
   --card: oklch(0.2 0.012 75);
@@ -133,20 +120,16 @@ html.dark {
   --ink-soft: oklch(0.62 0.01 80);
   --paper: oklch(0.16 0.01 75);
 
+  /* Stock emerald-700/800 are calibrated for light plates; lifted so
+     "worked / healthy" data stays legible on the dark archive. */
+  --color-emerald-700: oklch(0.74 0.13 155);
+  --color-emerald-800: oklch(0.8 0.12 155);
+
   --chart-1: var(--vermilion);
   --chart-2: var(--deepsea);
   --chart-3: oklch(0.7 0.07 145);
   --chart-4: oklch(0.72 0.1 78);
   --chart-5: oklch(0.65 0.02 80);
-
-  --sidebar: oklch(0.18 0.01 75);
-  --sidebar-foreground: oklch(0.92 0.008 85);
-  --sidebar-primary: var(--vermilion);
-  --sidebar-primary-foreground: oklch(0.15 0.01 75);
-  --sidebar-accent: oklch(0.24 0.012 75);
-  --sidebar-accent-foreground: oklch(0.92 0.008 85);
-  --sidebar-border: oklch(0.3 0.012 75);
-  --sidebar-ring: var(--vermilion);
 }
 
 @layer base {
@@ -204,7 +187,6 @@ html.dark {
     }
   }
 
-
   /* Photo loading state: warm paper tone while the image downloads */
   .photo-plate img {
     background-color: var(--secondary);
@@ -221,13 +203,12 @@ html.dark {
     pointer-events: none;
     opacity: 0.35;
     mix-blend-mode: multiply;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-image: var(--paper-grain-image);
   }
   html.dark .paper-grain::before {
     opacity: 0.12;
     mix-blend-mode: normal;
     background-color: var(--background);
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3Cfilter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
   /* Field label: clean mono uppercase data mark */
@@ -293,7 +274,7 @@ html.dark {
     transform: scale(0.97);
   }
 
-  /* Universal hover affordance — flat editorial hover (underline hairline + tone) */
+  /* Universal hover affordance — flat editorial hover */
   a:hover {
     transition: opacity 160ms;
   }
@@ -301,16 +282,7 @@ html.dark {
     opacity: 0.75;
   }
 
-  /* Card hover: border lifts to foreground — no shadow discipline */
-  .hover-lift {
-    transition: border-color 200ms cubic-bezier(0.23, 1, 0.32, 1), background-color 200ms;
-  }
-  .hover-lift:hover {
-    border-color: var(--foreground);
-    background: var(--card);
-  }
-
-  /* Scroll progress bar (global) */
+  /* Scroll progress bar (global): width driven by --scroll-progress (set from RAF) */
   .scroll-progress {
     position: fixed;
     top: 0;
@@ -339,29 +311,6 @@ html.dark {
   .skip-link:focus {
     top: 0;
   }
-
-  /* Form feedback states */
-  .field-success { border-color: oklch(0.45 0.08 150) !important; }
-  .field-error { border-color: var(--vermilion) !important; }
-  .input-notice {
-    font-family: "IBM Plex Mono", monospace;
-    font-size: 0.6875rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-  .notice-success { color: oklch(0.5 0.09 150); }
-  .notice-error { color: var(--vermilion); }
-
-  /* Reveal-up entrance */
-  @media (prefers-reduced-motion: no-preference) {
-    .reveal-up {
-      animation: reveal-up 320ms cubic-bezier(0.23, 1, 0.32, 1) both;
-    }
-    @keyframes reveal-up {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  }
 }
 
 /* ── Print stylesheet: a paper report of the field study ── */
@@ -380,6 +329,13 @@ html.dark {
   button,
   [role="dialog"],
   [data-no-print="true"] {
+    display: none !important;
+  }
+  /* Data cells that happen to be buttons (indicator register) print as data. */
+  button[data-print-keep="true"] {
+    display: flex !important;
+  }
+  button[data-print-keep="true"] [data-print-hide] {
     display: none !important;
   }
   main { padding: 0 !important; margin: 0 !important; }

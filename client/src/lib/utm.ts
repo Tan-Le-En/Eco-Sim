@@ -1,8 +1,9 @@
 /**
  * ECO//SIM — UTM tracking (v7 production layer)
- * Reads utm_source / utm_medium / utm_campaign from the URL on first load,
- * persists once to localStorage for attribution, and logs a one-line record.
- * Fully anonymous — no network call, no personal data.
+ * Reads utm_source / utm_medium / utm_campaign from the URL on first load.
+ * First-touch semantics: the FIRST attributed visit is recorded and later
+ * visits never overwrite it. Fully anonymous, local-only, silent — no
+ * network call, no personal data, no console noise.
  */
 
 const KEY = "utm-record";
@@ -15,46 +16,62 @@ interface UtmRecord {
 }
 
 function readParams(): Partial<UtmRecord> {
-  const params = new URLSearchParams(window.location.search);
-  const record: Partial<UtmRecord> = {};
-  const src = params.get("utm_source");
-  const med = params.get("utm_medium");
-  const cmp = params.get("utm_campaign");
-  if (src) record.source = src;
-  if (med) record.medium = med;
-  if (cmp) record.campaign = cmp;
-  return record;
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const record: Partial<UtmRecord> = {};
+    const src = params.get("utm_source");
+    const med = params.get("utm_medium");
+    const cmp = params.get("utm_campaign");
+    if (src) record.source = src;
+    if (med) record.medium = med;
+    if (cmp) record.campaign = cmp;
+    return record;
+  } catch {
+    return {};
+  }
+}
+
+function readStored(): UtmRecord | null {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<UtmRecord> | null;
+    if (!parsed || typeof parsed !== "object") return null;
+    return {
+      source: typeof parsed.source === "string" ? parsed.source : "",
+      medium: typeof parsed.medium === "string" ? parsed.medium : "",
+      campaign: typeof parsed.campaign === "string" ? parsed.campaign : "",
+      firstSeen: typeof parsed.firstSeen === "string" ? parsed.firstSeen : "",
+    };
+  } catch {
+    return null; // corrupted record
+  }
 }
 
 /**
- * Call once at app boot. Returns the stored record, or null if none.
+ * Call once at app boot. Records the first attributed visit; later visits
+ * never overwrite the first-touch record. Returns the stored record, or
+ * null when unattributed.
  */
 export function initUtm(): UtmRecord | null {
-  const stored = localStorage.getItem(KEY);
+  const stored = readStored();
   const incoming = readParams();
 
-  // Merge: keep existing record, fill in anything newly present.
-  const base: UtmRecord = stored
-    ? (JSON.parse(stored) as UtmRecord)
-    : { source: "", medium: "", campaign: "", firstSeen: "" };
-
-  if (incoming.source) base.source = incoming.source;
-  if (incoming.medium) base.medium = incoming.medium;
-  if (incoming.campaign) base.campaign = incoming.campaign;
-  if (!base.firstSeen) base.firstSeen = new Date().toISOString();
-
-  if (base.source || base.medium || base.campaign) {
-    localStorage.setItem(KEY, JSON.stringify(base));
-    console.info(
-      `[ECO//SIM] visit attributed · source=${base.source} medium=${base.medium} campaign=${base.campaign}`
-    );
-    return base;
+  let record = stored;
+  if (!record) {
+    const attributed = incoming.source || incoming.medium || incoming.campaign;
+    if (!attributed) return null;
+    record = {
+      source: incoming.source ?? "",
+      medium: incoming.medium ?? "",
+      campaign: incoming.campaign ?? "",
+      firstSeen: new Date().toISOString(),
+    };
+    try {
+      localStorage.setItem(KEY, JSON.stringify(record));
+    } catch {
+      /* best-effort attribution */
+    }
   }
-  return null;
-}
-
-/** Read-only access for components that want to display attribution. */
-export function getUtm(): UtmRecord | null {
-  const raw = localStorage.getItem(KEY);
-  return raw ? (JSON.parse(raw) as UtmRecord) : null;
+  return record;
 }

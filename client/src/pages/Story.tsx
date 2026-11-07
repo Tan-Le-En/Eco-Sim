@@ -19,6 +19,8 @@ import { ArrowRight, Undo2 } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
 import { useSim } from "@/contexts/SimContext";
 import {
+  CONTROL_RANGES,
+  Controls,
   INDICATOR_KEYS,
   INDICATOR_META,
   KID_INDICATORS,
@@ -86,8 +88,8 @@ const CHAPTERS: Chapter[] = [
     lesson:
       "The sea only gives what it has. Catch too many today and there are fewer fish tomorrow. The hardest dial.",
     photo: PHOTOS.fishingCoast,
-    alt: "Fishing boats on the coast at dusk",
-    cap: "The fishing coast, dusk",
+    alt: "Fishing boats on the coast at first light",
+    cap: "The fishing coast, first light",
     fig: "Fig. 03",
     connects: "Connects to: How Much We Fish · Nature & Animals · Good Life",
   },
@@ -107,10 +109,10 @@ const CHAPTERS: Chapter[] = [
   {
     n: "05",
     voice:
-      "You have 100 budget points a year. Spend on what lasts.",
+      "You hold 100 budget points. Spend on what lasts.",
     title: "The town hands you the keys",
     lesson:
-      "2026, 100 points a year, 25 years. Choose where money goes. Then live with the answer.",
+      "2026, 100 points in total, 25 years — and 1–6 points of income a year while the factories run. Choose where money goes. Then live with the answer.",
     photo: PHOTOS.workingJetty,
     alt: "Clan jetty — houses and work over the water",
     cap: "Life and work on the jetty",
@@ -147,19 +149,36 @@ function toneColor(tone: string): string {
   }
 }
 
-function eventEmoji(type: string): string {
+/* Word tags++ for each event type (engine.ts generateEvents). Positive
+   events get their own tag so good news doesn't read as a warning. */
+function eventTag(type: string): string {
   if (type.includes("flood")) return "Flood";
   if (type.includes("water")) return "Water";
-  if (type.includes("habitat") || type.includes("biodiversity")) return "Nature";
+  if (type.includes("habitat") || type.includes("biodiversity") || type.includes("nature_recovery")) return "Nature";
+  if (type.includes("clean_air")) return "Air";
+  if (type.includes("jobs_up")) return "Jobs";
+  if (type.includes("fair_share")) return "Fair";
+  if (type.includes("dry_spell")) return "Dry";
+  if (type.includes("budget") || type.includes("money_eased")) return "Money";
   if (type.includes("equity")) return "People";
   if (type.includes("health")) return "Health";
-  if (type.includes("budget")) return "Money";
   return "Event";
 }
 
-function eventSeverityColor(sev: string): string {
-  if (sev === "critical") return "border-l-vermilion";
-  return "border-l-amber-500";
+/** Event types that are good news — colored green, never amber. */
+const POSITIVE_EVENT_TYPES = new Set([
+  "nature_recovery",
+  "clean_air",
+  "jobs_up",
+  "fair_share",
+  "money_eased",
+]);
+
+function eventAccent(e: SimEvent): string {
+  if (POSITIVE_EVENT_TYPES.has(e.type)) return "border-l-emerald-700";
+  if (e.severity === "critical") return "border-l-vermilion";
+  if (e.severity === "warning") return "border-l-amber-500";
+  return "border-l-border";
 }
 
 /* ── The "What Happened" page ── */
@@ -185,8 +204,8 @@ function WhatHappened({ result }: { result: SimulationResult }) {
   // Find the biggest causal chains
   const topLinks = result.causalLinks.slice(0, 3);
 
-  // Events grouped by decade
-  const decadeEvents: { label: string; events: SimEvent[] }[] = [];
+  // Events grouped by period (5-year bands)
+  const decadeEvents: { label: string; events: SimEvent[]; total: number }[] = [];
   const byDecade = new Map<number, SimEvent[]>();
   for (const e of result.events) {
     const d = Math.floor((e.year - 2026) / 5) * 5 + 2026;
@@ -194,7 +213,7 @@ function WhatHappened({ result }: { result: SimulationResult }) {
     byDecade.get(d)!.push(e);
   }
   for (const [d, evts] of Array.from(byDecade.entries()).sort((a, b) => a[0] - b[0])) {
-    decadeEvents.push({ label: `${d}`, events: evts.slice(0, 4) });
+    decadeEvents.push({ label: `${d}`, events: evts.slice(0, 4), total: evts.length });
   }
 
   // Controls that were pushed hard
@@ -202,7 +221,7 @@ function WhatHappened({ result }: { result: SimulationResult }) {
     .filter(([, v]) => v > 15)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 4)
-    .map(([key, val]) => ({ key, val, kid: KID_CONTROLS[key as keyof typeof KID_CONTROLS] }));
+    .map(([key, val]) => ({ key, val, max: CONTROL_RANGES[key as keyof Controls].max, kid: KID_CONTROLS[key as keyof typeof KID_CONTROLS] }));
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -212,7 +231,7 @@ function WhatHappened({ result }: { result: SimulationResult }) {
       />
       <SiteHeader backHref="/simulator" />
 
-      <main className="flex-1">
+      <main id="main" tabIndex={-1} className="flex-1 outline-none">
         {/* Masthead: the verdict as a story opener */}
         <section className="px-6 sm:px-10 lg:px-14 pt-12 pb-10 border-b border-border">
           <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-4">
@@ -251,7 +270,7 @@ function WhatHappened({ result }: { result: SimulationResult }) {
                   <div className="font-data text-[11px] tracking-[0.06em] uppercase mb-1">{c.kid.kidName}</div>
                   <div className="flex items-baseline gap-2">
                     <span className="font-data text-2xl tabular-nums font-semibold">{c.val}</span>
-                    <span className="font-data text-[9px] tracking-[0.12em] uppercase text-muted-foreground">of 100</span>
+                    <span className="font-data text-[9px] tracking-[0.12em] uppercase text-muted-foreground">of {c.max}</span>
                   </div>
                 </div>
               ))}
@@ -273,15 +292,20 @@ function WhatHappened({ result }: { result: SimulationResult }) {
                   </div>
                   <div className="space-y-2">
                     {dec.events.map((e, i) => (
-                      <div key={i} className={`border-l-2 ${eventSeverityColor(e.severity)} pl-4 py-1`}>
+                      <div key={i} className={`border-l-2 ${eventAccent(e)} pl-4 py-1`}>
                         <p className="text-sm leading-relaxed">
                           <span className="font-data text-[10px] tracking-[0.08em] uppercase text-muted-foreground mr-2">
-                            {e.year}
+                            {e.year} · {eventTag(e.type)}
                           </span>
-                          {eventEmoji(e.type)}: {e.message}
+                          {e.message}
                         </p>
                       </div>
                     ))}
+                    {dec.total > 4 && (
+                      <p className="font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground pl-4">
+                        +{dec.total - 4} more that period
+                      </p>
+                    )}
                   </div>
                 </div>
               ))}
@@ -405,7 +429,7 @@ function Chapters() {
       />
       <SiteHeader backHref="/" />
 
-      <main className="flex-1">
+      <main id="main" tabIndex={-1} className="flex-1 outline-none">
         {/* Chapter masthead */}
         <section className="px-6 sm:px-10 lg:px-14 pt-12 pb-10 border-b border-border">
           <h1 className="font-display font-semibold tracking-tight leading-[0.98] text-[clamp(2.4rem,5.5vw,4.2rem)] max-w-3xl">
@@ -442,7 +466,7 @@ function Chapters() {
                 </div>
               </div>
               {/* Photo plate */}
-              <figure className="photo-plate overflow-hidden m-6 sm:m-8 lg:m-8 group cursor-pointer">
+              <figure className="photo-plate overflow-hidden m-6 sm:m-8 lg:m-8 group">
                 <img src={c.photo} alt={c.alt} className="h-full min-h-56 w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]" loading="lazy" />
                 <figcaption className="plate-caption">
                   <span>{c.cap}</span>
