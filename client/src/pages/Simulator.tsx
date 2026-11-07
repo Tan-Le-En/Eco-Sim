@@ -8,7 +8,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import PageMeta from "@/components/PageMeta";
-import { Play, Pause, FastForward, Save, Lightbulb, Coins, ChevronLeft, ChevronRight, AlertTriangle } from "lucide-react";
+import { Play, Pause, FastForward, Save, Lightbulb, Coins, ChevronLeft, ChevronRight, AlertTriangle, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { goalsMetCount } from "@/components/TownMood";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { MISSION_TARGETS, INDICATOR_META, KID_INDICATORS } from "@/lib/sim/types";
@@ -36,8 +37,9 @@ export default function Simulator() {
   const [previewResult, setPreviewResult] = useState<ReturnType<typeof runSimulation> | null>(null);
   const [playing, setPlaying] = useState(false);
   const [displayYear, setDisplayYear] = useState(2026);
-  const [speed, setSpeed] = useState<1 | 2 | 5>(1);
+  const [speed, setSpeed] = useState<1 | 2>(1);
   const [pauseOnEvents, setPauseOnEvents] = useState(true);
+  const [reelOpen, setReelOpen] = useState(false);
   const [saveOpen, setSaveOpen] = useState(false);
   const [saveName, setSaveName] = useState("");
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -75,38 +77,37 @@ export default function Simulator() {
     stepTo(displayYear + delta);
   };
 
-  // Step-by-step playback: one year per tick, always. Speed only changes pace.
+  // Cinematic step-by-step: one year at a time, slowly. Speed only paces the reel.
   useEffect(() => {
     if (!playing) return;
-    const interval = speed === 5 ? 160 : speed === 2 ? 360 : 700;
-    timerRef.current = setInterval(() => {
+    // Apple-style patience: quiet years 2s, event years 3s — enough time to read.
+    const isEvent = hasEventAt(displayYear);
+    const base = speed === 2 ? 1100 : 2000;
+    const interval = isEvent ? base + 900 : base;
+    timerRef.current = setTimeout(() => {
       setDisplayYear((y) => {
         const next = y + 1;
         if (next >= 2050) {
           setPlaying(false);
+          if (!reelOpen) toast("2050 reached. Open the full account on Results.");
           return 2050;
         }
-        if (pauseOnEvents && hasEventAt(next)) {
-          // Land on the event year, then pause so the player can read it.
+        if (pauseOnEvents && !reelOpen && hasEventAt(next)) {
           queueMicrotask(() => setPlaying(false));
         }
         return next;
       });
     }, interval);
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [playing, speed, pauseOnEvents, eventsByYear]);
+  }, [playing, speed, pauseOnEvents, eventsByYear, displayYear, reelOpen]);
 
   const handleRun = () => {
-    if (displayYear >= 2050) {
-      setDisplayYear(2026);
-      setPlaying(true);
-      toast("Restarted. 2026 to 2050, one year at a time.");
-    } else {
-      setPlaying(true);
-      toast(displayYear === 2026 ? "Playing. One year at a time." : `Resuming from ${displayYear}.`);
-    }
+    // Run = open the reel screen. Slow, centred, one year at a time.
+    if (displayYear >= 2050) setDisplayYear(2026);
+    setReelOpen(true);
+    setPlaying(true);
   };
 
   const handleStop = () => setPlaying(false);
@@ -115,11 +116,12 @@ export default function Simulator() {
     setDisplayYear(2050);
   };
 
-  // Keyboard: ← / → step, space play-pause (when not typing).
+  // Keyboard: ← / → step, space play-pause, Esc close reel (when not typing).
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement | null;
       if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+      if (e.key === "Escape" && reelOpen) { e.preventDefault(); setPlaying(false); setReelOpen(false); return; }
       if (e.key === "ArrowRight") { e.preventDefault(); stepBy(1); }
       else if (e.key === "ArrowLeft") { e.preventDefault(); stepBy(-1); }
       else if (e.key === " ") { e.preventDefault(); setPlaying((p) => !p); }
@@ -127,7 +129,15 @@ export default function Simulator() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [displayYear, pauseOnEvents, eventsByYear]);
+  }, [displayYear, pauseOnEvents, eventsByYear, reelOpen]);
+
+  // Reel open: lock scroll so the film stays centred.
+  useEffect(() => {
+    if (!reelOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, [reelOpen]);
 
   const indicatorsAtDisplay = useMemo(() => {
     if (!previewResult) return null;
@@ -321,16 +331,16 @@ export default function Simulator() {
               <FastForward className="w-3 h-3" /> To 2050
             </button>
             <div className="flex border border-border" role="group" aria-label="Playback speed">
-              {([1, 2, 5] as const).map((s) => (
+              {([1, 2] as const).map((s) => (
                 <button
                   key={s}
                   onClick={() => setSpeed(s)}
                   className={`btn-press px-2.5 py-2 font-data text-[10px] tracking-wider uppercase transition-colors ${
                     speed === s ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
                   }`}
-                  title={s === 1 ? "Slow: ~0.7s per year" : s === 2 ? "Medium: ~0.35s per year" : "Fast: ~0.15s per year"}
+                  title={s === 1 ? "Film speed: ~2s per year" : "Brisk: ~1s per year"}
                 >
-                  {s === 1 ? "1x" : `${s}x`}
+                  {s === 1 ? "Slow" : "Brisk"}
                 </button>
               ))}
             </div>
@@ -535,6 +545,179 @@ export default function Simulator() {
         </aside>
       </main>
 
+      {/* ── Year Reel: slow cinematic replay ── */}
+      <AnimatePresence>
+        {reelOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed inset-0 z-50 bg-background flex flex-col"
+            role="dialog"
+            aria-label="Year reel: watch Teluk Nusa from 2026 to 2050"
+          >
+            {/* Slow background: map + mood wash */}
+            <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+              <motion.div
+                key={displayYear}
+                initial={{ opacity: 0, scale: 1.04 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                className="h-full w-full opacity-[0.28]"
+              >
+                <CityMap controls={controls} indicators={indicatorsAtDisplay} year={displayYear} className="h-full" />
+              </motion.div>
+              <div
+                className="absolute inset-0 transition-colors duration-[1200ms]"
+                style={{
+                  background: indicatorsAtDisplay && goalsMetCount(indicatorsAtDisplay) >= 2
+                    ? "linear-gradient(to bottom, rgba(47,122,72,0.10), transparent 55%, rgba(255,255,255,0.88) 92%)"
+                    : "linear-gradient(to bottom, rgba(201,107,66,0.10), transparent 55%, rgba(255,255,255,0.88) 92%)",
+                }}
+              />
+            </div>
+
+            {/* Reel chrome */}
+            <div className="relative flex items-center justify-between px-4 sm:px-6 py-3 border-b border-border/60 bg-background/60 backdrop-blur-sm">
+              <span className="font-data text-[10px] tracking-[0.16em] uppercase text-muted-foreground">
+                Teluk Nusa · the years
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setSpeed(speed === 1 ? 2 : 1)}
+                  className="btn-press font-data text-[10px] tracking-wider uppercase border border-border px-2.5 py-1.5 text-muted-foreground hover:text-foreground transition-colors"
+                  title="Toggle speed"
+                >
+                  {speed === 1 ? "Slow" : "Brisk"}
+                </button>
+                <button
+                  onClick={() => { setPlaying(false); setReelOpen(false); }}
+                  className="btn-press inline-flex items-center gap-1.5 font-data text-[10px] tracking-wider uppercase border border-border px-2.5 py-1.5 text-muted-foreground hover:text-foreground transition-colors"
+                  title="Exit to cockpit (Esc)"
+                >
+                  <X className="w-3.5 h-3.5" /> Exit
+                </button>
+              </div>
+            </div>
+
+            {/* Centre stage: year flips, story fades */}
+            <div className="relative flex-1 flex flex-col items-center justify-center px-5 py-6 overflow-y-auto">
+              <div className="font-data text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-2">
+                {displayYear} · Year {displayYear - 2026 + 1} of 25
+              </div>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={displayYear}
+                  initial={{ opacity: 0, y: 28 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -18 }}
+                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                  className="flex flex-col items-center text-center max-w-2xl w-full"
+                >
+                  <h2 className="font-display font-semibold tracking-tight leading-none text-[clamp(5rem,14vw,10rem)] tabular-nums">
+                    {displayYear}
+                  </h2>
+                  <div className="mt-4 min-h-[7.5rem] flex flex-col items-center justify-start">
+                    {displayYear === 2026 ? (
+                      <>
+                        <p className="font-display italic text-2xl sm:text-3xl leading-snug max-w-xl">The town begins.</p>
+                        <p className="mt-2 text-sm text-muted-foreground max-w-md">One million people. 100 points a year. Press play and live it, year by year.</p>
+                      </>
+                    ) : (
+                      <>
+                        {eventsHere.length > 0 ? (
+                          <div className="space-y-2">
+                            {eventsHere.map((e, i) => (
+                              <p key={i} className={`font-display italic text-2xl sm:text-[2rem] leading-tight max-w-xl ${e.severity === "info" ? "text-emerald-700" : e.severity === "critical" ? "text-vermilion" : "text-foreground"}`}>
+                                {e.message}
+                              </p>
+                            ))}
+                          </div>
+                        ) : displayYear === 2050 ? (
+                          <>
+                            <p className="font-display italic text-2xl sm:text-[2rem] leading-tight max-w-xl">2050. The record closes.</p>
+                            <p className="mt-2 text-sm text-muted-foreground max-w-md">{previewResult ? `${previewResult.biggestSuccess} ${previewResult.biggestFailure}` : "The town has spoken."}</p>
+                          </>
+                        ) : (
+                          <p className="font-display italic text-2xl sm:text-[2rem] leading-tight max-w-xl">{quietLine(displayYear)}</p>
+                        )}
+                        {yearMovers.length > 0 && (
+                          <div className="mt-3 flex flex-wrap justify-center gap-1.5">
+                            {yearMovers.map((m) => (
+                              <span key={m.key} className={`inline-flex items-center gap-1 border px-2 py-1 font-data text-[11px] tabular-nums ${m.good ? "border-emerald-700/40 text-emerald-700" : "border-vermilion/40 text-vermilion"}`}>
+                                {KID_INDICATORS[m.key].kidName} {m.delta > 0 ? "+" : ""}{m.delta.toFixed(1)}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        <p className="mt-2 font-data text-[11px] tracking-[0.1em] uppercase text-muted-foreground tabular-nums">
+                          {yearRow ? `Budget ${yearRow.budgetRemaining.toFixed(0)} pts · Pop ${yearRow.population.toLocaleString()}` : ""}
+                        </p>
+                      </>
+                    )}
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+              <div className="w-full max-w-md mt-4">
+                <div className="h-1 bg-secondary" role="progressbar" aria-valuenow={progressPct} aria-valuemin={0} aria-valuemax={100} aria-label="Reel progress">
+                  <div className="h-full bg-vermilion transition-[width] duration-700" style={{ width: `${progressPct}%` }} />
+                </div>
+                <div className="mt-1.5 flex justify-between font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground tabular-nums">
+                  <span>2026</span><span>{progressPct}%</span><span>2050</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Reel transport */}
+            <div className="relative px-4 sm:px-6 py-3 border-t border-border/60 bg-background/60 backdrop-blur-sm flex flex-wrap items-center justify-center gap-2">
+              <button
+                onClick={() => stepBy(-1)}
+                disabled={displayYear <= 2026}
+                className="btn-press inline-flex items-center gap-1 border border-border px-4 py-2.5 font-data text-[11px] tracking-wider uppercase text-muted-foreground hover:text-foreground transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                title="Previous year (←)"
+              >
+                <ChevronLeft className="w-4 h-4" /> Back
+              </button>
+              <button
+                onClick={() => {
+                  if (!playing && displayYear >= 2050) { setDisplayYear(2026); setPlaying(true); }
+                  else setPlaying((p) => !p);
+                }}
+                className="btn-press inline-flex items-center gap-2 bg-vermilion text-primary-foreground px-6 py-2.5 font-data text-[11px] tracking-[0.14em] uppercase hover:brightness-105 transition-all"
+                title="Play / pause (Space)"
+              >
+                {playing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                {playing ? "Pause" : displayYear >= 2050 ? "Replay" : "Play"}
+              </button>
+              <button
+                onClick={() => stepBy(1)}
+                disabled={displayYear >= 2050}
+                className="btn-press inline-flex items-center gap-1 border border-border px-4 py-2.5 font-data text-[11px] tracking-wider uppercase hover:bg-secondary/60 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                title="Next year (→)"
+              >
+                Next <ChevronRight className="w-4 h-4" />
+              </button>
+              {displayYear >= 2050 ? (
+                <button
+                  onClick={() => { run(); setPlaying(false); setReelOpen(false); navigate("/results"); }}
+                  className="btn-press inline-flex items-center gap-2 border border-foreground px-4 py-2.5 font-data text-[11px] tracking-[0.14em] uppercase hover:bg-foreground hover:text-background transition-colors"
+                >
+                  Full account <FastForward className="w-3.5 h-3.5" />
+                </button>
+              ) : (
+                <button
+                  onClick={() => { setPlaying(false); setDisplayYear(2050); }}
+                  className="btn-press hidden sm:inline-flex items-center gap-1.5 px-3 py-2.5 font-data text-[10px] tracking-wider uppercase text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <FastForward className="w-3.5 h-3.5" /> To 2050
+                </button>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Save dialog */}
       <Dialog open={saveOpen} onOpenChange={setSaveOpen}>
         <DialogContent className="bg-popover rounded-none border-border">
@@ -581,4 +764,16 @@ function moodPhotoAlt(score: number): string {
   return score >= 58
     ? "Fishermen with nets at dawn, Kuala Kedah. The town is alive."
     : "Fisherman casting net at dusk. The town still needs help.";
+}
+
+function quietLine(year: number): string {
+  const lines = [
+    "A quiet year. The town drifts a little.",
+    "No headlines. Pipes run, boats go out.",
+    "Ordinary days. Small gains, small losses.",
+    "The ledger moves a notch. Life goes on.",
+    "Calm water. The town keeps its balance.",
+    "Nothing breaks. Nothing soars. It holds.",
+  ];
+  return lines[year % lines.length]!;
 }
