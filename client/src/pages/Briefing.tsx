@@ -47,7 +47,7 @@ export default function Briefing() {
 
       <PageMeta
         title="ECO//SIM — Mission briefing · keep the town alive for 25 years"
-        description="Your mission: govern a fictional Malaysian coastal town from 2026 to 2050. RM 100 a year, eight decisions, seven vital signs."
+        description="Your mission: govern a fictional Malaysian coastal town from 2026 to 2050. 100 budget points a year, eight decisions, seven vital signs."
       />
       <SiteHeader />
 
@@ -61,7 +61,7 @@ export default function Briefing() {
           </h1>
           <p className="mt-6 max-w-xl text-base sm:text-lg leading-relaxed text-muted-foreground">
             One million people live in this fictional Malaysian town. You
-            receive <strong className="text-foreground">RM 100 every year</strong> to
+            receive <strong className="text-foreground">100 budget points every year</strong> to
             spend on it: energy, buses, trees, mangroves, water, housing. Every
             year from 2026 to 2050, the town responds. You win by keeping three
             registers healthy; you lose by neglecting any one of them.

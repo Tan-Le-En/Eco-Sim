@@ -65,9 +65,11 @@ function computeYear(
 
   // ---- electricity demand (spec §2.5) ----
   // 8,000 people-kWh ÷ 1,000,000 people = 8,000 GWh baseline. Expressed in TWh (8 TWh).
-  const efficiency = c.waterEfficiency / 100; // proxy: efficiency program also saves energy
+  // efficiency programs (water/energy) are bundled: water efficiency slider also reduces
+  // electricity demand by up to 20% (efficiency co-benefit, documented in transparency page).
+  const efficiencyCoefficient = c.waterEfficiency / 100;
   const electricityDemandTWh =
-    (population * (ELECTRICITY_PER_PERSON_KWH / 1_000_000) * (1 - efficiency * 0.2)) / 1000; // TWh
+    (population * (ELECTRICITY_PER_PERSON_KWH / 1_000_000) * (1 - efficiencyCoefficient * 0.2)) / 1000; // TWh
 
   // ---- renewable share (spec equation, annualized rollout) ----
   const rollout = Math.min(1, t / 10); // 10-year transition window
@@ -90,7 +92,12 @@ function computeYear(
   const privateTransportShare = Math.max(0.2, 0.68 - (c.publicTransport / 100) * 0.4);
   const transportEmissions =
     (population * privateTransportShare * TRANSPORT_EMISSIONS_PER_PERSON_KG) / 1_000_000; // Mt
-  const industrialEmissions = (c.industrialActivity / 100) * 14.1 * (1 + t * 0.004); // Mt
+  // Industrial emissions grow with time (no clean-tech path in this model, educational simplification).
+  // Capped at 2× baseline to avoid unrealistic runaway (spec deviation noted).
+  const industrialEmissions = Math.min(
+    (c.industrialActivity / 100) * 14.1 * (1 + t * 0.004),
+    (c.industrialActivity / 100) * 28.2
+  ); // Mt
   const wasteEmissions = Math.max(0, 0.9 - (c.wasteRecycling / 100) * 1.2); // Mt
   const emissionsMtco2e =
     fossilEmissions + renewableEmissions + transportEmissions + industrialEmissions + wasteEmissions;
@@ -153,11 +160,11 @@ function computeYear(
   const industrialGrowthBonus = (c.industrialActivity / 100) * 30 * (1 + t * 0.005);
   const transportBenefit = (c.publicTransport / 100) * 10;
   const infrastructureCost =
-    ((c.renewableElectricity / 100) * 14 +
-      (c.publicTransport / 100) * 12 +
-      (c.coastalDevelopment / 100) * 8 +
-      (c.mangroveRestoration / 100) * 6 +
-      (c.wasteRecycling / 100) * 4) *
+    ((c.renewableElectricity / 100) * 5 +
+      (c.publicTransport / 100) * 4 +
+      (c.coastalDevelopment / 30) * 2 +
+      (c.mangroveRestoration / 30) * 2 +
+      (c.wasteRecycling / 60) * 1.5) *
     (1 + t * 0.012);
   const disasterDamage =
     Math.max(0, 40 - floodResilience) * 0.12 * rainfallFactorFor(year) * (1 + t * 0.02);
@@ -169,14 +176,16 @@ function computeYear(
   );
 
   // ---- budget accounting ----
+  // spendRate: normalized so max total spend ≈ 12 pts/yr; revenue 1–8 pts/yr.
+  // At default settings → ~break-even. Full green + no industry → deficit after ~8 yrs.
   const spendRate =
-    (c.renewableElectricity / 100) * 14 +
-    (c.publicTransport / 100) * 12 +
-    (c.mangroveRestoration / 30) * 9 +
-    (c.waterEfficiency / 60) * 8 +
-    (c.wasteRecycling / 60) * 6 +
-    (c.coastalDevelopment / 30) * 5;
-  const revenue = 1.6 + (c.industrialActivity / 100) * 0.9;
+    (c.renewableElectricity / 100) * 4 +
+    (c.publicTransport / 100) * 3 +
+    (c.mangroveRestoration / 30) * 2 +
+    (c.waterEfficiency / 60) * 1.5 +
+    (c.wasteRecycling / 60) * 1 +
+    (c.coastalDevelopment / 30) * 0.5;
+  const revenue = 1 + (c.industrialActivity / 100) * 5;
   const budgetRemaining = prev
     ? clamp(prev.budgetRemaining + revenue - spendRate, 0, 999)
     : BASELINE.budgetUnits;

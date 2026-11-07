@@ -107,10 +107,10 @@ const CHAPTERS: Chapter[] = [
   {
     n: "05",
     voice:
-      "The old boss always said there was no money. You have RM 100 a year. Don't spend it on what looks good. Spend it on what lasts.",
+      "The old boss always said there was no money. You have 100 budget points a year. Don't spend it on what looks good. Spend it on what lasts.",
     title: "The town hands you the keys",
     lesson:
-      "You start in 2026 with RM 100 a year, which is not much. That is the whole game: choose where the money goes, then live with the answer for 25 years. The town will tell you what worked and what did not. Fail safely here, and you will learn something that holds in the real world.",
+      "You start in 2026 with 100 budget points a year, which is not much. That is the whole game: choose where the money goes, then live with the answer for 25 years. The town will tell you what worked and what did not. Fail safely here, and you will learn something that holds in the real world.",
     photo: PHOTOS.workingJetty,
     alt: "Clan jetty — houses and work over the water",
     cap: "Life and work on the jetty",

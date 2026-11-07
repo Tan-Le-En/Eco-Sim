@@ -60,10 +60,10 @@ export default function TownMood({ indicators, year }: TownMoodProps) {
                 {g.title}
               </div>
               <div className="flex items-center justify-center gap-1.5 mb-1">
-                {[0, 1, 2].map((j) => (
+                {Array.from({ length: g.keys.length }, (_, j) => (
                   <span
                     key={j}
-                    className={`w-2.5 h-2.5 border border-border ${j < keys ? (keys >= 2 ? "bg-foreground" : "bg-vermilion") : "bg-transparent"}`}
+                    className={`w-2.5 h-2.5 border border-border ${j < keys ? (keys >= g.keys.length ? "bg-foreground" : "bg-vermilion") : "bg-transparent"}`}
                     aria-hidden="true"
                   />
                 ))}

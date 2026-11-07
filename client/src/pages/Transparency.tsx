@@ -54,7 +54,7 @@ const EQUATIONS = [
   {
     title: "Overall score",
     formula: "score = Σ weight_i × value_i − penalties",
-    note: "Weights: climate 0.20, biodiversity 0.15, water 0.15, flood resilience 0.10, health 0.15, economy 0.15, equity 0.10. Penalties apply for collapsed systems (flood resilience or water below 35, fishery collapse).",
+    note: "Weights: climate 0.20, biodiversity 0.15, water 0.15, flood resilience 0.15, health 0.15, economy 0.10, equity 0.10. Penalties apply for system collapse: biodiversity below 30 (−10), water security below 25 (−8), equity below 35 (−6).",
   },
 ];
 

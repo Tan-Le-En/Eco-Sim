@@ -83,7 +83,8 @@ export default function IndicatorStrip({ indicators, baseline, history }: Indica
                 {value.toFixed(0)}
               </span>
               <span
-                className={`font-data text-[11px] tabular-nums w-11 text-right ${good ? "text-emerald-700" : "text-vermilion"}`}
+                className={`font-data text-[11px] tabular-nums w-14 text-right ${good ? "text-emerald-700" : "text-vermilion"}`}
+                title="Change vs 2026 baseline"
               >
                 {delta === 0 ? "—" : `${delta > 0 ? "+" : ""}${delta.toFixed(1)}`}
               </span>
@@ -120,6 +121,9 @@ export default function IndicatorStrip({ indicators, baseline, history }: Indica
               <div className="overflow-hidden">
                 <div className="pt-2 text-[12px] leading-relaxed max-w-xl">
                   <p className="text-foreground font-medium">{isGoodNow ? kid.happy : kid.sad}</p>
+                  {!meta.higherIsBetter && (
+                    <p className="font-data text-[10px] text-muted-foreground mt-0.5">↓ Lower is better for this register</p>
+                  )}
                   <p className="text-muted-foreground font-data text-[10px] mt-1 uppercase tracking-wider">{kid.bm}</p>
                 </div>
               </div>

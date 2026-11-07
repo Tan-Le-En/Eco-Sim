@@ -1,7 +1,7 @@
 # ECO//SIM — Teluk Nusa Coastal City 2050
 
 > **An Interactive Field Study of Coastal Resilience (2026–2050)**  
-> *"Change one thing, watch everything change. Simple enough for a child; rigorous enough for a climate researcher."*
+> _"Change one thing, watch everything change. Simple enough for a child; rigorous enough for a climate researcher."_
 
 ---
 
@@ -34,7 +34,7 @@ The platform provides a dynamic sandbox where users manage 5 key policy levers o
 - **🔍 Full Model Transparency (`/transparency`)**:
   - Complete mathematical formulas, differential equations, baseline values, and tipping point thresholds documented openly.
 - **🎨 Editorial Aesthetic & Design System**:
-  - Crafted with a field-study documentary layout, responsive light/dark themes, clean typography (*Newsreader*, *Public Sans*, *IBM Plex Mono*), and real photography.
+  - Crafted with a field-study documentary layout, responsive light/dark themes, clean typography (_Newsreader_, _Public Sans_, _IBM Plex Mono_), and real photography.
 
 ---
 
@@ -87,23 +87,28 @@ Eco-Sim/
 ### Installation
 
 1. **Clone the Repository**:
+
    ```bash
    git clone https://github.com/Tan-Le-En/Eco-Sim.git
    cd Eco-Sim
    ```
 
 2. **Install Dependencies**:
+
    ```bash
    npm install
    ```
 
 3. **Start Development Server**:
+
    ```bash
    npm run dev
    ```
+
    Open `http://localhost:3000` in your browser.
 
 4. **Build for Production**:
+
    ```bash
    npm run build
    ```
@@ -117,14 +122,14 @@ Eco-Sim/
 
 ## 📈 Simulation Indicators
 
-| Indicator | Symbol | Unit | Baseline (2026) | Target (2050) | Description |
-|---|---|---|---|---|---|
-| **Carbon Emissions** | ⚡ | Mt CO₂/yr | 1.00 | ≤ 0.30 | Annual carbon footprint from power and industry |
-| **Flood Protection** | 🌊 | % | 30% | ≥ 80% | Combined protection against high tide & storm surges |
-| **Fish Biomass** | 🐟 | Index | 40 | ≥ 75 | Coastal marine population and nursery health |
-| **Freshwater Supply** | 💧 | % | 50% | ≥ 85% | Percentage of population with reliable fresh drinking water |
-| **Town Economy** | 🏙️ | Index | 50 | ≥ 70 | Local business vitality, eco-tourism, & employment |
-| **Community Mood** | 😊 | Index | 50 | ≥ 75 | Resident happiness, public health, & disaster security |
+| Indicator             | Symbol | Unit      | Baseline (2026) | Target (2050) | Description                                                 |
+| --------------------- | ------ | --------- | --------------- | ------------- | ----------------------------------------------------------- |
+| **Carbon Emissions**  | ⚡     | Mt CO₂/yr | 1.00            | ≤ 0.30        | Annual carbon footprint from power and industry             |
+| **Flood Protection**  | 🌊     | %         | 30%             | ≥ 80%         | Combined protection against high tide & storm surges        |
+| **Fish Biomass**      | 🐟     | Index     | 40              | ≥ 75          | Coastal marine population and nursery health                |
+| **Freshwater Supply** | 💧     | %         | 50%             | ≥ 85%         | Percentage of population with reliable fresh drinking water |
+| **Town Economy**      | 🏙️     | Index     | 50              | ≥ 70          | Local business vitality, eco-tourism, & employment          |
+| **Community Mood**    | 😊     | Index     | 50              | ≥ 75          | Resident happiness, public health, & disaster security      |
 
 ---
 

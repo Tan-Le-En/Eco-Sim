@@ -133,10 +133,6 @@ export default function CityMap({ controls, indicators, year, className }: CityM
           className="relative select-none aspect-[4/3] min-h-[180px] bg-[oklch(0.88_0.02_80)] dark:bg-[oklch(0.25_0.015_75)]"
           onPointerMove={onMove}
           onPointerLeave={onLeave}
-          style={{
-            transition: "transform 800ms cubic-bezier(0.23, 1, 0.32, 1)",
-            transform: year >= 2050 ? "scale(1.05)" : "scale(1)",
-          }}
         >
           {/* Base layer: illustrated field map of Teluk Nusa */}
           <img
@@ -181,6 +177,15 @@ export default function CityMap({ controls, indicators, year, className }: CityM
             />
           )}
         </div>
+      </div>
+      {/* Overlay legend */}
+      <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1">
+        {OVERLAY_LEGEND.map(([color, label]) => (
+          <div key={label} className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 shrink-0 border border-border/40" style={{ backgroundColor: color }} aria-hidden="true" />
+            <span className="font-data text-[10px] tracking-[0.08em] uppercase text-muted-foreground">{label}</span>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -289,12 +289,12 @@ export interface KidControlMeta {
 export const KID_CONTROLS: Record<keyof Controls, KidControlMeta> = {
   renewableElectricity: {
     key: "renewableElectricity",
-    kidName: "Clean Power",
-    bm: "Tenaga Bersih",
-    kidStory: "Make electricity from sun and wind instead of smoke.",
+    kidName: "Solar & Wind Power",
+    bm: "Tenaga Suria & Angin",
+    kidStory: "Replace coal & gas with rooftop solar panels and coastal wind turbines.",
     icon: "Sun",
-    goodWhenMore: "Less smoke in the sky",
-    badWhenMore: "Costs more at the start",
+    goodWhenMore: "Less emissions, cleaner coastal air",
+    badWhenMore: "Upfront grid & storage installation costs",
   },
   publicTransport: {
     key: "publicTransport",

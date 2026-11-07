@@ -18,7 +18,7 @@ const FAQS = [
   {
     id: "score",
     q: "How is the final score calculated?",
-    a: "Seven registers are measured in 2050: sea and air, nature, clean water, flood safety, health, economy, and fairness. Each is scored 0–100. They are combined with published weights (nature 25%, health 20%, flood 15%, water 15%, economy 10%, air 8%, equity 7%) into one number out of 100. The full equation is on the Transparency page.",
+    a: "Seven registers are measured in 2050: climate pressure (20%), nature (15%), clean water (15%), flood resilience (15%), health (15%), economy (10%), and fairness (10%). Penalties apply if vital systems collapse. The full mathematics and penalty thresholds are published on the Transparency page.",
   },
   {
     id: "perfect",

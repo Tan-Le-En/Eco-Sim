@@ -35,37 +35,47 @@ const TICK = { fontFamily: "IBM Plex Mono", fontSize: 10, fontWeight: 400, fill:
  * Custom tooltip: shows indicator values at the hovered year plus a plain-language
  * hint about what changed since 2026. "What changed?" at a glance.
  */
-function CausalTooltip({ active, payload, label }: TooltipProps<number, string>) {
+function CausalTooltip({
+  active,
+  payload,
+  label,
+  baselineRow,
+}: TooltipProps<number, string> & { baselineRow?: ChartRow }) {
   if (!active || !payload || payload.length === 0 || !label) return null;
   const year = label as unknown as number;
-  const baseRow = payload[0]?.payload as ChartRow;
 
   return (
-    <div className="bg-popover border border-border p-3 max-w-xs">
+    <div className="bg-popover border border-border p-3 max-w-xs shadow-sm">
       <div className="font-data text-[10px] tracking-[0.14em] uppercase text-vermilion mb-1.5">
-        Year {year} · what changed
+        Year {year} · vs 2026 baseline
       </div>
       <div className="space-y-0.5">
         {payload.map((entry) => {
           const key = entry.dataKey as string;
+          const meta = INDICATOR_META[key as keyof Indicators];
           const kidName = KID_INDICATORS[key as keyof Indicators]?.kidName ?? key;
           const current = typeof entry.value === "number" ? entry.value : 0;
-          const delta = current - 50; // 2026 baseline is 50 for all indicators
+          const baseVal = baselineRow?.[key] ?? 50;
+          const delta = current - baseVal;
+          const higherIsBetter = meta ? meta.higherIsBetter : true;
+          const isBetter = higherIsBetter ? delta > 0 : delta < 0;
+          const isNeutral = Math.abs(delta) < 1;
           const dir = delta > 0 ? "↑" : delta < 0 ? "↓" : "—";
-          const color =
-            Math.abs(delta) > 15
-              ? delta > 0
-                ? "text-emerald-700"
-                : "text-vermilion"
-              : "text-muted-foreground";
+          const color = isNeutral
+            ? "text-muted-foreground"
+            : isBetter
+              ? "text-emerald-700"
+              : "text-vermilion";
           return (
             <div key={key} className="flex items-baseline justify-between gap-3 text-[11px]">
               <span className="font-data text-[10px] truncate">{kidName}</span>
               <span className="font-data text-[11px] tabular-nums">
                 <span className={color}>{dir}</span>{" "}
                 {current.toFixed(0)}
-                {Math.abs(delta) > 5 && (
-                  <span className="text-[9px] text-muted-foreground ml-1">({delta > 0 ? "+" : ""}{delta.toFixed(0)})</span>
+                {Math.abs(delta) >= 1 && (
+                  <span className={`text-[9px] ml-1 ${color}`}>
+                    ({delta > 0 ? "+" : ""}{delta.toFixed(0)})
+                  </span>
                 )}
               </span>
             </div>
@@ -74,8 +84,7 @@ function CausalTooltip({ active, payload, label }: TooltipProps<number, string>)
       </div>
       {year > 2026 && (
         <p className="mt-2 pt-2 border-t border-border text-[10px] text-muted-foreground leading-relaxed">
-          Arrows show how far each indicator has moved from the 2026 starting point.
-          The model is deterministic; your controls drive every change.
+          Deltas show change from 2026 starting conditions. Green indicates positive town progress.
         </p>
       )}
     </div>
@@ -85,6 +94,7 @@ function CausalTooltip({ active, payload, label }: TooltipProps<number, string>)
 export default function TimelineChart({ data, className, highlightKeys }: TimelineChartProps) {
   const keys = highlightKeys ?? INDICATOR_KEYS;
   const [hidden, setHidden] = useState<Record<string, boolean>>({});
+  const baselineRow = data[0];
 
   const toggle = (k: string) => setHidden((h) => ({ ...h, [k]: !h[k] }));
 
@@ -105,7 +115,10 @@ export default function TimelineChart({ data, className, highlightKeys }: Timeli
             ticks={[0, 25, 50, 75, 100]}
             stroke="oklch(0.235 0.015 65 / 0.35)"
           />
-          <Tooltip content={<CausalTooltip />} cursor={{ stroke: "oklch(0.45 0.02 65 / 0.3)", strokeWidth: 1 }} />
+          <Tooltip
+            content={<CausalTooltip baselineRow={baselineRow} />}
+            cursor={{ stroke: "oklch(0.45 0.02 65 / 0.3)", strokeWidth: 1 }}
+          />
           <Legend
             wrapperStyle={{ paddingTop: 8 }}
             formatter={(value) => (

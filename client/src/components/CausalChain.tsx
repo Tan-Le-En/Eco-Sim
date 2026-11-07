@@ -83,7 +83,7 @@ export default function CausalChain({ links, events, eventsToShow = 5 }: CausalC
       )}
 
       <div className="px-4 py-2">
-        <span className="status-chip">Rules-based · certainty: educational model, not a forecast</span>
+        <span className="status-chip">Deterministic model · not a forecast</span>
       </div>
     </div>
   );

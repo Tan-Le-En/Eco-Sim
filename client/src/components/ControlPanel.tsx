@@ -44,14 +44,14 @@ const ICONS: Record<ControlKey, LucideIcon> = {
 };
 
 const UNIT_LABEL: Record<ControlKey, string> = {
-  renewableElectricity: "% clean power",
-  publicTransport: "% bus share",
-  mangroveRestoration: "restored",
-  coastalDevelopment: "new buildings",
+  renewableElectricity: "% grid target",
+  publicTransport: "invest. level",
+  mangroveRestoration: "% area",
+  coastalDevelopment: "% expansion",
   waterEfficiency: "% saved",
   wasteRecycling: "% sorted",
-  fishingPressure: "boats at sea",
-  industrialActivity: "factory output",
+  fishingPressure: "% intensity",
+  industrialActivity: "% output",
 };
 
 interface ControlPanelProps {
@@ -67,7 +67,6 @@ export default function ControlPanel({ controls, onChange, onReset }: ControlPan
         const kid = KID_CONTROLS[key];
         const r = SLIDER_RANGES[key];
         const value = controls[key];
-        const pct = Math.round((value / r.max) * 100);
         const Ico = ICONS[key];
         return (
           <div key={key} className="px-4 py-3">
@@ -76,13 +75,13 @@ export default function ControlPanel({ controls, onChange, onReset }: ControlPan
                 {String(idx + 1).padStart(2, "0")}
               </span>
               <Ico className="w-4 h-4 text-foreground/70 shrink-0" aria-hidden={true} />
-              <span className="flex-1">
-                <span className="font-display font-semibold text-[14px] leading-tight">{kid.kidName}</span>
-                <span className="font-data text-[10px] text-muted-foreground block mt-0.5">{kid.bm}</span>
+              <span className="flex-1 min-w-0">
+                <span className="font-display font-semibold text-[14px] leading-tight block truncate">{kid.kidName}</span>
+                <span className="font-data text-[10px] text-muted-foreground block mt-0.5 truncate">{kid.bm} · {UNIT_LABEL[key]}</span>
               </span>
-              <span className="font-data text-[12px] tabular-nums font-medium w-20 text-right whitespace-nowrap">
-                {pct}%
-                <span className="text-muted-foreground font-normal">/ {r.defaultVal}%</span>
+              <span className="font-data text-[12px] tabular-nums font-medium w-16 text-right whitespace-nowrap">
+                {value}
+                <span className="text-muted-foreground font-normal text-[11px]">/{r.max}</span>
               </span>
             </div>
             <Slider

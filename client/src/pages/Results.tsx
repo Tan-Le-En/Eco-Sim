@@ -24,7 +24,7 @@ import CopyButton from "@/components/CopyButton";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { useSim } from "@/contexts/SimContext";
 import { runSimulation } from "@/lib/sim/engine";
-import { INDICATOR_KEYS, INDICATOR_META, KID_GOALS, KID_INDICATORS, MISSION_TARGETS, SimulationResult } from "@/lib/sim/types";
+import { INDICATOR_KEYS, INDICATOR_META, KID_CONTROLS, KID_GOALS, KID_INDICATORS, MISSION_TARGETS, SimulationResult } from "@/lib/sim/types";
 
 const SUNSET_PHOTO = "/storage/fishermen-dawn-nets-real_81f6e009.jpeg";
 const DAWN_PHOTO = "/storage/fishermen-net-cast-real_a6fc104d.jpg";
@@ -83,15 +83,16 @@ export default function Results() {
   const photo = happy ? SUNSET_PHOTO : DAWN_PHOTO;
   const verdict = happy
     ? "Teluk Nusa held its own."
-    : "Teluk Nusa is still struggling. That is where most real plans begin.";
+    : "Teluk Nusa is struggling. Adjust one dial and run again.";
 
   const [expertOpen, setExpertOpen] = useState<Record<string, boolean>>({
-    breakdown: false,
+    appendix: false,
+    breakdown: true,
     table: false,
     comparison: false,
   });
   const toggle = (k: string) => setExpertOpen((o) => ({ ...o, [k]: !o[k] }));
-  const isAnyExpertOpen = expertOpen.appendix || expertOpen.breakdown || expertOpen.table || expertOpen.comparison;
+  const isAnyExpertOpen = Boolean(expertOpen.appendix);
 
   const shareText = `I scored ${latest.score.toFixed(1)}/100 protecting Teluk Nusa to 2050 on ECO//SIM. Try to beat it.`;
 
@@ -146,11 +147,11 @@ export default function Results() {
                 </div>
                 <div>
                   <div className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">Population 2050</div>
-                  <div className="font-data text-xl tabular-nums">1,080,000</div>
+                  <div className="font-data text-xl tabular-nums">{latest.years[latest.years.length - 1].population.toLocaleString()}</div>
                 </div>
                 <div>
                   <div className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">Budget remaining</div>
-                  <div className="font-data text-xl tabular-nums">RM {budgetFinal.toFixed(0)}</div>
+                  <div className="font-data text-xl tabular-nums">{budgetFinal.toFixed(0)} pts</div>
                 </div>
                 <div>
                   <div className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">Goals reached</div>
@@ -407,11 +408,16 @@ export default function Results() {
                                 </div>
                               </div>
                               <div className="flex flex-wrap gap-x-3 gap-y-0.5">
-                                {Object.entries(s.controls).map(([k, v]) => (
-                                  <span key={k} className="font-data text-[10px] text-muted-foreground">
-                                    {k}: <span className="tabular-nums">{v}</span>
-                                  </span>
-                                ))}
+                                {(Object.entries(s.controls) as [keyof typeof s.controls, number][]).map(([k, v]) => {
+                                  const meta = KID_CONTROLS[k];
+                                  const { min, max } = { min: 0, max: k === "mangroveRestoration" || k === "coastalDevelopment" ? 30 : k === "waterEfficiency" || k === "wasteRecycling" ? 60 : 100 };
+                                  const pct = Math.round((v / max) * 100);
+                                  return (
+                                    <span key={k} className="font-data text-[10px] text-muted-foreground">
+                                      {meta.kidName}: <span className="tabular-nums text-foreground">{pct}%</span>
+                                    </span>
+                                  );
+                                })}
                               </div>
                             </div>
                           ))}

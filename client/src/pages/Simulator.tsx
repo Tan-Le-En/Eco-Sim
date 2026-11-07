@@ -88,8 +88,9 @@ export default function Simulator() {
     };
   }, [playing]);
 
-  // Suppress unused warning — lastTick forces re-render cadence during play.
-  void lastTick;
+  // lastTick is a render trigger during playback.
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+  lastTick;
 
   const handleRun = () => {
     setDisplayYear(2026);
@@ -214,7 +215,7 @@ export default function Simulator() {
                     runningBudget < 20 ? "text-vermilion" : runningBudget < 40 ? "text-vermilion/70" : "text-foreground"
                   }`}
                 >
-                  RM {runningBudget.toFixed(0)}
+                  {runningBudget.toFixed(0)} pts
                 </div>
               </div>
             </div>
@@ -238,7 +239,7 @@ export default function Simulator() {
             )}
             <button
               onClick={handleFinishEarly}
-              disabled={!playing}
+              disabled={displayYear >= 2050}
               className="btn-press inline-flex items-center gap-1.5 border border-border px-3 py-2.5 font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground hover:text-foreground transition-colors disabled:opacity-40 disabled:pointer-events-none"
               title="Jump to 2050"
             >
@@ -261,9 +262,9 @@ export default function Simulator() {
         </div>
       </div>
 
-      <main className="flex-1 px-4 sm:px-6 lg:px-8 py-3 grid lg:grid-cols-[1fr_340px] gap-4 max-w-[1500px] w-full h-[calc(100vh-8.5rem)] overflow-hidden">
+      <main className="flex-1 px-4 sm:px-6 lg:px-8 py-3 grid lg:grid-cols-[1fr_340px] gap-4 max-w-[1500px] w-full lg:h-[calc(100vh-8.5rem)] lg:overflow-hidden overflow-y-auto">
         {/* Left: mood → map → indicators → trajectory */}
-        <div className="space-y-3 min-w-0 flex flex-col overflow-hidden">
+        <div className="space-y-3 min-w-0 flex flex-col lg:overflow-hidden">
           {indicatorsAtDisplay && <TownMood indicators={indicatorsAtDisplay} year={displayYear} />}
           <CityMap controls={controls} indicators={indicatorsAtDisplay} year={displayYear} />
 
@@ -356,7 +357,7 @@ export default function Simulator() {
 
         {/* Right: decision ledger */}
         <aside className="lg:sticky lg:top-14 lg:self-start lg:h-[calc(100vh-8.5rem)] lg:overflow-y-auto pr-1 pb-2 shrink-0">
-          <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-1">Decisions · each year</div>
+          <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-1">Policy · 2026 – 2050</div>
           <ControlPanel controls={controls} onChange={setControl} onReset={resetControls} />
           <div className="mt-3 px-1">
             <p className="text-[11px] text-muted-foreground leading-relaxed">
