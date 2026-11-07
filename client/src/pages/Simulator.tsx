@@ -593,17 +593,22 @@ export default function Simulator() {
             role="dialog"
             aria-label="Year reel: watch Teluk Nusa from 2026 to 2050"
           >
-            {/* Subtle background so white cards stand out */}
+            {/* Plain map background — just the map, no overlays or text */}
             <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
-              <div className="h-full w-full opacity-[0.14]">
-                <CityMap controls={controls} indicators={indicatorsAtDisplay} year={displayYear} className="h-full" />
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-transparent to-background/85" />
+              <img
+                src="/storage/teluk-nusa-map-illustrated_e05d6285.png"
+                alt=""
+                className="h-full w-full object-cover"
+                draggable={false}
+              />
+              <div className="absolute inset-0 bg-white/55" />
             </div>
 
-            {/* Sticky header: odometer year + controls */}
+            {/* Sticky header */}
             <div className="relative flex items-center justify-between gap-3 px-4 sm:px-6 py-3 border-b-2 border-foreground/80 bg-white dark:bg-card shadow-sm">
-              <OdometerYear year={displayYear} />
+              <span className="font-data text-[10px] tracking-[0.16em] uppercase text-muted-foreground">
+                Teluk Nusa · the years
+              </span>
               <div className="text-right">
                 <div className="font-data text-[10px] tracking-[0.16em] uppercase text-muted-foreground tabular-nums">
                   Year {displayYear - 2026 + 1} of 25 · {progressPct}%
@@ -630,10 +635,18 @@ export default function Simulator() {
               </div>
             </div>
 
+            {/* Centre piece: rolling year */}
+            <div className="relative flex flex-col items-center justify-center px-4 pt-6 pb-3">
+              <OdometerYear year={displayYear} large />
+              <div className="mt-3 font-data text-[10px] tracking-[0.16em] uppercase text-muted-foreground">
+                {playing ? (eventsHere.length > 0 ? "Story year — read it" : "Fast-forwarding…") : "Paused"}
+              </div>
+            </div>
+
             {/* Scrolling feed: whole timeline, auto-scrolls down */}
-            <div ref={reelScrollRef} className="relative flex-1 overflow-y-auto px-4 sm:px-6 py-6 scroll-smooth">
+            <div ref={reelScrollRef} className="relative flex-1 overflow-y-auto px-4 sm:px-6 py-4 scroll-smooth">
               <div className="mx-auto max-w-md w-full space-y-3 pb-10">
-                <p className="font-data text-[11px] tracking-[0.12em] uppercase text-muted-foreground text-center">
+                <p className="font-data text-[11px] tracking-[0.12em] uppercase text-muted-foreground text-center font-semibold">
                   Fast-forward until a story year. Story pauses. Then fast-forward again.
                 </p>
                 {feed.map((item) => {
@@ -818,25 +831,25 @@ function quietLine(year: number): string {
   return lines[year % lines.length]!;
 }
 
-function OdometerYear({ year }: { year: number }) {
+function OdometerYear({ year, large = false }: { year: number; large?: boolean }) {
   const digits = String(year).padStart(4, "0").split("");
   return (
     <div className="flex items-center gap-1" aria-label={`Year ${year}`}>
       {digits.map((d, i) => (
-        <RollingDigit key={i} digit={d} delay={i * 0.03} />
+        <RollingDigit key={i} digit={d} delay={i * 0.03} large={large} />
       ))}
     </div>
   );
 }
 
-function RollingDigit({ digit, delay = 0 }: { digit: string; delay?: number }) {
+function RollingDigit({ digit, delay = 0, large = false }: { digit: string; delay?: number; large?: boolean }) {
   const n = Number(digit) || 0;
   return (
     <span
-      className="inline-block overflow-hidden border-2 border-foreground bg-white px-1.5 py-0.5 leading-none"
+      className={`inline-block overflow-hidden border-2 border-foreground bg-white leading-none ${large ? "px-3 py-2" : "px-1.5 py-0.5"}`}
       aria-hidden="true"
     >
-      <span className="block h-[1.1em] overflow-hidden font-display font-semibold text-2xl leading-[1.1em] tabular-nums text-foreground">
+      <span className={`block overflow-hidden font-display font-semibold tabular-nums text-foreground ${large ? "h-[1.1em] text-6xl sm:text-7xl leading-[1.1em]" : "h-[1.1em] text-2xl leading-[1.1em]"}`}>
         <motion.span
           className="block will-change-transform"
           animate={{ y: `-${n * 1.1}em` }}

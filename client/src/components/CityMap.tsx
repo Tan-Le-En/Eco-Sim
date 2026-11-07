@@ -172,20 +172,6 @@ export default function CityMap({ controls, indicators, year, className }: CityM
                 style={{ transition: "fill 500ms ease" }}
               />
             ))}
-            {/* River marker & label */}
-            <g className="pointer-events-none select-none">
-              <text
-                x="28"
-                y="48"
-                fill="#ffffff"
-                stroke="rgba(0,0,0,0.6)"
-                strokeWidth="0.5"
-                paintOrder="stroke"
-                className="font-data text-[3.4px] font-bold tracking-[0.16em] uppercase"
-              >
-                ~ Sungai Kedah (River) ~
-              </text>
-            </g>
           </svg>
           {/* Hover indicator: thin outline cell */}
           {hover && containerRef.current && (
