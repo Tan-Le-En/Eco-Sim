@@ -152,7 +152,8 @@ export default function Home() {
               className="group"
             >
               <div className="px-6 sm:px-10 pt-8 pb-4">
-                <div className="flex items-baseline gap-4 mb-4">
+                <div className="flex items-baseline gap-3 mb-4">
+                  <span className="font-data text-vermilion text-sm font-semibold tracking-wider">{f.n}</span>
                   <span className="font-display italic font-semibold text-xl">{f.k}</span>
                 </div>
                 <p className="text-sm sm:text-[15px] leading-relaxed text-muted-foreground max-w-sm">
