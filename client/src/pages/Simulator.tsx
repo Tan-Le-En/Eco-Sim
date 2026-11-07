@@ -823,21 +823,33 @@ function OdometerYear({ year }: { year: number }) {
   return (
     <div className="flex items-center gap-1" aria-label={`Year ${year}`}>
       {digits.map((d, i) => (
-        <span key={i} className="inline-block overflow-hidden border-2 border-foreground bg-white px-1.5 py-0.5">
-          <AnimatePresence mode="popLayout" initial={false}>
-            <motion.span
-              key={d}
-              initial={{ y: 14, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -14, opacity: 0 }}
-              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-              className="block font-display font-semibold text-2xl leading-none tabular-nums text-foreground"
-            >
-              {d}
-            </motion.span>
-          </AnimatePresence>
-        </span>
+        <RollingDigit key={i} digit={d} delay={i * 0.03} />
       ))}
     </div>
+  );
+}
+
+function RollingDigit({ digit, delay = 0 }: { digit: string; delay?: number }) {
+  const n = Number(digit) || 0;
+  return (
+    <span
+      className="inline-block overflow-hidden border-2 border-foreground bg-white px-1.5 py-0.5 leading-none"
+      aria-hidden="true"
+    >
+      <span className="block h-[1.1em] overflow-hidden font-display font-semibold text-2xl leading-[1.1em] tabular-nums text-foreground">
+        <motion.span
+          className="block will-change-transform"
+          animate={{ y: `-${n * 1.1}em` }}
+          transition={{ duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] }}
+          style={{ height: "11em" }}
+        >
+          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((v) => (
+            <span key={v} className="block h-[1.1em] leading-[1.1em] text-center">
+              {v}
+            </span>
+          ))}
+        </motion.span>
+      </span>
+    </span>
   );
 }
