@@ -38,13 +38,13 @@
 ## engine.ts
 
 ### Events (messages)
-- water_stress_warning: "The Sungai Kedah runs thin by March. Families in the kampungs fetch rainwater in plastic drums."
+- water_stress_warning: "The Sungai Nusa runs thin by March. Families in the kampungs fetch rainwater in plastic drums."
 - water_crisis: "The dams run dry. Water board trucks park on Jalan Utama and residents queue with every container they own. The school closes early."
 - coastal_flood: "A monsoon surge pushes the sea past the seawall. In the kampung, a grandmother carries her cat onto the roof and waits for a boat."
 - habitat_loss_warning: "The bakau trees on the estuary bank are gone. Fishermen say the nets come back lighter every year."
 - equity_warning: "The flats by the river have no lift and the bus route stops at the main road. Residents walk 40 minutes to the clinic."
 - health_warning: "Hospital admissions for asthma and heat exhaustion climb. The ward runs out of beds by September."
-- budget_deficit: "The town hall stops funding projects. A bridge half-finished over the mouth of the Sungai Kedah. Approval for the mayor drops to its lowest since 2026."
+- budget_deficit: "The town hall stops funding projects. A bridge half-finished over the mouth of the Sungai Nusa. Approval for the mayor drops to its lowest since 2026."
 
 ### explainOutcome labels
 - climatePressure: "climate pressure"

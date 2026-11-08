@@ -292,7 +292,7 @@ function generateEvents(years: SimYear[], controls: Controls): SimEvent[] {
       "Kampung taps fail. Wells run low.",
     ],
     water_stress: [
-      "Sungai Kedah runs low. Rationing starts.",
+      "Sungai Nusa runs low. Rationing starts.",
       "Dry season: river thin, taps weak.",
       "Water pressure drops. Half-day supply.",
       "Low river. Fields take less water.",
