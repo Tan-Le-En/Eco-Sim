@@ -143,7 +143,7 @@ export default function Home() {
       {/* ────────────── Full-viewport editorial hero ────────────── */}
       <section id="home-hero" className="relative flex-1 grid lg:grid-cols-[1.1fr_1fr] h-screen overflow-hidden">
         {/* Left: typographic hero, offset */}
-        <div className="relative paper-grain flex flex-col justify-between px-4 sm:px-6 lg:px-10 py-4 lg:py-6 border-r border-border">
+        <div className="relative flex flex-col justify-between px-4 sm:px-6 lg:px-10 py-4 lg:py-6 border-r border-border">
           <SiteHeader bare />
 
           <motion.div
