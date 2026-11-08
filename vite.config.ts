@@ -15,10 +15,15 @@ function vitePluginStorageProxy(): Plugin {
       server.middlewares.use("/storage", async (req, res, next) => {
         const key = req.url?.replace(/^\//, "").replace(/\?.*$/, "");
         if (!key) {
-          return res.writeHead(400, { "Content-Type": "text/plain" }).end("Missing storage key");
+          return res
+            .writeHead(400, { "Content-Type": "text/plain" })
+            .end("Missing storage key");
         }
 
-        const forgeBaseUrl = (process.env.BUILT_IN_FORGE_API_URL || "").replace(/\/+$/, "");
+        const forgeBaseUrl = (process.env.BUILT_IN_FORGE_API_URL || "").replace(
+          /\/+$/,
+          ""
+        );
         const forgeKey = process.env.BUILT_IN_FORGE_API_KEY;
 
         // Not configured: serve the committed file from public/ instead.
@@ -27,7 +32,10 @@ function vitePluginStorageProxy(): Plugin {
         }
 
         try {
-          const forgeUrl = new URL("v1/storage/presign/get", forgeBaseUrl + "/");
+          const forgeUrl = new URL(
+            "v1/storage/presign/get",
+            forgeBaseUrl + "/"
+          );
           forgeUrl.searchParams.set("path", key);
 
           const forgeResp = await fetch(forgeUrl, {
@@ -92,10 +100,7 @@ export default defineConfig(({ command }) => {
       port: 3000,
       strictPort: false, // Will find next available port if 3000 is busy
       host: true,
-      allowedHosts: [
-        "localhost",
-        "127.0.0.1",
-      ],
+      allowedHosts: ["localhost", "127.0.0.1"],
       fs: {
         strict: true,
         deny: ["**/.*"],

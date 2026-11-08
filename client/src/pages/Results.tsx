@@ -55,13 +55,13 @@ function deriveResult(latest: SimulationResult): Derived {
   const final = lastYear.indicators;
   const budgetFinal = lastYear.budgetRemaining;
   const populationFinal = lastYear.population;
-  const goalsMet = KID_GOALS.map((g) =>
-    g.keys.every((k) => {
-      const t = MISSION_TARGETS.find((x) => x.key === k);
+  const goalsMet = KID_GOALS.map(g =>
+    g.keys.every(k => {
+      const t = MISSION_TARGETS.find(x => x.key === k);
       if (!t) return true; // public health & economy have no hard target
       const v = final[k];
       return t.direction === "above" ? v >= t.threshold : v <= t.threshold;
-    }),
+    })
   );
   return { base, final, budgetFinal, populationFinal, goalsMet };
 }
@@ -81,9 +81,12 @@ export default function Results() {
 
   // This session's run, else the most recent saved plan — never a fake one.
   const latest = currentResult ?? scenarios[0]?.result ?? null;
-  const derived = useMemo(() => (latest ? deriveResult(latest) : null), [latest]);
+  const derived = useMemo(
+    () => (latest ? deriveResult(latest) : null),
+    [latest]
+  );
 
-  const toggle = (k: string) => setExpertOpen((o) => ({ ...o, [k]: !o[k] }));
+  const toggle = (k: string) => setExpertOpen(o => ({ ...o, [k]: !o[k] }));
   const isAnyExpertOpen = Boolean(expertOpen.appendix);
 
   if (!latest || !derived) {
@@ -102,12 +105,15 @@ export default function Results() {
           <span className="font-data text-[10px] tracking-[0.16em] uppercase text-muted-foreground">
             Field report · empty folder
           </span>
-          <h1 className="font-display text-2xl sm:text-3xl font-semibold">No report yet</h1>
+          <h1 className="font-display text-2xl sm:text-3xl font-semibold">
+            No report yet
+          </h1>
           <p className="text-muted-foreground text-sm max-w-md leading-relaxed">
-            This page fills itself in after you run the town to 2050.
-            Open the simulator, make a few decisions, press <span className="font-data">Run</span> — and the
-            score, the story, and the causal chain appear here. Saved plans
-            (kept on this device) also open here.
+            This page fills itself in after you run the town to 2050. Open the
+            simulator, make a few decisions, press{" "}
+            <span className="font-data">Run</span> — and the score, the story,
+            and the causal chain appear here. Saved plans (kept on this device)
+            also open here.
           </p>
           <Link href="/simulator" className="btn btn-primary">
             Go to simulator <ArrowLeft className="w-4 h-4 rotate-180" />
@@ -139,7 +145,15 @@ export default function Results() {
   const entrance = (delay = 0) =>
     reducedMotion
       ? {}
-      : { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, transition: { delay, duration: 0.35, ease: [0.23, 1, 0.32, 1] as const } };
+      : {
+          initial: { opacity: 0, y: 12 },
+          animate: { opacity: 1, y: 0 },
+          transition: {
+            delay,
+            duration: 0.35,
+            ease: [0.23, 1, 0.32, 1] as const,
+          },
+        };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -148,7 +162,11 @@ export default function Results() {
         description={`Teluk Nusa 2050 Report: Score ${Math.round(latest.score)}. A summary of environmental and economic outcomes for a fictional Malaysian coastal town.`}
       />
       <SiteHeader backHref="/simulator" />
-      <main id="main" tabIndex={-1} className="px-6 sm:px-10 lg:px-14 py-8 flex-1 space-y-8 max-w-[1280px] w-full mx-auto outline-none">
+      <main
+        id="main"
+        tabIndex={-1}
+        className="px-6 sm:px-10 lg:px-14 py-8 flex-1 space-y-8 max-w-[1280px] w-full mx-auto outline-none"
+      >
         {/* ── Verdict plate ── */}
         <motion.section
           initial={reducedMotion ? undefined : { opacity: 0, y: 12 }}
@@ -161,7 +179,9 @@ export default function Results() {
               src={photo}
               alt={photoAlt}
               className="absolute inset-0 h-full w-full object-cover object-center"
-              onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+              onError={e => {
+                (e.target as HTMLImageElement).style.display = "none";
+              }}
             />
             <figcaption className="absolute bottom-0 left-0 right-0 bg-background font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground px-3 py-1.5 whitespace-normal sm:whitespace-nowrap sm:overflow-hidden sm:text-ellipsis">
               {photoCaption}
@@ -186,44 +206,78 @@ export default function Results() {
             <div className="mt-6">
               <div className="flex flex-wrap items-center gap-6 pb-5 border-b border-border">
                 <div>
-                  <div className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">Score</div>
+                  <div className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
+                    Score
+                  </div>
                   <div className="font-data text-4xl tabular-nums font-medium leading-none">
                     {latest.score.toFixed(0)}
-                    <span className="text-base text-muted-foreground"> / 100</span>
+                    <span className="text-base text-muted-foreground">
+                      {" "}
+                      / 100
+                    </span>
                   </div>
                 </div>
                 <div>
-                  <div className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">Population 2050</div>
-                  <div className="font-data text-xl tabular-nums">{populationFinal.toLocaleString()}</div>
+                  <div className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
+                    Population 2050
+                  </div>
+                  <div className="font-data text-xl tabular-nums">
+                    {populationFinal.toLocaleString()}
+                  </div>
                 </div>
                 <div>
-                  <div className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">Budget remaining</div>
-                  <div className="font-data text-xl tabular-nums">{budgetFinal.toFixed(0)} pts</div>
+                  <div className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
+                    Budget remaining
+                  </div>
+                  <div className="font-data text-xl tabular-nums">
+                    {budgetFinal.toFixed(0)} pts
+                  </div>
                 </div>
                 <div>
-                  <div className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">Goals reached</div>
+                  <div className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
+                    Goals reached
+                  </div>
                   <div className="font-data text-xl tabular-nums">
                     {goalsMet.filter(Boolean).length} / {KID_GOALS.length}
-                    <span className="text-muted-foreground text-xs"> · sea · town · people</span>
+                    <span className="text-muted-foreground text-xs">
+                      {" "}
+                      · sea · town · people
+                    </span>
                   </div>
                 </div>
               </div>
 
               <div className="grid grid-cols-3 mt-5">
                 {KID_GOALS.map((g, i) => (
-                  <div key={g.id} className={`px-2 first:pl-0 ${i > 0 ? "border-l border-border" : ""}`}>
+                  <div
+                    key={g.id}
+                    className={`px-2 first:pl-0 ${i > 0 ? "border-l border-border" : ""}`}
+                  >
                     <div className="flex items-center gap-1.5 mb-1 min-w-0">
                       {goalsMet[i] ? (
-                        <Check className="w-4 h-4 text-ok shrink-0" aria-hidden="true" />
+                        <Check
+                          className="w-4 h-4 text-ok shrink-0"
+                          aria-hidden="true"
+                        />
                       ) : (
-                        <X className="w-4 h-4 text-vermilion shrink-0" aria-hidden="true" />
+                        <X
+                          className="w-4 h-4 text-vermilion shrink-0"
+                          aria-hidden="true"
+                        />
                       )}
-                      <span className="font-data text-[10px] sm:text-[11px] tracking-[0.06em] uppercase leading-tight whitespace-normal">{g.title}</span>
+                      <span className="font-data text-[10px] sm:text-[11px] tracking-[0.06em] uppercase leading-tight whitespace-normal">
+                        {g.title}
+                      </span>
                     </div>
                     <div className="space-y-0.5">
-                      {g.keys.map((k) => (
-                        <div key={k} className="flex items-center justify-between gap-1.5 text-[12px]">
-                          <span className="text-muted-foreground truncate">{KID_INDICATORS[k].kidName}</span>
+                      {g.keys.map(k => (
+                        <div
+                          key={k}
+                          className="flex items-center justify-between gap-1.5 text-[12px]"
+                        >
+                          <span className="text-muted-foreground truncate">
+                            {KID_INDICATORS[k].kidName}
+                          </span>
                           <span className="font-data tabular-nums shrink-0">
                             {final[k].toFixed(0)}
                           </span>
@@ -235,11 +289,16 @@ export default function Results() {
               </div>
 
               <p className="font-data text-[10px] tracking-[0.06em] text-muted-foreground mt-2 leading-relaxed">
-                Healthy people &amp; good jobs (&middot; marks) have no pass/fail gate — they weight the score instead.
+                Healthy people &amp; good jobs (&middot; marks) have no
+                pass/fail gate — they weight the score instead.
               </p>
 
               <div className="flex flex-wrap gap-2 mt-5">
-                <CopyButton text={shareText} label="Share score" className="gap-1.5 px-4 py-2 text-[11px] tracking-[0.12em]" />
+                <CopyButton
+                  text={shareText}
+                  label="Share score"
+                  className="gap-1.5 px-4 py-2 text-[11px] tracking-[0.12em]"
+                />
                 <button onClick={handleReplay} className="btn btn-primary">
                   <RefreshCw className="w-3.5 h-3.5" /> Play again
                 </button>
@@ -255,21 +314,31 @@ export default function Results() {
             className="border border-border border-l-2 border-l-ok bg-card p-5"
           >
             <div className="field-label mb-2 !text-ok">Worked</div>
-            <p className="text-[13px] leading-relaxed">{latest.biggestSuccess}</p>
+            <p className="text-[13px] leading-relaxed">
+              {latest.biggestSuccess}
+            </p>
           </motion.div>
           <motion.div
             {...entrance(0.14)}
             className="border border-border border-l-2 border-l-vermilion bg-card p-5"
           >
             <div className="field-label mb-2 !text-vermilion">Failed</div>
-            <p className="text-[13px] leading-relaxed">{latest.biggestFailure}</p>
+            <p className="text-[13px] leading-relaxed">
+              {latest.biggestFailure}
+            </p>
           </motion.div>
         </section>
 
         {/* ── Causal chain ── */}
         <section>
-          <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-3">Why it happened</div>
-          <CausalChain links={latest.causalLinks} events={latest.events} eventsToShow={6} />
+          <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-3">
+            Why it happened
+          </div>
+          <CausalChain
+            links={latest.causalLinks}
+            events={latest.events}
+            eventsToShow={6}
+          />
         </section>
 
         {/* ── Technical appendix ── */}
@@ -281,7 +350,9 @@ export default function Results() {
             className="btn-press w-full flex items-center justify-between gap-3 text-left py-2"
           >
             <div>
-              <span className="font-display font-semibold text-lg">Technical Appendix</span>
+              <span className="font-display font-semibold text-lg">
+                Technical Appendix
+              </span>
               <span className="block font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground mt-0.5">
                 Score breakdown · indicator table · plan comparison
               </span>
@@ -310,7 +381,9 @@ export default function Results() {
                     className="w-full text-left px-4 py-3 flex items-center justify-between font-data text-[11px] tracking-[0.14em] uppercase"
                   >
                     Score breakdown
-                    <ChevronDown className={`w-4 h-4 transition-transform ${expertOpen.breakdown ? "rotate-180" : ""}`} />
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform ${expertOpen.breakdown ? "rotate-180" : ""}`}
+                    />
                   </button>
                   <AnimatePresence>
                     {expertOpen.breakdown && (
@@ -322,24 +395,35 @@ export default function Results() {
                         className="px-4 pb-4 overflow-hidden"
                       >
                         <div className="space-y-3">
-                          {latest.scoreBreakdown.map((row) => {
+                          {latest.scoreBreakdown.map(row => {
                             const meta = INDICATOR_META[row.key];
                             return (
                               <div key={row.key}>
                                 <div className="flex items-baseline justify-between gap-3 mb-1">
-                                  <span className="font-data text-[11px] uppercase tracking-wider text-muted-foreground">{meta.label}</span>
+                                  <span className="font-data text-[11px] uppercase tracking-wider text-muted-foreground">
+                                    {meta.label}
+                                  </span>
                                   <span className="font-data text-[11px] text-muted-foreground">
-                                    weight ×{(row.weight * 100).toFixed(0)}% · value {row.value.toFixed(0)}
+                                    weight ×{(row.weight * 100).toFixed(0)}% ·
+                                    value {row.value.toFixed(0)}
                                   </span>
                                   <span className="font-data text-[13px] tabular-nums">
-                                    {row.points.toFixed(1)} / {(row.weight * 100).toFixed(0)}
+                                    {row.points.toFixed(1)} /{" "}
+                                    {(row.weight * 100).toFixed(0)}
                                   </span>
                                 </div>
                                 <div className="h-1.5 bg-secondary">
                                   <motion.div
-                                    initial={reducedMotion ? undefined : { width: 0 }}
-                                    animate={{ width: `${Math.max(0, Math.min(100, (row.points / (row.weight * 100)) * 100))}%` }}
-                                    transition={{ duration: reducedMotion ? 0 : 0.6, ease: [0.23, 1, 0.32, 1] }}
+                                    initial={
+                                      reducedMotion ? undefined : { width: 0 }
+                                    }
+                                    animate={{
+                                      width: `${Math.max(0, Math.min(100, (row.points / (row.weight * 100)) * 100))}%`,
+                                    }}
+                                    transition={{
+                                      duration: reducedMotion ? 0 : 0.6,
+                                      ease: [0.23, 1, 0.32, 1],
+                                    }}
                                     className="h-full"
                                     style={{ backgroundColor: meta.color }}
                                   />
@@ -351,7 +435,9 @@ export default function Results() {
                         {latest.penalties.length > 0 && (
                           <div className="mt-4 border-l-2 border-vermilion pl-3 space-y-1">
                             {latest.penalties.map((p, i) => (
-                              <p key={i} className="text-xs text-vermilion">{p}</p>
+                              <p key={i} className="text-xs text-vermilion">
+                                {p}
+                              </p>
                             ))}
                           </div>
                         )}
@@ -368,7 +454,9 @@ export default function Results() {
                     className="w-full text-left px-4 py-3 flex items-center justify-between font-data text-[11px] tracking-[0.14em] uppercase"
                   >
                     Indicator table · baseline → 2050
-                    <ChevronDown className={`w-4 h-4 transition-transform ${expertOpen.table ? "rotate-180" : ""}`} />
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform ${expertOpen.table ? "rotate-180" : ""}`}
+                    />
                   </button>
                   <AnimatePresence>
                     {expertOpen.table && (
@@ -383,30 +471,58 @@ export default function Results() {
                           <table className="w-full text-sm">
                             <thead>
                               <tr className="font-data text-[10px] uppercase tracking-wider text-muted-foreground border-b border-border">
-                                <th className="text-left py-2 pr-4 font-medium">Indicator</th>
-                                <th className="text-right py-2 px-3 font-medium">2026</th>
-                                <th className="text-right py-2 px-3 font-medium">2050</th>
-                                <th className="text-right py-2 font-medium">Change</th>
+                                <th className="text-left py-2 pr-4 font-medium">
+                                  Indicator
+                                </th>
+                                <th className="text-right py-2 px-3 font-medium">
+                                  2026
+                                </th>
+                                <th className="text-right py-2 px-3 font-medium">
+                                  2050
+                                </th>
+                                <th className="text-right py-2 font-medium">
+                                  Change
+                                </th>
                               </tr>
                             </thead>
                             <tbody>
-                              {INDICATOR_KEYS.map((k) => {
+                              {INDICATOR_KEYS.map(k => {
                                 const meta = INDICATOR_META[k];
                                 // Rounded before sign decisions — float noise never prints "−0.0".
-                                const delta = Number((final[k] - base[k]).toFixed(1));
-                                const good = meta.higherIsBetter ? delta >= 0 : delta <= 0;
+                                const delta = Number(
+                                  (final[k] - base[k]).toFixed(1)
+                                );
+                                const good = meta.higherIsBetter
+                                  ? delta >= 0
+                                  : delta <= 0;
                                 return (
-                                  <tr key={k} className="border-b border-border/40">
+                                  <tr
+                                    key={k}
+                                    className="border-b border-border/40"
+                                  >
                                     <td className="py-2.5 pr-4">
                                       <span className="flex items-center gap-2">
-                                        <span className="font-data text-[11px] uppercase tracking-wider">{meta.label}</span>
+                                        <span className="font-data text-[11px] uppercase tracking-wider">
+                                          {meta.label}
+                                        </span>
                                       </span>
                                     </td>
-                                    <td className="text-right tabular-nums text-muted-foreground px-3">{base[k].toFixed(0)}</td>
-                                    <td className="text-right tabular-nums px-3">{final[k].toFixed(0)}</td>
+                                    <td className="text-right tabular-nums text-muted-foreground px-3">
+                                      {base[k].toFixed(0)}
+                                    </td>
                                     <td className="text-right tabular-nums px-3">
-                                      <span className={`font-data text-[12px] ${good ? "text-ok" : "text-vermilion"}`}>
-                                        {delta === 0 ? "—" : delta > 0 ? "+" : ""}{delta.toFixed(1)}
+                                      {final[k].toFixed(0)}
+                                    </td>
+                                    <td className="text-right tabular-nums px-3">
+                                      <span
+                                        className={`font-data text-[12px] ${good ? "text-ok" : "text-vermilion"}`}
+                                      >
+                                        {delta === 0
+                                          ? "—"
+                                          : delta > 0
+                                            ? "+"
+                                            : ""}
+                                        {delta.toFixed(1)}
                                       </span>
                                     </td>
                                   </tr>
@@ -428,7 +544,9 @@ export default function Results() {
                     className="w-full text-left px-4 py-3 flex items-center justify-between font-data text-[11px] tracking-[0.14em] uppercase"
                   >
                     Compare saved plans
-                    <ChevronDown className={`w-4 h-4 transition-transform ${expertOpen.comparison ? "rotate-180" : ""}`} />
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform ${expertOpen.comparison ? "rotate-180" : ""}`}
+                    />
                   </button>
                   <AnimatePresence>
                     {expertOpen.comparison && (
@@ -442,15 +560,23 @@ export default function Results() {
                         <div className="space-y-2">
                           {scenarios.length === 0 && (
                             <p className="text-[12px] text-muted-foreground">
-                              Save plans from the simulator to compare them side by side here.
+                              Save plans from the simulator to compare them side
+                              by side here.
                             </p>
                           )}
-                          {scenarios.map((s) => (
-                            <div key={s.id} className="border border-border/70 p-3">
+                          {scenarios.map(s => (
+                            <div
+                              key={s.id}
+                              className="border border-border/70 p-3"
+                            >
                               <div className="flex items-center justify-between gap-2 mb-1.5">
-                                <span className="font-display font-medium text-[13px]">{s.name}</span>
+                                <span className="font-display font-medium text-[13px]">
+                                  {s.name}
+                                </span>
                                 <div className="flex items-center gap-2">
-                                  <span className="font-data text-[13px] tabular-nums">{s.result.score.toFixed(1)}</span>
+                                  <span className="font-data text-[13px] tabular-nums">
+                                    {s.result.score.toFixed(1)}
+                                  </span>
                                   <ConfirmDialog
                                     trigger={
                                       <button
@@ -468,12 +594,25 @@ export default function Results() {
                                 </div>
                               </div>
                               <div className="flex flex-wrap gap-x-3 gap-y-0.5">
-                                {(Object.entries(s.controls) as [keyof typeof s.controls, number][]).map(([k, v]) => {
+                                {(
+                                  Object.entries(s.controls) as [
+                                    keyof typeof s.controls,
+                                    number,
+                                  ][]
+                                ).map(([k, v]) => {
                                   const meta = KID_CONTROLS[k];
-                                  const pct = Math.round((v / CONTROL_RANGES[k].max) * 100);
+                                  const pct = Math.round(
+                                    (v / CONTROL_RANGES[k].max) * 100
+                                  );
                                   return (
-                                    <span key={k} className="font-data text-[10px] text-muted-foreground">
-                                      {meta.kidName}: <span className="tabular-nums text-foreground">{pct}%</span>
+                                    <span
+                                      key={k}
+                                      className="font-data text-[10px] text-muted-foreground"
+                                    >
+                                      {meta.kidName}:{" "}
+                                      <span className="tabular-nums text-foreground">
+                                        {pct}%
+                                      </span>
                                     </span>
                                   );
                                 })}
@@ -481,10 +620,11 @@ export default function Results() {
                             </div>
                           ))}
                           <p className="text-[11px] text-muted-foreground leading-relaxed mt-3">
-                            The model rewards strategies that combine ambition with balance;
-                            one strong investment alone rarely wins. This is an educational
-                            model with simplified assumptions, not a prediction about any
-                            real city. Full equations on the transparency page.
+                            The model rewards strategies that combine ambition
+                            with balance; one strong investment alone rarely
+                            wins. This is an educational model with simplified
+                            assumptions, not a prediction about any real city.
+                            Full equations on the transparency page.
                           </p>
                         </div>
                       </motion.div>

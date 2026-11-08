@@ -55,7 +55,7 @@ export function useComposition<
       c.current = true;
       originalOnCompositionStart?.(e);
     },
-    [originalOnCompositionStart],
+    [originalOnCompositionStart]
   );
 
   const onCompositionEnd = useCallback(
@@ -69,7 +69,7 @@ export function useComposition<
       });
       originalOnCompositionEnd?.(e);
     },
-    [originalOnCompositionEnd],
+    [originalOnCompositionEnd]
   );
 
   const onKeyDown = useCallback(
@@ -84,7 +84,7 @@ export function useComposition<
       }
       originalOnKeyDown?.(e);
     },
-    [originalOnKeyDown],
+    [originalOnKeyDown]
   );
 
   const isComposing = useCallback(() => c.current, []);

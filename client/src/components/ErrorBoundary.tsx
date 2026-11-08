@@ -48,13 +48,20 @@ function FriendlyErrorPage({ error }: { error: Error | null }) {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <main id="main" tabIndex={-1} className="flex-1 flex items-center justify-center px-6 py-16 outline-none">
+      <main
+        id="main"
+        tabIndex={-1}
+        className="flex-1 flex items-center justify-center px-6 py-16 outline-none"
+      >
         <div className="max-w-md w-full text-center">
           <div className="font-data text-[11px] tracking-[0.16em] uppercase text-muted-foreground mb-5">
             Field report · something broke
           </div>
           <div className="flex justify-center mb-6">
-            <AlertTriangle className="w-12 h-12 text-vermilion" strokeWidth={1.5} />
+            <AlertTriangle
+              className="w-12 h-12 text-vermilion"
+              strokeWidth={1.5}
+            />
           </div>
           <h1 className="font-display text-4xl sm:text-5xl font-semibold tracking-tight leading-tight">
             The town went <span className="text-vermilion">quiet</span>.
@@ -66,7 +73,10 @@ function FriendlyErrorPage({ error }: { error: Error | null }) {
           </p>
 
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-            <button onClick={() => window.location.reload()} className="btn btn-primary">
+            <button
+              onClick={() => window.location.reload()}
+              className="btn btn-primary"
+            >
               <RefreshCw className="w-3.5 h-3.5" /> Reload the page
             </button>
             <a href="/" className="btn btn-outline">
@@ -76,7 +86,7 @@ function FriendlyErrorPage({ error }: { error: Error | null }) {
 
           {isDev && (
             <button
-              onClick={() => setShowNote((s) => !s)}
+              onClick={() => setShowNote(s => !s)}
               className="mt-8 mx-auto block font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground hover:text-foreground transition-colors"
             >
               {showNote ? "Hide" : "Show"} technical note (dev only)
@@ -92,7 +102,8 @@ function FriendlyErrorPage({ error }: { error: Error | null }) {
       <footer className="border-t border-border">
         <div className="px-6 sm:px-10 lg:px-14 py-5 flex flex-wrap items-center justify-between gap-3">
           <span className="font-data text-[11px] tracking-[0.12em] uppercase text-muted-foreground">
-            ECO//SIM · Teluk Nusa · an open educational model, not real-world advice
+            ECO//SIM · Teluk Nusa · an open educational model, not real-world
+            advice
           </span>
           <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
             © 2026 Tan-Le-En

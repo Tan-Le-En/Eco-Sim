@@ -48,7 +48,7 @@ function overlayFor(
   cell: MapCell,
   controls: Controls,
   indicators: Indicators | null,
-  t: number,
+  t: number
 ): { fill: string; tag?: string } {
   const rollout = Math.min(1, t / 10);
   const isLate = t > 18; // near 2050: overlays deepen for the consequence reveal
@@ -64,7 +64,12 @@ function overlayFor(
   }
 
   // Flood consequence takes precedence on kampung cells: the stakes outrank the build
-  if (indicators && cell.type === "residentialLow" && indicators.floodResilience < 45 && t > 10) {
+  if (
+    indicators &&
+    cell.type === "residentialLow" &&
+    indicators.floodResilience < 45 &&
+    t > 10
+  ) {
     return { fill: `rgba(201,107,66,${isLate ? 0.7 : 0.55})`, tag: TAG_FLOOD };
   }
 
@@ -82,12 +87,18 @@ function overlayFor(
   // Coastal development: built-over tint shares one color for beach, kampung, wetland
   if (cell.type === "beach" || cell.type === "residentialLow") {
     if ((controls.coastalDevelopment / 30) * rollout > 0.5) {
-      return { fill: `rgba(185,154,107,${isLate ? 0.7 : 0.6})`, tag: TAG_COAST };
+      return {
+        fill: `rgba(185,154,107,${isLate ? 0.7 : 0.6})`,
+        tag: TAG_COAST,
+      };
     }
   }
   if (cell.type === "wetland") {
     if ((controls.coastalDevelopment / 30) * rollout > 0.4) {
-      return { fill: `rgba(185,154,107,${isLate ? 0.65 : 0.55})`, tag: TAG_WETLAND };
+      return {
+        fill: `rgba(185,154,107,${isLate ? 0.65 : 0.55})`,
+        tag: TAG_WETLAND,
+      };
     }
   }
 
@@ -112,7 +123,13 @@ export default function CityMap({
   // Grid geometry + tint fills + tags are recomputed only when the inputs
   // change (never per pointer move).
   const cells = useMemo(() => {
-    const out: { key: string; x: number; y: number; fill: string; tag?: string }[] = [];
+    const out: {
+      key: string;
+      x: number;
+      y: number;
+      fill: string;
+      tag?: string;
+    }[] = [];
     const tags = new Map<string, string | undefined>();
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
@@ -139,21 +156,18 @@ export default function CityMap({
   const cellWidth = 100 / COLS;
   const cellHeight = 100 / ROWS;
 
-  const onMove = useCallback(
-    (e: React.PointerEvent<HTMLDivElement>) => {
-      const target = e.currentTarget;
-      const rect = target.getBoundingClientRect();
-      const px = (e.clientX - rect.left) / rect.width;
-      const py = (e.clientY - rect.top) / rect.height;
-      const c = Math.min(COLS - 1, Math.max(0, Math.floor(px * COLS)));
-      const r = Math.min(ROWS - 1, Math.max(0, Math.floor(py * ROWS)));
-      const cell = staticMap[r][c];
-      if (hoverCell.current === cell.id) return; // same cell: no state churn
-      hoverCell.current = cell.id;
-      setHover({ cell, col: c, row: r });
-    },
-    [],
-  );
+  const onMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    const target = e.currentTarget;
+    const rect = target.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width;
+    const py = (e.clientY - rect.top) / rect.height;
+    const c = Math.min(COLS - 1, Math.max(0, Math.floor(px * COLS)));
+    const r = Math.min(ROWS - 1, Math.max(0, Math.floor(py * ROWS)));
+    const cell = staticMap[r][c];
+    if (hoverCell.current === cell.id) return; // same cell: no state churn
+    hoverCell.current = cell.id;
+    setHover({ cell, col: c, row: r });
+  }, []);
 
   const onLeave = useCallback(() => {
     hoverCell.current = null;
@@ -163,7 +177,7 @@ export default function CityMap({
   // Hover readout: what the overlay says about this cell — never fabricated
   // numbers the photograph can't support.
   const hoverText = hover
-    ? tagsById.get(hover.cell.id) ?? CELL_LABELS[hover.cell.type]
+    ? (tagsById.get(hover.cell.id) ?? CELL_LABELS[hover.cell.type])
     : "Pointer over map to survey";
 
   return (
@@ -203,7 +217,7 @@ export default function CityMap({
             role="img"
             aria-label="Town data overlay on the map of fictional Teluk Nusa"
           >
-            {cells.map((r) => (
+            {cells.map(r => (
               <rect
                 key={r.key}
                 x={r.x}
@@ -233,8 +247,14 @@ export default function CityMap({
       <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1">
         {OVERLAY_LEGEND.map(([color, label]) => (
           <div key={label} className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 shrink-0 border border-border/40" style={{ backgroundColor: color }} aria-hidden="true" />
-            <span className="font-data text-[10px] tracking-[0.08em] uppercase text-muted-foreground">{label}</span>
+            <span
+              className="w-2.5 h-2.5 shrink-0 border border-border/40"
+              style={{ backgroundColor: color }}
+              aria-hidden="true"
+            />
+            <span className="font-data text-[10px] tracking-[0.08em] uppercase text-muted-foreground">
+              {label}
+            </span>
           </div>
         ))}
       </div>

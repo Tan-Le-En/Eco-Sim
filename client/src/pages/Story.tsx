@@ -57,8 +57,7 @@ interface Chapter {
 const CHAPTERS: Chapter[] = [
   {
     n: "01",
-    voice:
-      "When the river rises, our village rises with it.",
+    voice: "When the river rises, our village rises with it.",
     title: "A town that lives on the water",
     lesson:
       "Built beside the sea and river: homes, markets, roads. Also the biggest risk. Sea rises a little. Rain comes heavier.",
@@ -98,8 +97,7 @@ const CHAPTERS: Chapter[] = [
   },
   {
     n: "04",
-    voice:
-      "Where the green ends, the roofs begin.",
+    voice: "Where the green ends, the roofs begin.",
     title: "The whole town from above",
     lesson:
       "One dial pulls every thread: roads, smoke, air, rain, river, floors. That is why we watch seven registers.",
@@ -111,8 +109,7 @@ const CHAPTERS: Chapter[] = [
   },
   {
     n: "05",
-    voice:
-      "You hold 100 budget points. Spend on what lasts.",
+    voice: "You hold 100 budget points. Spend on what lasts.",
     title: "The town hands you the keys",
     lesson:
       "2026, 100 points in total, 25 years — and 1–6 points of income a year while the factories run. Choose where money goes. Then live with the answer.",
@@ -124,9 +121,11 @@ const CHAPTERS: Chapter[] = [
   },
   {
     n: "06",
-    voice: "You have met the town. Now spend twenty-five years trying to keep it standing.",
+    voice:
+      "You have met the town. Now spend twenty-five years trying to keep it standing.",
     title: "Mission briefing",
-    lesson: "The full briefing: controls, indicators, scoring, and how to govern Teluk Nusa from 2026 to 2050.",
+    lesson:
+      "The full briefing: controls, indicators, scoring, and how to govern Teluk Nusa from 2026 to 2050.",
     photo: PHOTOS.workingJetty,
     alt: "Clan jetty",
     cap: "Life and work on the jetty",
@@ -143,9 +142,13 @@ function yearRange(years: SimulationResult["years"]): string {
   return `${first} to ${last}`;
 }
 
-function classifyRun(r: SimulationResult): { tone: "hope" | "struggle" | "balance" | "loss"; label: string } {
+function classifyRun(r: SimulationResult): {
+  tone: "hope" | "struggle" | "balance" | "loss";
+  label: string;
+} {
   if (r.score >= 65) return { tone: "hope", label: "The town is better off" };
-  if (r.score >= 45) return { tone: "balance", label: "The town held, but barely" };
+  if (r.score >= 45)
+    return { tone: "balance", label: "The town held, but barely" };
   if (r.score >= 30) return { tone: "struggle", label: "The town struggled" };
   return { tone: "loss", label: "The town lost ground" };
 }
@@ -168,7 +171,12 @@ function toneColor(tone: string): string {
 function eventTag(type: string): string {
   if (type.includes("flood")) return "Flood";
   if (type.includes("water")) return "Water";
-  if (type.includes("habitat") || type.includes("biodiversity") || type.includes("nature_recovery")) return "Nature";
+  if (
+    type.includes("habitat") ||
+    type.includes("biodiversity") ||
+    type.includes("nature_recovery")
+  )
+    return "Nature";
   if (type.includes("clean_air")) return "Air";
   if (type.includes("jobs_up")) return "Jobs";
   if (type.includes("fair_share")) return "Fair";
@@ -205,29 +213,36 @@ function WhatHappened({ result }: { result: SimulationResult }) {
   const final = finalYear.indicators;
 
   // Find indicators that moved significantly
-  const movers = INDICATOR_KEYS.map((k) => {
+  const movers = INDICATOR_KEYS.map(k => {
     const delta = final[k] - baseline[k];
     const kid = KID_INDICATORS[k];
     const meta = INDICATOR_META[k];
     const good = meta.higherIsBetter ? delta >= 0 : delta <= 0;
     return { key: k, kid, delta, good, abs: Math.abs(delta) };
   })
-    .filter((m) => m.abs > 8)
+    .filter(m => m.abs > 8)
     .sort((a, b) => b.abs - a.abs);
 
   // Find the biggest causal chains
   const topLinks = result.causalLinks.slice(0, 3);
 
   // Events grouped by period (5-year bands)
-  const decadeEvents: { label: string; events: SimEvent[]; total: number }[] = [];
+  const decadeEvents: { label: string; events: SimEvent[]; total: number }[] =
+    [];
   const byDecade = new Map<number, SimEvent[]>();
   for (const e of result.events) {
     const d = Math.floor((e.year - 2026) / 5) * 5 + 2026;
     if (!byDecade.has(d)) byDecade.set(d, []);
     byDecade.get(d)!.push(e);
   }
-  for (const [d, evts] of Array.from(byDecade.entries()).sort((a, b) => a[0] - b[0])) {
-    decadeEvents.push({ label: `${d}`, events: evts.slice(0, 4), total: evts.length });
+  for (const [d, evts] of Array.from(byDecade.entries()).sort(
+    (a, b) => a[0] - b[0]
+  )) {
+    decadeEvents.push({
+      label: `${d}`,
+      events: evts.slice(0, 4),
+      total: evts.length,
+    });
   }
 
   // Controls that were pushed hard
@@ -235,7 +250,12 @@ function WhatHappened({ result }: { result: SimulationResult }) {
     .filter(([, v]) => v > 15)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 4)
-    .map(([key, val]) => ({ key, val, max: CONTROL_RANGES[key as keyof Controls].max, kid: KID_CONTROLS[key as keyof typeof KID_CONTROLS] }));
+    .map(([key, val]) => ({
+      key,
+      val,
+      max: CONTROL_RANGES[key as keyof Controls].max,
+      kid: KID_CONTROLS[key as keyof typeof KID_CONTROLS],
+    }));
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -253,7 +273,9 @@ function WhatHappened({ result }: { result: SimulationResult }) {
           </div>
           <h1 className="font-display font-semibold tracking-tight leading-[1.02] text-[clamp(2rem,4.5vw,3.6rem)] max-w-3xl">
             Over twenty-five years,{" "}
-            <span className={toneColor(classification.tone)}>{classification.label.toLowerCase()}.</span>{" "}
+            <span className={toneColor(classification.tone)}>
+              {classification.label.toLowerCase()}.
+            </span>{" "}
             Here is what the town remembers.
           </h1>
           <p className="mt-6 max-w-2xl text-base sm:text-lg leading-relaxed text-muted-foreground">
@@ -279,12 +301,21 @@ function WhatHappened({ result }: { result: SimulationResult }) {
               What you spent the town's money on
             </h2>
             <div className="grid sm:grid-cols-2 gap-4 max-w-2xl">
-              {controls.map((c) => (
-                <div key={c.key} className="border border-border bg-card px-4 py-3">
-                  <div className="font-data text-[11px] tracking-[0.06em] uppercase mb-1">{c.kid.kidName}</div>
+              {controls.map(c => (
+                <div
+                  key={c.key}
+                  className="border border-border bg-card px-4 py-3"
+                >
+                  <div className="font-data text-[11px] tracking-[0.06em] uppercase mb-1">
+                    {c.kid.kidName}
+                  </div>
                   <div className="flex items-baseline gap-2">
-                    <span className="font-data text-2xl tabular-nums font-semibold">{c.val}</span>
-                    <span className="font-data text-[9px] tracking-[0.12em] uppercase text-muted-foreground">of {c.max}</span>
+                    <span className="font-data text-2xl tabular-nums font-semibold">
+                      {c.val}
+                    </span>
+                    <span className="font-data text-[9px] tracking-[0.12em] uppercase text-muted-foreground">
+                      of {c.max}
+                    </span>
                   </div>
                 </div>
               ))}
@@ -299,14 +330,17 @@ function WhatHappened({ result }: { result: SimulationResult }) {
               The years the town remembers
             </h2>
             <div className="max-w-2xl divide-y divide-border">
-              {decadeEvents.map((dec) => (
+              {decadeEvents.map(dec => (
                 <div key={dec.label} className="py-4">
                   <div className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground mb-3">
                     Around {dec.label}
                   </div>
                   <div className="space-y-2">
                     {dec.events.map((e, i) => (
-                      <div key={i} className={`border-l-2 ${eventAccent(e)} pl-4 py-1`}>
+                      <div
+                        key={i}
+                        className={`border-l-2 ${eventAccent(e)} pl-4 py-1`}
+                      >
                         <p className="text-sm leading-relaxed">
                           <span className="font-data text-[10px] tracking-[0.08em] uppercase text-muted-foreground mr-2">
                             {e.year} · {eventTag(e.type)}
@@ -336,11 +370,17 @@ function WhatHappened({ result }: { result: SimulationResult }) {
             <div className="max-w-2xl divide-y divide-border">
               {topLinks.map((link, i) => (
                 <div key={i} className="py-4 flex items-baseline gap-4">
-                  <span className="font-data text-[11px] tracking-[0.06em] uppercase w-40 shrink-0">{link.cause}</span>
-                  <span className={`text-lg ${link.direction === "positive" ? "text-ok" : "text-vermilion"}`}>
+                  <span className="font-data text-[11px] tracking-[0.06em] uppercase w-40 shrink-0">
+                    {link.cause}
+                  </span>
+                  <span
+                    className={`text-lg ${link.direction === "positive" ? "text-ok" : "text-vermilion"}`}
+                  >
                     {link.direction === "positive" ? "built up" : "pulled down"}
                   </span>
-                  <span className="font-data text-[11px] tracking-[0.06em] uppercase">{link.effect}</span>
+                  <span className="font-data text-[11px] tracking-[0.06em] uppercase">
+                    {link.effect}
+                  </span>
                   <span className="font-data text-[10px] tabular-nums text-muted-foreground ml-auto">
                     {Math.round(link.strength * 100)}%
                   </span>
@@ -357,21 +397,30 @@ function WhatHappened({ result }: { result: SimulationResult }) {
               What changed most
             </h2>
             <div className="max-w-2xl divide-y divide-border">
-              {movers.slice(0, 5).map((m) => (
+              {movers.slice(0, 5).map(m => (
                 <div key={m.key} className="py-3 flex items-baseline gap-4">
-                  <span className="font-data text-[11px] tracking-[0.06em] uppercase w-32 shrink-0">{m.kid.kidName}</span>
+                  <span className="font-data text-[11px] tracking-[0.06em] uppercase w-32 shrink-0">
+                    {m.kid.kidName}
+                  </span>
                   <div className="flex-1 flex items-center gap-3">
-                    <span className="font-data text-[12px] tabular-nums text-muted-foreground">{baseline[m.key].toFixed(0)}</span>
+                    <span className="font-data text-[12px] tabular-nums text-muted-foreground">
+                      {baseline[m.key].toFixed(0)}
+                    </span>
                     <div className="flex-1 h-px bg-border relative">
                       <span
                         className={`absolute top-1/2 -translate-y-1/2 w-2 h-2 ${m.good ? "bg-ok" : "bg-vermilion"}`}
                         style={{ left: `${final[m.key]}%` }}
                       />
                     </div>
-                    <span className="font-data text-[12px] tabular-nums">{final[m.key].toFixed(0)}</span>
+                    <span className="font-data text-[12px] tabular-nums">
+                      {final[m.key].toFixed(0)}
+                    </span>
                   </div>
-                  <span className={`font-data text-[11px] tabular-nums ${m.good ? "text-ok" : "text-vermilion"}`}>
-                    {m.delta > 0 ? "+" : ""}{m.delta.toFixed(0)}
+                  <span
+                    className={`font-data text-[11px] tabular-nums ${m.good ? "text-ok" : "text-vermilion"}`}
+                  >
+                    {m.delta > 0 ? "+" : ""}
+                    {m.delta.toFixed(0)}
                   </span>
                 </div>
               ))}
@@ -405,12 +454,15 @@ function WhatHappened({ result }: { result: SimulationResult }) {
                 End of the record
               </div>
               <p className="font-display italic text-xl sm:text-2xl max-w-xl leading-snug">
-                The town remembers everything. Try again with different
-                choices, and see which path it remembers better.
+                The town remembers everything. Try again with different choices,
+                and see which path it remembers better.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Link href="/simulator" className="btn btn-primary px-8 py-4 text-[15px]">
+              <Link
+                href="/simulator"
+                className="btn btn-primary px-8 py-4 text-[15px]"
+              >
                 Run again <ArrowRight className="w-4 h-4" />
               </Link>
               <Link href="/" className="btn btn-outline">
@@ -444,7 +496,11 @@ function Chapters() {
       />
       <SiteHeader backHref="/" />
 
-      <main id="main" tabIndex={-1} className="flex-1 outline-none overflow-hidden">
+      <main
+        id="main"
+        tabIndex={-1}
+        className="flex-1 outline-none overflow-hidden"
+      >
         <motion.section
           key={c.n}
           initial={{ opacity: 0, x: 30 }}
@@ -455,29 +511,58 @@ function Chapters() {
           <div className="px-6 sm:px-10 lg:px-14 py-8 lg:py-10 lg:border-r border-border min-w-0 flex flex-col justify-between overflow-hidden">
             <div>
               <div className="flex items-baseline gap-4 mb-4">
-                <span className="font-data text-vermilion text-base">{c.n}</span>
-                <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">Page {page + 1} of {CHAPTERS.length}</span>
+                <span className="font-data text-vermilion text-base">
+                  {c.n}
+                </span>
+                <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
+                  Page {page + 1} of {CHAPTERS.length}
+                </span>
               </div>
               <blockquote className="font-display italic text-xl sm:text-2xl leading-snug border-l-2 border-vermilion pl-5 mb-4">
                 {c.voice}
               </blockquote>
-              <h2 className="font-display font-semibold text-2xl sm:text-3xl tracking-tight mb-3">{c.title}</h2>
-              <p className="text-sm sm:text-[15px] leading-relaxed text-muted-foreground max-w-xl">{c.lesson}</p>
+              <h2 className="font-display font-semibold text-2xl sm:text-3xl tracking-tight mb-3">
+                {c.title}
+              </h2>
+              <p className="text-sm sm:text-[15px] leading-relaxed text-muted-foreground max-w-xl">
+                {c.lesson}
+              </p>
               <div className="mt-4">
-                <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">{c.connects}</span>
+                <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
+                  {c.connects}
+                </span>
               </div>
             </div>
             <div className="flex items-center justify-between gap-4 mt-6">
-              <button onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={isFirst} className="btn btn-outline disabled:opacity-40">Previous</button>
+              <button
+                onClick={() => setPage(p => Math.max(0, p - 1))}
+                disabled={isFirst}
+                className="btn btn-outline disabled:opacity-40"
+              >
+                Previous
+              </button>
               {isLast ? (
-                <Link href="/simulator" className="btn btn-primary">Finish</Link>
+                <Link href="/simulator" className="btn btn-primary">
+                  Finish
+                </Link>
               ) : (
-                <button onClick={() => setPage((p) => Math.min(CHAPTERS.length - 1, p + 1))} className="btn btn-primary">Next</button>
+                <button
+                  onClick={() =>
+                    setPage(p => Math.min(CHAPTERS.length - 1, p + 1))
+                  }
+                  className="btn btn-primary"
+                >
+                  Next
+                </button>
               )}
             </div>
           </div>
           <figure className="photo-plate overflow-hidden m-6 sm:m-8 lg:m-8 h-full">
-            <FadeImg src={c.photo} alt={c.alt} className="h-full w-full object-cover" />
+            <FadeImg
+              src={c.photo}
+              alt={c.alt}
+              className="h-full w-full object-cover"
+            />
             <figcaption className="plate-caption">
               <span>{c.cap}</span>
               <span>{c.fig}</span>
@@ -486,7 +571,11 @@ function Chapters() {
         </motion.section>
       </main>
 
-      <button onClick={toggleTheme} aria-label={dark ? "Switch to light mode" : "Switch to dark mode"} className="fixed bottom-4 right-4 z-50 btn-press inline-flex items-center p-3 border border-border bg-background/90 backdrop-blur rounded-full shadow-md">
+      <button
+        onClick={toggleTheme}
+        aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+        className="fixed bottom-4 right-4 z-50 btn-press inline-flex items-center p-3 border border-border bg-background/90 backdrop-blur rounded-full shadow-md"
+      >
         {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
       </button>
 

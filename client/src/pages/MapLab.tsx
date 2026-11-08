@@ -42,23 +42,56 @@ interface PaletteEntry {
 const PALETTE: PaletteEntry[] = [
   { letter: "R", name: "River", hint: "the water channel", color: "#3aa5d8" },
   { letter: "O", name: "Sea / bay", hint: "open water", color: "#1a6da8" },
-  { letter: "W", name: "Wetland / marsh", hint: "marshy green flats", color: "#8aa54a" },
-  { letter: "M", name: "Mangrove", hint: "dense wetland trees", color: "#1e6e3c" },
+  {
+    letter: "W",
+    name: "Wetland / marsh",
+    hint: "marshy green flats",
+    color: "#8aa54a",
+  },
+  {
+    letter: "M",
+    name: "Mangrove",
+    hint: "dense wetland trees",
+    color: "#1e6e3c",
+  },
   { letter: "B", name: "Beach / sand", hint: "bare sand", color: "#e3c67e" },
   { letter: "H", name: "Houses", hint: "normal housing", color: "#b06a3b" },
-  { letter: "U", name: "Town core", hint: "dense center, shops, hall", color: "#c85028" },
-  { letter: "V", name: "Villas", hint: "purple roofs, upscale", color: "#7a5aa8" },
-  { letter: "K", name: "Kampung", hint: "small / stilt houses", color: "#d89050" },
-  { letter: "I", name: "Industry", hint: "warehouses, docks, cranes", color: "#6b6e78" },
+  {
+    letter: "U",
+    name: "Town core",
+    hint: "dense center, shops, hall",
+    color: "#c85028",
+  },
+  {
+    letter: "V",
+    name: "Villas",
+    hint: "purple roofs, upscale",
+    color: "#7a5aa8",
+  },
+  {
+    letter: "K",
+    name: "Kampung",
+    hint: "small / stilt houses",
+    color: "#d89050",
+  },
+  {
+    letter: "I",
+    name: "Industry",
+    hint: "warehouses, docks, cranes",
+    color: "#6b6e78",
+  },
   { letter: "G", name: "Fields", hint: "farmland, paddies", color: "#c2c86a" },
   { letter: "T", name: "Forest", hint: "dense trees", color: "#1f5c2e" },
   { letter: ".", name: "Clear", hint: "leave undrawn", color: "transparent" },
 ];
 
-const BLANK = (): string[] => Array.from({ length: SIZE }, () => ".".repeat(SIZE));
+const BLANK = (): string[] =>
+  Array.from({ length: SIZE }, () => ".".repeat(SIZE));
 
 function lettersFromLiveGrid(): string[] {
-  return buildCityMap().map((row) => row.map((cell) => LETTERS_BY_TYPE[cell.type]).join(""));
+  return buildCityMap().map(row =>
+    row.map(cell => LETTERS_BY_TYPE[cell.type]).join("")
+  );
 }
 
 export default function MapLab() {
@@ -72,7 +105,7 @@ export default function MapLab() {
 
   const paint = useCallback(
     (r: number, c: number) => {
-      setRows((prev) => {
+      setRows(prev => {
         if (prev[r][c] === brush) return prev;
         const row = prev[r].split("");
         row[c] = brush;
@@ -81,13 +114,19 @@ export default function MapLab() {
         return next;
       });
     },
-    [brush],
+    [brush]
   );
 
   const cellFromEvent = (e: React.PointerEvent<HTMLDivElement>) => {
     const box = e.currentTarget.getBoundingClientRect();
-    const c = Math.min(SIZE - 1, Math.max(0, Math.floor(((e.clientX - box.left) / box.width) * SIZE)));
-    const r = Math.min(SIZE - 1, Math.max(0, Math.floor(((e.clientY - box.top) / box.height) * SIZE)));
+    const c = Math.min(
+      SIZE - 1,
+      Math.max(0, Math.floor(((e.clientX - box.left) / box.width) * SIZE))
+    );
+    const r = Math.min(
+      SIZE - 1,
+      Math.max(0, Math.floor(((e.clientY - box.top) / box.height) * SIZE))
+    );
     return { r, c };
   };
 
@@ -120,13 +159,16 @@ export default function MapLab() {
   };
 
   const paletteName = (letter: string): string =>
-    PALETTE.find((p) => p.letter === letter)?.name ?? letter;
+    PALETTE.find(p => p.letter === letter)?.name ?? letter;
 
   const exportText = useMemo(() => rows.join("\n"), [rows]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <PageMeta title="ECO//SIM — map lab" description="Internal: annotate the real map photo for the town grid." />
+      <PageMeta
+        title="ECO//SIM — map lab"
+        description="Internal: annotate the real map photo for the town grid."
+      />
       <div className="max-w-[1050px] mx-auto px-6 py-8">
         <div className="flex flex-wrap items-baseline justify-between gap-3">
           <h1 className="font-display font-semibold text-2xl sm:text-3xl tracking-tight">
@@ -137,13 +179,15 @@ export default function MapLab() {
           </span>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground max-w-2xl">
-          The cockpit's 20×20 grid is drawn from code, and the code disagrees with the
-          photograph. Paint what each cell <em>actually</em> shows, then press{" "}
-          <span className="font-data">Copy annotation</span> and paste the result back to the
-          developer. Rows run <span className="font-data">00–19</span> top to bottom, columns{" "}
-          <span className="font-data">00–19</span> left to right. Each cell is 5% of the image.
-          Ignore the drawn compass and legend insets in the bottom-left. The grid the site
-          already uses is pre-loaded — paint only what it gets wrong.
+          The cockpit's 20×20 grid is drawn from code, and the code disagrees
+          with the photograph. Paint what each cell <em>actually</em> shows,
+          then press <span className="font-data">Copy annotation</span> and
+          paste the result back to the developer. Rows run{" "}
+          <span className="font-data">00–19</span> top to bottom, columns{" "}
+          <span className="font-data">00–19</span> left to right. Each cell is
+          5% of the image. Ignore the drawn compass and legend insets in the
+          bottom-left. The grid the site already uses is pre-loaded — paint only
+          what it gets wrong.
         </p>
 
         {/* Palette */}
@@ -153,35 +197,51 @@ export default function MapLab() {
               Brush — pick a type, then draw on the photo (click or drag)
             </span>
             <span className="font-data text-[11px] text-muted-foreground">
-              painting: <span className="text-foreground font-semibold">{paletteName(brush)}</span>
+              painting:{" "}
+              <span className="text-foreground font-semibold">
+                {paletteName(brush)}
+              </span>
               {hover && (
                 <>
                   {" · "}
                   <span className="font-data tabular-nums">
-                    R{String(hover.r).padStart(2, "0")} C{String(hover.c).padStart(2, "0")}
+                    R{String(hover.r).padStart(2, "0")} C
+                    {String(hover.c).padStart(2, "0")}
                   </span>
                   {" — cell is "}
-                  <span className="font-data tabular-nums">{rows[hover.r][hover.c] === "." ? "empty" : paletteName(rows[hover.r][hover.c])}</span>
+                  <span className="font-data tabular-nums">
+                    {rows[hover.r][hover.c] === "."
+                      ? "empty"
+                      : paletteName(rows[hover.r][hover.c])}
+                  </span>
                 </>
               )}
             </span>
           </div>
           <div className="p-3 flex flex-wrap gap-1.5">
-            {PALETTE.map((p) => (
+            {PALETTE.map(p => (
               <button
                 key={p.letter}
                 onClick={() => setBrush(p.letter)}
                 className={`btn-press inline-flex items-center gap-2 border px-2.5 py-1.5 text-left transition-colors ${
-                  brush === p.letter ? "border-vermilion bg-secondary" : "border-border hover:border-foreground/40"
+                  brush === p.letter
+                    ? "border-vermilion bg-secondary"
+                    : "border-border hover:border-foreground/40"
                 }`}
                 title={p.hint}
               >
                 <span
                   className="inline-block w-3.5 h-3.5 shrink-0 border border-border/40"
-                  style={{ backgroundColor: p.color === "transparent" ? "transparent" : p.color, opacity: 0.85 }}
+                  style={{
+                    backgroundColor:
+                      p.color === "transparent" ? "transparent" : p.color,
+                    opacity: 0.85,
+                  }}
                   aria-hidden="true"
                 />
-                <span className="font-data text-[11px] font-semibold tabular-nums w-3">{p.letter}</span>
+                <span className="font-data text-[11px] font-semibold tabular-nums w-3">
+                  {p.letter}
+                </span>
                 <span className="text-[12px] leading-tight">{p.name}</span>
               </button>
             ))}
@@ -203,10 +263,15 @@ export default function MapLab() {
             draggable={false}
           />
           {/* Painted cells + grid hairlines */}
-          <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 w-full h-full" aria-hidden="true">
+          <svg
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            className="absolute inset-0 w-full h-full"
+            aria-hidden="true"
+          >
             {rows.map((row, r) =>
               row.split("").map((letter, c) => {
-                const entry = PALETTE.find((p) => p.letter === letter);
+                const entry = PALETTE.find(p => p.letter === letter);
                 if (!entry || entry.color === "transparent") return null;
                 return (
                   <rect
@@ -219,7 +284,7 @@ export default function MapLab() {
                     opacity={0.55}
                   />
                 );
-              }),
+              })
             )}
             {Array.from({ length: SIZE - 1 }, (_, i) => (
               <line
@@ -265,7 +330,10 @@ export default function MapLab() {
           <button onClick={copyForDev} className="btn btn-primary">
             {copied ? "Copied ✓" : "Copy annotation"}
           </button>
-          <button onClick={() => setRows(ANNOTATED_ROWS.slice())} className="btn btn-quiet">
+          <button
+            onClick={() => setRows(ANNOTATED_ROWS.slice())}
+            className="btn btn-quiet"
+          >
             Reset to the accepted grid
           </button>
           <button onClick={() => setRows(liveGrid)} className="btn btn-quiet">
@@ -286,7 +354,7 @@ export default function MapLab() {
             readOnly
             rows={SIZE}
             className="w-full font-data text-[12px] leading-snug tabular-nums bg-card border border-border p-3 outline-none focus:border-ring"
-            onFocus={(e) => e.currentTarget.select()}
+            onFocus={e => e.currentTarget.select()}
           />
         </div>
       </div>

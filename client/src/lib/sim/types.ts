@@ -36,7 +36,10 @@ export const DEFAULT_CONTROLS: Controls = {
 };
 
 /** Legal range for each lever; the single source of truth for sliders and validation. */
-export const CONTROL_RANGES: Record<keyof Controls, { min: number; max: number }> = {
+export const CONTROL_RANGES: Record<
+  keyof Controls,
+  { min: number; max: number }
+> = {
   renewableElectricity: { min: 0, max: 100 },
   publicTransport: { min: 0, max: 100 },
   mangroveRestoration: { min: 0, max: 30 },
@@ -150,7 +153,11 @@ export const BASELINE = {
 };
 
 /** Mission success conditions used by the scorecard. */
-export const MISSION_TARGETS: { key: keyof Indicators; threshold: number; direction: "above" | "below" }[] = [
+export const MISSION_TARGETS: {
+  key: keyof Indicators;
+  threshold: number;
+  direction: "above" | "below";
+}[] = [
   { key: "climatePressure", threshold: 45, direction: "below" },
   { key: "biodiversity", threshold: 70, direction: "above" },
   { key: "waterSecurity", threshold: 60, direction: "above" },
@@ -178,12 +185,28 @@ export type CausalLink = {
 export type SimulationResult = {
   id: string;
   controls: Controls;
-  baselineYear: { year: number; indicators: Indicators; population: number; emissionsMtco2e: number };
-  years: { year: number; indicators: Indicators; population: number; emissionsMtco2e: number; budgetRemaining: number }[];
+  baselineYear: {
+    year: number;
+    indicators: Indicators;
+    population: number;
+    emissionsMtco2e: number;
+  };
+  years: {
+    year: number;
+    indicators: Indicators;
+    population: number;
+    emissionsMtco2e: number;
+    budgetRemaining: number;
+  }[];
   events: SimEvent[];
   causalLinks: CausalLink[];
   score: number; // 0–100 weighted composite
-  scoreBreakdown: { key: keyof Indicators; value: number; weight: number; points: number }[];
+  scoreBreakdown: {
+    key: keyof Indicators;
+    value: number;
+    weight: number;
+    points: number;
+  }[];
   penalties: string[];
   biggestSuccess: string;
   biggestFailure: string;
@@ -303,7 +326,8 @@ export const KID_CONTROLS: Record<keyof Controls, KidControlMeta> = {
     key: "renewableElectricity",
     kidName: "Solar & Wind Power",
     bm: "Tenaga Suria & Angin",
-    kidStory: "Replace coal & gas with rooftop solar panels and coastal wind turbines.",
+    kidStory:
+      "Replace coal & gas with rooftop solar panels and coastal wind turbines.",
     icon: "Sun",
     goodWhenMore: "Less emissions, cleaner coastal air",
     badWhenMore: "Upfront grid & storage installation costs",
@@ -348,7 +372,8 @@ export const KID_CONTROLS: Record<keyof Controls, KidControlMeta> = {
     key: "wasteRecycling",
     kidName: "Sorting Rubbish",
     bm: "Kitar Semula",
-    kidStory: "Sort rubbish so it can be used again instead of thrown in the sea.",
+    kidStory:
+      "Sort rubbish so it can be used again instead of thrown in the sea.",
     icon: "Recycle",
     goodWhenMore: "Cleaner river and beach, happy fish",
     badWhenMore: "Takes work and costs a little",
@@ -374,8 +399,28 @@ export const KID_CONTROLS: Record<keyof Controls, KidControlMeta> = {
 };
 
 /* The three big kid goals shown as traffic lights on the results screen. */
-export const KID_GOALS: { id: string; title: string; bm: string; keys: (keyof Indicators)[] }[] = [
-  { id: "sea", title: "Clean & calm sea", bm: "Laut bersih & tenang", keys: ["climatePressure", "biodiversity", "floodResilience"] },
-  { id: "city", title: "Safe & healthy town", bm: "Bandar selamat & sihat", keys: ["waterSecurity", "publicHealth", "floodResilience"] },
-  { id: "people", title: "Fair for everyone", bm: "Semua orang dapat adil", keys: ["economicWellbeing", "equity"] },
+export const KID_GOALS: {
+  id: string;
+  title: string;
+  bm: string;
+  keys: (keyof Indicators)[];
+}[] = [
+  {
+    id: "sea",
+    title: "Clean & calm sea",
+    bm: "Laut bersih & tenang",
+    keys: ["climatePressure", "biodiversity", "floodResilience"],
+  },
+  {
+    id: "city",
+    title: "Safe & healthy town",
+    bm: "Bandar selamat & sihat",
+    keys: ["waterSecurity", "publicHealth", "floodResilience"],
+  },
+  {
+    id: "people",
+    title: "Fair for everyone",
+    bm: "Semua orang dapat adil",
+    keys: ["economicWellbeing", "equity"],
+  },
 ];

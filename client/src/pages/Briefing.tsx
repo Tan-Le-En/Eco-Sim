@@ -45,14 +45,17 @@ export default function Briefing() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-
       <PageMeta
         title="ECO//SIM — Mission briefing · keep the town alive for 25 years"
         description="Your mission: govern a fictional Malaysian coastal town from 2026 to 2050. A 100-point budget across 25 years, eight decisions, seven vital signs."
       />
       <SiteHeader />
 
-      <main id="main" tabIndex={-1} className="flex-1 px-6 sm:px-10 lg:px-14 py-10 grid lg:grid-cols-[1.2fr_1fr] gap-12 max-w-[1400px] outline-none">
+      <main
+        id="main"
+        tabIndex={-1}
+        className="flex-1 px-6 sm:px-10 lg:px-14 py-10 grid lg:grid-cols-[1.2fr_1fr] gap-12 max-w-[1400px] outline-none"
+      >
         {/* ── Left: mission ── */}
         <div className="flex flex-col">
           <h1 className="font-display font-semibold tracking-tight leading-[0.98] text-[clamp(2.4rem,5.5vw,4.2rem)]">
@@ -61,7 +64,12 @@ export default function Briefing() {
             <span className="text-vermilion">Keep it alive</span> for 25 years.
           </h1>
           <p className="mt-6 max-w-xl text-base sm:text-lg leading-relaxed text-muted-foreground">
-            One million people. <strong className="text-foreground">100 budget points for all 25 years</strong> — energy, buses, trees, water, housing. Keep three registers healthy throughout.
+            One million people.{" "}
+            <strong className="text-foreground">
+              100 budget points for all 25 years
+            </strong>{" "}
+            — energy, buses, trees, water, housing. Keep three registers healthy
+            throughout.
           </p>
 
           {/* The three registers */}
@@ -71,14 +79,22 @@ export default function Briefing() {
                 key={g.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 + i * 0.06, duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+                transition={{
+                  delay: 0.1 + i * 0.06,
+                  duration: 0.3,
+                  ease: [0.23, 1, 0.32, 1],
+                }}
                 className="py-4 flex items-baseline gap-5"
               >
-                <span className="font-data text-vermilion text-sm w-6">{String(i + 1).padStart(2, "0")}</span>
+                <span className="font-data text-vermilion text-sm w-6">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
                 <div className="flex-1">
-                  <div className="font-display font-semibold text-xl">{g.title}</div>
+                  <div className="font-display font-semibold text-xl">
+                    {g.title}
+                  </div>
                   <div className="font-data text-[11px] tracking-[0.08em] uppercase text-muted-foreground mt-1">
-                    {g.keys.map((k) => INDICATOR_META[k].label).join(" · ")}
+                    {g.keys.map(k => INDICATOR_META[k].label).join(" · ")}
                   </div>
                 </div>
               </motion.div>
@@ -97,8 +113,12 @@ export default function Briefing() {
                   transition={{ delay: i * 0.05, duration: 0.3 }}
                   className="border-l-2 border-vermilion pl-4"
                 >
-                  <div className="font-data text-[11px] tracking-[0.14em] uppercase text-vermilion mb-0.5">{entry[0]}</div>
-                  <p className="text-sm leading-relaxed text-muted-foreground">{entry[1]}</p>
+                  <div className="font-data text-[11px] tracking-[0.14em] uppercase text-vermilion mb-0.5">
+                    {entry[0]}
+                  </div>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {entry[1]}
+                  </p>
                 </motion.div>
               ))}
             </div>
@@ -106,7 +126,10 @@ export default function Briefing() {
 
           {/* CTA */}
           <div className="mt-10 flex flex-wrap items-center gap-3">
-            <Link href="/simulator" className="btn btn-primary px-8 py-4 text-[15px]">
+            <Link
+              href="/simulator"
+              className="btn btn-primary px-8 py-4 text-[15px]"
+            >
               Begin the study <ArrowRight className="w-4 h-4" />
             </Link>
             <Link href="/transparency" className="btn btn-outline">
@@ -121,68 +144,91 @@ export default function Briefing() {
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
-            transition={{ delay: 0.15, duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
+            transition={{
+              delay: 0.15,
+              duration: 0.45,
+              ease: [0.23, 1, 0.32, 1],
+            }}
           >
-          <figure className="photo-plate overflow-hidden">
-            <FadeImg src={PHOTO} alt="Malaysian fishermen at dawn" className="h-64 w-full object-cover object-top" />
-            <figcaption className="plate-caption">
-              <span>Fishermen at dawn, East Coast</span>
-              <span>Fig. 02</span>
-            </figcaption>
-          </figure>
+            <figure className="photo-plate overflow-hidden">
+              <FadeImg
+                src={PHOTO}
+                alt="Malaysian fishermen at dawn"
+                className="h-64 w-full object-cover object-top"
+              />
+              <figcaption className="plate-caption">
+                <span>Fishermen at dawn, East Coast</span>
+                <span>Fig. 02</span>
+              </figcaption>
+            </figure>
 
-          <figure className="photo-plate overflow-hidden hidden lg:block">
-            <FadeImg src={RIVER} alt="Mangrove river in Langkawi" className="h-40 w-full object-cover" />
-            <figcaption className="plate-caption">
-              <span>Mangrove river, Kilim Geopark</span>
-              <span>Fig. 03</span>
-            </figcaption>
-          </figure>
+            <figure className="photo-plate overflow-hidden hidden lg:block">
+              <FadeImg
+                src={RIVER}
+                alt="Mangrove river in Langkawi"
+                className="h-40 w-full object-cover"
+              />
+              <figcaption className="plate-caption">
+                <span>Mangrove river, Kilim Geopark</span>
+                <span>Fig. 03</span>
+              </figcaption>
+            </figure>
 
-          <figure className="photo-plate overflow-hidden hidden lg:block">
-            <FadeImg src={JETTY} alt="Clan jetty houses on stilts over the sea" className="h-40 w-full object-cover" />
-            <figcaption className="plate-caption">
-              <span>Where your town lives · clan jetty</span>
-              <span>Fig. 04</span>
-            </figcaption>
-          </figure>
+            <figure className="photo-plate overflow-hidden hidden lg:block">
+              <FadeImg
+                src={JETTY}
+                alt="Clan jetty houses on stilts over the sea"
+                className="h-40 w-full object-cover"
+              />
+              <figcaption className="plate-caption">
+                <span>Where your town lives · clan jetty</span>
+                <span>Fig. 04</span>
+              </figcaption>
+            </figure>
 
-          {/* The datum — expandable */}
-          <button
-            onClick={() => setShowNumbers((v) => !v)}
-            className="btn-press border border-border bg-card px-5 py-4 flex items-center justify-between gap-3 text-left"
-          >
-            <span className="font-data text-[11px] tracking-[0.14em] uppercase">
-              {showNumbers ? "Close" : "Open"} the 2026 datum
+            {/* The datum — expandable */}
+            <button
+              onClick={() => setShowNumbers(v => !v)}
+              className="btn-press border border-border bg-card px-5 py-4 flex items-center justify-between gap-3 text-left"
+            >
+              <span className="font-data text-[11px] tracking-[0.14em] uppercase">
+                {showNumbers ? "Close" : "Open"} the 2026 datum
+              </span>
+              <ChevronDown
+                className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ${showNumbers ? "rotate-180" : ""}`}
+              />
+            </button>
+            <AnimatePresence>
+              {showNumbers && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
+                  className="overflow-hidden"
+                >
+                  <div className="border border-border bg-card divide-y divide-border/60">
+                    {DATUM.map(([label, value]) => (
+                      <div
+                        key={label}
+                        className="px-4 py-2 flex items-baseline justify-between gap-3"
+                      >
+                        <span className="font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground">
+                          {label}
+                        </span>
+                        <span className="font-data text-[13px] tabular-nums">
+                          {value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <span className="font-data text-[11px] tracking-[0.12em] uppercase text-muted-foreground">
+              Read this page, then go govern.
             </span>
-            <ChevronDown
-              className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ${showNumbers ? "rotate-180" : ""}`}
-            />
-          </button>
-          <AnimatePresence>
-            {showNumbers && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
-                className="overflow-hidden"
-              >
-                <div className="border border-border bg-card divide-y divide-border/60">
-                  {DATUM.map(([label, value]) => (
-                    <div key={label} className="px-4 py-2 flex items-baseline justify-between gap-3">
-                      <span className="font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground">{label}</span>
-                      <span className="font-data text-[13px] tabular-nums">{value}</span>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <span className="font-data text-[11px] tracking-[0.12em] uppercase text-muted-foreground">
-            Read this page, then go govern.
-          </span>
           </motion.div>
         </div>
       </main>

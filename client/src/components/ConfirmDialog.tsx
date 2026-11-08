@@ -37,14 +37,21 @@ export default function ConfirmDialog({
       <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
       <AlertDialogContent className="rounded-none border-border">
         <AlertDialogHeader>
-          <AlertDialogTitle className="font-display text-xl tracking-tight">{title}</AlertDialogTitle>
+          <AlertDialogTitle className="font-display text-xl tracking-tight">
+            {title}
+          </AlertDialogTitle>
           <AlertDialogDescription className="font-sans text-sm text-muted-foreground">
             {description}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="rounded-none border-border">Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm} className={`rounded-none ${confirmClass}`}>
+          <AlertDialogCancel className="rounded-none border-border">
+            Cancel
+          </AlertDialogCancel>
+          <AlertDialogAction
+            onClick={onConfirm}
+            className={`rounded-none ${confirmClass}`}
+          >
             {confirmLabel}
           </AlertDialogAction>
         </AlertDialogFooter>

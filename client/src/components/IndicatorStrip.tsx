@@ -48,7 +48,11 @@ function sparkPath(values: number[], width: number, height: number): string {
     .join(" ");
 }
 
-export default function IndicatorStrip({ indicators, baseline, history }: IndicatorStripProps) {
+export default function IndicatorStrip({
+  indicators,
+  baseline,
+  history,
+}: IndicatorStripProps) {
   const [openKey, setOpenKey] = useState<string | null>(null);
 
   return (
@@ -63,7 +67,10 @@ export default function IndicatorStrip({ indicators, baseline, history }: Indica
         const delta = Number((value - baselineVal).toFixed(1));
         const good = meta.higherIsBetter ? delta >= 0 : delta <= 0;
         const isGoodNow = meta.higherIsBetter ? value >= 60 : value <= 45;
-        const sparkValues = history.map((h) => h.indicators[k]).concat(value).slice(-25);
+        const sparkValues = history
+          .map(h => h.indicators[k])
+          .concat(value)
+          .slice(-25);
         const isOpen = openKey === k;
         return (
           <button
@@ -77,20 +84,31 @@ export default function IndicatorStrip({ indicators, baseline, history }: Indica
             className={`w-full text-left px-3.5 py-2.5 transition-colors ${isOpen ? "bg-secondary/50" : "hover:bg-secondary/30"}`}
           >
             <div className="flex items-center gap-3">
-              <Icon className="w-4 h-4 shrink-0" style={{ color: meta.color }} aria-hidden="true" />
-              <span className="font-data text-[11px] tracking-[0.06em] uppercase w-28 sm:w-36 shrink-0">{kid.kidName}</span>
-              <span
-                className="font-data text-[15px] tabular-nums font-semibold w-8 text-right"
-              >
+              <Icon
+                className="w-4 h-4 shrink-0"
+                style={{ color: meta.color }}
+                aria-hidden="true"
+              />
+              <span className="font-data text-[11px] tracking-[0.06em] uppercase w-28 sm:w-36 shrink-0">
+                {kid.kidName}
+              </span>
+              <span className="font-data text-[15px] tabular-nums font-semibold w-8 text-right">
                 {value.toFixed(0)}
               </span>
               <span
                 className={`font-data text-[11px] tabular-nums w-14 text-right ${good ? "text-ok" : "text-vermilion"}`}
                 title="Change vs 2026 baseline"
               >
-                {delta === 0 ? "—" : `${delta > 0 ? "+" : ""}${delta.toFixed(1)}`}
+                {delta === 0
+                  ? "—"
+                  : `${delta > 0 ? "+" : ""}${delta.toFixed(1)}`}
               </span>
-              <svg viewBox="0 0 100 22" className="w-20 sm:w-28 h-4 shrink-0 ml-auto" preserveAspectRatio="none" aria-hidden="true">
+              <svg
+                viewBox="0 0 100 22"
+                className="w-20 sm:w-28 h-4 shrink-0 ml-auto"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              >
                 <path
                   d={sparkPath(sparkValues, 100, 22)}
                   fill="none"
@@ -100,7 +118,8 @@ export default function IndicatorStrip({ indicators, baseline, history }: Indica
                   opacity="0.85"
                 />
                 <line
-                  x1="0" x2="100"
+                  x1="0"
+                  x2="100"
                   y1={22 - (baselineVal / 100) * 22}
                   y2={22 - (baselineVal / 100) * 22}
                   stroke="currentColor"
@@ -123,11 +142,17 @@ export default function IndicatorStrip({ indicators, baseline, history }: Indica
             >
               <div className="overflow-hidden">
                 <div className="pt-2 text-[12px] leading-relaxed max-w-xl">
-                  <p className="text-foreground font-medium">{isGoodNow ? kid.happy : kid.sad}</p>
+                  <p className="text-foreground font-medium">
+                    {isGoodNow ? kid.happy : kid.sad}
+                  </p>
                   {!meta.higherIsBetter && (
-                    <p className="font-data text-[10px] text-muted-foreground mt-0.5">↓ Lower is better for this register</p>
+                    <p className="font-data text-[10px] text-muted-foreground mt-0.5">
+                      ↓ Lower is better for this register
+                    </p>
                   )}
-                  <p className="text-muted-foreground font-data text-[10px] mt-1 uppercase tracking-wider">{kid.bm}</p>
+                  <p className="text-muted-foreground font-data text-[10px] mt-1 uppercase tracking-wider">
+                    {kid.bm}
+                  </p>
                 </div>
               </div>
             </div>

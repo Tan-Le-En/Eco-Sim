@@ -24,7 +24,11 @@ const SEVERITY_TEXT: Record<SimEvent["severity"], string> = {
   critical: "text-vermilion",
 };
 
-export default function CausalChain({ links, events, eventsToShow = 5 }: CausalChainProps) {
+export default function CausalChain({
+  links,
+  events,
+  eventsToShow = 5,
+}: CausalChainProps) {
   return (
     <div className="border border-border bg-card divide-y divide-border/50">
       {events.length > 0 && (
@@ -37,8 +41,12 @@ export default function CausalChain({ links, events, eventsToShow = 5 }: CausalC
               key={i}
               className={`flex items-start gap-2.5 border-l-2 pl-2.5 py-1 ${SEVERITY_BORDER[e.severity]}`}
             >
-              <span className="font-data text-[11px] tabular-nums whitespace-nowrap pt-px">{e.year}</span>
-              <span className={`text-[12px] leading-snug ${SEVERITY_TEXT[e.severity]}`}>
+              <span className="font-data text-[11px] tabular-nums whitespace-nowrap pt-px">
+                {e.year}
+              </span>
+              <span
+                className={`text-[12px] leading-snug ${SEVERITY_TEXT[e.severity]}`}
+              >
                 {e.severity !== "info" && (
                   <AlertTriangle className="w-3 h-3 inline mr-1 -mt-0.5" />
                 )}

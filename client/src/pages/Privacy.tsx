@@ -17,7 +17,11 @@ export default function Privacy() {
         title="ECO//SIM — Privacy notice"
         description="What this site keeps and what it does not: nothing is required, nothing is collected today, nothing is ever sold."
       />
-      <main id="main" tabIndex={-1} className="container py-12 flex-1 max-w-3xl px-6 sm:px-10 outline-none">
+      <main
+        id="main"
+        tabIndex={-1}
+        className="container py-12 flex-1 max-w-3xl px-6 sm:px-10 outline-none"
+      >
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -34,7 +38,9 @@ export default function Privacy() {
           </p>
 
           <section className="mb-10 space-y-4">
-            <h2 className="font-display text-lg font-semibold">1. Nothing is required</h2>
+            <h2 className="font-display text-lg font-semibold">
+              1. Nothing is required
+            </h2>
             <p className="text-sm leading-relaxed text-muted-foreground">
               You can use the whole simulator without an account, without
               signing up, and without giving us anything. Your simulation plans
@@ -59,17 +65,19 @@ export default function Privacy() {
             </h2>
             <p className="text-sm leading-relaxed text-muted-foreground">
               The site currently sends nothing anywhere: no analytics, no
-              trackers, no cookies for tracking. The banner asks whether
-              we may switch on optional, privacy-friendly analytics in the
-              future — your answer is stored so the choice sticks. If that
-              ever happens, it would record only anonymous aggregate usage
-              (for example, how often the simulator is run), never names,
-              emails, or anything you type into the simulation.
+              trackers, no cookies for tracking. The banner asks whether we may
+              switch on optional, privacy-friendly analytics in the future —
+              your answer is stored so the choice sticks. If that ever happens,
+              it would record only anonymous aggregate usage (for example, how
+              often the simulator is run), never names, emails, or anything you
+              type into the simulation.
             </p>
           </section>
 
           <section className="mb-10 space-y-4">
-            <h2 className="font-display text-lg font-semibold">4. What we never do</h2>
+            <h2 className="font-display text-lg font-semibold">
+              4. What we never do
+            </h2>
             <ul className="text-sm leading-relaxed text-muted-foreground list-disc pl-5 space-y-1.5">
               <li>Sell, rent, or trade any data.</li>
               <li>Track you across other websites.</li>
@@ -82,7 +90,10 @@ export default function Privacy() {
             <h2 className="font-display text-lg font-semibold">5. Questions</h2>
             <p className="text-sm leading-relaxed text-muted-foreground">
               Every equation and number is published on the{" "}
-              <Link href="/transparency" className="underline underline-offset-2 hover:text-foreground">
+              <Link
+                href="/transparency"
+                className="underline underline-offset-2 hover:text-foreground"
+              >
                 Transparency page
               </Link>
               . There is no contact form today; if that changes, this notice
@@ -91,10 +102,16 @@ export default function Privacy() {
           </section>
 
           <div className="border-t border-border pt-6 flex flex-wrap items-center gap-4">
-            <Link href="/" className="font-data text-[11px] tracking-[0.14em] uppercase text-vermilion hover:underline inline-flex items-center gap-2">
+            <Link
+              href="/"
+              className="font-data text-[11px] tracking-[0.14em] uppercase text-vermilion hover:underline inline-flex items-center gap-2"
+            >
               <ArrowRight className="w-3.5 h-3.5 rotate-180" /> Home
             </Link>
-            <Link href="/terms" className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground hover:text-foreground hover:underline inline-flex items-center gap-2">
+            <Link
+              href="/terms"
+              className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground hover:text-foreground hover:underline inline-flex items-center gap-2"
+            >
               Terms of use <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>

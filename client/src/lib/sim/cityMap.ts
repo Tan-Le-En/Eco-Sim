@@ -92,10 +92,8 @@ const TYPE_BY_LETTER: Record<string, CellType> = {
 };
 
 /** Parsed once at module load: CELL_TYPES[row][col]. */
-const CELL_TYPES: CellType[][] = ANNOTATED_ROWS.map((row) =>
-  row
-    .split("")
-    .map((letter) => TYPE_BY_LETTER[letter] ?? "residential"),
+const CELL_TYPES: CellType[][] = ANNOTATED_ROWS.map(row =>
+  row.split("").map(letter => TYPE_BY_LETTER[letter] ?? "residential")
 );
 
 // Deterministic pseudo-random for stable map layout (simple LCG)
@@ -179,7 +177,11 @@ export function buildCityMap(): MapCell[][] {
         elevationM: Number((elevationFor(x, y, type) + noise * 0.4).toFixed(1)),
         population: populationFor(type, x, y),
         incomeGroup:
-          type === "residentialLow" ? "low" : type === "highIncome" ? "high" : "mid",
+          type === "residentialLow"
+            ? "low"
+            : type === "highIncome"
+              ? "high"
+              : "mid",
         greenCover: greenCoverFor(type, rng),
         imperviousSurface: imperviousFor(type),
         floodExposure: Number(floodExposureFor(x, y, type).toFixed(2)),

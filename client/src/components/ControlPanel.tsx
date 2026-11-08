@@ -51,7 +51,11 @@ interface ControlPanelProps {
   onReset: () => void;
 }
 
-export default function ControlPanel({ controls, onChange, onReset }: ControlPanelProps) {
+export default function ControlPanel({
+  controls,
+  onChange,
+  onReset,
+}: ControlPanelProps) {
   return (
     <div className="border border-border bg-card divide-y divide-border/60">
       {(Object.keys(KID_CONTROLS) as ControlKey[]).map((key, idx) => {
@@ -65,14 +69,23 @@ export default function ControlPanel({ controls, onChange, onReset }: ControlPan
               <span className="font-data text-vermilion text-[11px] tabular-nums w-4 shrink-0">
                 {String(idx + 1).padStart(2, "0")}
               </span>
-              <Ico className="w-4 h-4 text-foreground/70 shrink-0" aria-hidden={true} />
+              <Ico
+                className="w-4 h-4 text-foreground/70 shrink-0"
+                aria-hidden={true}
+              />
               <span className="flex-1 min-w-0">
-                <span className="font-display font-semibold text-[14px] leading-tight block truncate">{kid.kidName}</span>
-                <span className="font-data text-[10px] text-muted-foreground block mt-0.5 truncate">{kid.bm} · {UNIT_LABEL[key]}</span>
+                <span className="font-display font-semibold text-[14px] leading-tight block truncate">
+                  {kid.kidName}
+                </span>
+                <span className="font-data text-[10px] text-muted-foreground block mt-0.5 truncate">
+                  {kid.bm} · {UNIT_LABEL[key]}
+                </span>
               </span>
               <span className="font-data text-[12px] tabular-nums font-medium w-16 text-right whitespace-nowrap">
                 {value}
-                <span className="text-muted-foreground font-normal text-[11px]">/{r.max}</span>
+                <span className="text-muted-foreground font-normal text-[11px]">
+                  /{r.max}
+                </span>
               </span>
             </div>
             <Slider
@@ -86,11 +99,17 @@ export default function ControlPanel({ controls, onChange, onReset }: ControlPan
             />
             <div className="mt-1.5 space-y-0.5">
               <div className="flex items-start gap-2 text-[11px] leading-snug">
-                <span className="font-data text-ok font-bold text-[10px] tracking-wider uppercase pt-px shrink-0">+</span>
-                <span className="text-muted-foreground">{kid.goodWhenMore}</span>
+                <span className="font-data text-ok font-bold text-[10px] tracking-wider uppercase pt-px shrink-0">
+                  +
+                </span>
+                <span className="text-muted-foreground">
+                  {kid.goodWhenMore}
+                </span>
               </div>
               <div className="flex items-start gap-2 text-[11px] leading-snug">
-                <span className="font-data text-vermilion font-bold text-[10px] tracking-wider uppercase pt-px shrink-0">−</span>
+                <span className="font-data text-vermilion font-bold text-[10px] tracking-wider uppercase pt-px shrink-0">
+                  −
+                </span>
                 <span className="text-muted-foreground">{kid.badWhenMore}</span>
               </div>
             </div>
@@ -100,9 +119,7 @@ export default function ControlPanel({ controls, onChange, onReset }: ControlPan
       <div className="px-4 py-2.5">
         <ConfirmDialog
           trigger={
-            <button
-              className="btn-press w-full font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground border border-border py-2 px-3 hover:border-foreground hover:text-foreground transition-colors"
-            >
+            <button className="btn-press w-full font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground border border-border py-2 px-3 hover:border-foreground hover:text-foreground transition-colors">
               Reset all to baseline
             </button>
           }

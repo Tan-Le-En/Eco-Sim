@@ -60,12 +60,7 @@ export function setMeta({ title, description }: MetaProps) {
     "twitter:card",
     "summary_large_image"
   );
-  setOrCreate(
-    'meta[name="twitter:title"]',
-    "name",
-    "twitter:title",
-    title
-  );
+  setOrCreate('meta[name="twitter:title"]', "name", "twitter:title", title);
   setOrCreate(
     'meta[name="twitter:description"]',
     "name",

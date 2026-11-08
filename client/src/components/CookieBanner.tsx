@@ -55,10 +55,13 @@ export default function CookieBanner() {
               <span className="font-data text-[10px] tracking-[0.16em] uppercase block mb-1 text-secondary-foreground dark:text-[oklch(0.62_0.01_80)]">
                 Field note · cookies
               </span>
-              Right now this study sends nothing anywhere: plans, theme, and scores live
-              only in your browser. Allow analytics to future-proof this choice — nothing
-              is collected yet.{" "}
-              <Link href="/privacy" className="underline underline-offset-2 hover:text-secondary-foreground/90">
+              Right now this study sends nothing anywhere: plans, theme, and
+              scores live only in your browser. Allow analytics to future-proof
+              this choice — nothing is collected yet.{" "}
+              <Link
+                href="/privacy"
+                className="underline underline-offset-2 hover:text-secondary-foreground/90"
+              >
                 Privacy notice
               </Link>
             </p>

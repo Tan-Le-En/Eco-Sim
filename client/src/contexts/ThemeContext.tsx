@@ -47,7 +47,10 @@ export function ThemeProvider({
   // first state and first paint agree — no flash either way.
   const [theme, setTheme] = useState<Theme>(() => {
     if (!switchable) return defaultTheme;
-    return readStoredTheme() ?? (defaultTheme === "light" ? systemTheme() : defaultTheme);
+    return (
+      readStoredTheme() ??
+      (defaultTheme === "light" ? systemTheme() : defaultTheme)
+    );
   });
 
   useEffect(() => {
@@ -65,16 +68,18 @@ export function ThemeProvider({
 
   const toggleTheme = switchable
     ? () => {
-        setTheme((prev) => (prev === "light" ? "dark" : "light"));
+        setTheme(prev => (prev === "light" ? "dark" : "light"));
       }
     : undefined;
 
   const value = React.useMemo(
     () => ({ theme, toggleTheme, switchable }),
-    [theme, toggleTheme, switchable],
+    [theme, toggleTheme, switchable]
   );
 
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+  );
 }
 
 export function useTheme() {

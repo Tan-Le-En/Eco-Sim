@@ -76,7 +76,10 @@ function Router() {
         initial={reducedMotion ? { opacity: 1 } : { opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         exit={reducedMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
-        transition={{ duration: reducedMotion ? 0 : 0.28, ease: [0.23, 1, 0.32, 1] }}
+        transition={{
+          duration: reducedMotion ? 0 : 0.28,
+          ease: [0.23, 1, 0.32, 1],
+        }}
       >
         <Switch location={location}>
           <Route path={"/"} component={Home} />

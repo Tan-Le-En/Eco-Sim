@@ -26,7 +26,8 @@ const BASE_WATER_SUPPLY_M3 = 220_000_000; // million litres → 220M m³/yr capa
 const INDUSTRIAL_WATER_PER_UNIT = 300_000; // m³ per industrial activity unit
 const EMISSIONS_BUDGET_BASE_MT = 8.2; // MtCO2e baseline total (2026, fictional)
 
-const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+const clamp = (v: number, lo: number, hi: number) =>
+  Math.min(hi, Math.max(lo, v));
 
 /* ---------- rainfall variability (deterministic per year) ---------- */
 function rainfallFactorFor(year: number): number {
@@ -69,13 +70,18 @@ function computeYear(
   // electricity demand by up to 20% (efficiency co-benefit, documented in transparency page).
   const efficiencyCoefficient = c.waterEfficiency / 100;
   const electricityDemandTWh =
-    (population * (ELECTRICITY_PER_PERSON_KWH / 1_000_000) * (1 - efficiencyCoefficient * 0.2)) / 1000; // TWh
+    (population *
+      (ELECTRICITY_PER_PERSON_KWH / 1_000_000) *
+      (1 - efficiencyCoefficient * 0.2)) /
+    1000; // TWh
 
   // ---- renewable share (spec equation, annualized rollout) ----
   const rollout = Math.min(1, t / 10); // 10-year transition window
   const targetShare = Math.min(
     0.95,
-    0.3 + (c.renewableElectricity / 100) * 0.006 * 100 - (c.industrialActivity / 100) * 0.0005 * 100
+    0.3 +
+      (c.renewableElectricity / 100) * 0.006 * 100 -
+      (c.industrialActivity / 100) * 0.0005 * 100
   );
   // linear transition: renewable share moves from baseline 0.30 toward target
   const renewableShare = 0.3 + (targetShare - 0.3) * rollout;
@@ -87,11 +93,16 @@ function computeYear(
   //   transport: 1M people × 0.68 × 1.1 kg ≈ 0.75 Mt
   //   industry: 55% activity ≈ 3.0 Mt ; waste ≈ 0.9 Mt  -> total ≈ 8.1 Mt
   const ELECTRICITY_EF_T_PER_GWH = 0.4; // illustrative grid factor
-  const fossilEmissions = electricityDemandTWh * fossilShare * ELECTRICITY_EF_T_PER_GWH; // Mt (0.4 Mt/TWh)
+  const fossilEmissions =
+    electricityDemandTWh * fossilShare * ELECTRICITY_EF_T_PER_GWH; // Mt (0.4 Mt/TWh)
   const renewableEmissions = electricityDemandTWh * renewableShare * 0.05; // Mt
-  const privateTransportShare = Math.max(0.2, 0.68 - (c.publicTransport / 100) * 0.4);
+  const privateTransportShare = Math.max(
+    0.2,
+    0.68 - (c.publicTransport / 100) * 0.4
+  );
   const transportEmissions =
-    (population * privateTransportShare * TRANSPORT_EMISSIONS_PER_PERSON_KG) / 1_000_000; // Mt
+    (population * privateTransportShare * TRANSPORT_EMISSIONS_PER_PERSON_KG) /
+    1_000_000; // Mt
   // Industrial emissions grow with time (no clean-tech path in this model, educational simplification).
   // Capped at 2× baseline to avoid unrealistic runaway (spec deviation noted).
   const industrialEmissions = Math.min(
@@ -100,15 +111,28 @@ function computeYear(
   ); // Mt
   const wasteEmissions = Math.max(0, 0.9 - (c.wasteRecycling / 100) * 1.2); // Mt
   const emissionsMtco2e =
-    fossilEmissions + renewableEmissions + transportEmissions + industrialEmissions + wasteEmissions;
+    fossilEmissions +
+    renewableEmissions +
+    transportEmissions +
+    industrialEmissions +
+    wasteEmissions;
 
   // ---- water (spec equations) ----
   const waterDemandM3 =
-    population * WATER_PER_PERSON_M3 * (1 - (c.waterEfficiency / 100) * 0.008 * 100 * 0.0125) +
+    population *
+      WATER_PER_PERSON_M3 *
+      (1 - (c.waterEfficiency / 100) * 0.008 * 100 * 0.0125) +
     (c.industrialActivity / 100) * INDUSTRIAL_WATER_PER_UNIT * (1 + t * 0.01);
   const supplyGrowth = t * 1_200_000; // gradual capacity expansion (educational)
-  const waterSupply = BASE_WATER_SUPPLY_M3 + supplyGrowth + (c.waterEfficiency / 100) * 30_000_000;
-  let waterSecurity = clamp((100 * waterSupply) / Math.max(waterDemandM3, 1), 0, 100);
+  const waterSupply =
+    BASE_WATER_SUPPLY_M3 +
+    supplyGrowth +
+    (c.waterEfficiency / 100) * 30_000_000;
+  let waterSecurity = clamp(
+    (100 * waterSupply) / Math.max(waterDemandM3, 1),
+    0,
+    100
+  );
   waterSecurity = clamp(waterSecurity * rainfallFactorFor(year), 0, 100);
 
   // ---- biodiversity (spec equations, annualized) ----
@@ -117,10 +141,15 @@ function computeYear(
   const wasteLeakage = Math.max(0, 0.3 - (c.wasteRecycling / 100) * 0.35); // 0.3 baseline leakage
   const habitatGain = (c.mangroveRestoration / 100) * 0.75 * rollout;
   const habitatLoss =
-    ((c.coastalDevelopment / 100) * 0.85 + (c.fishingPressure / 100) * 0.25) * (1 + t * 0.006);
+    ((c.coastalDevelopment / 100) * 0.85 + (c.fishingPressure / 100) * 0.25) *
+    (1 + t * 0.006);
   const pollutionLoss = wasteLeakage * 0.3;
   // start from baseline 62, apply cumulative change
-  const biodiversity = clamp(62 + habitatGain * 12 - habitatLoss * 12 - pollutionLoss * 12 - t * 0.15, 0, 100);
+  const biodiversity = clamp(
+    62 + habitatGain * 12 - habitatLoss * 12 - pollutionLoss * 12 - t * 0.15,
+    0,
+    100
+  );
 
   // ---- flood resilience (spec equations) ----
   const naturalProtection = mangroveCoverage * 60 + wetlandCoverage * 40; // scale to ~10
@@ -132,23 +161,39 @@ function computeYear(
     naturalProtection * 0.5 -
     infrastructureProtection * 0.4;
   const seaLevelPressure = t * 0.28; // rising baseline flood pressure
-  const floodResilience = clamp(70 - exposure - seaLevelPressure + (c.waterEfficiency / 100) * 3, 0, 100);
+  const floodResilience = clamp(
+    70 - exposure - seaLevelPressure + (c.waterEfficiency / 100) * 3,
+    0,
+    100
+  );
 
   // ---- public health (spec equations) ----
   const urbanization = 52 + t * 0.25; // % urbanized
   const treeCover = (c.mangroveRestoration / 100) * 18 * rollout; // % added green
   // urbanization contributes relative to its 52-point baseline (educational rescaling)
-  const heatRisk = (urbanization - 52) * 0.3 - treeCover * 0.5 - (c.publicTransport / 100) * 10;
+  const heatRisk =
+    (urbanization - 52) * 0.3 -
+    treeCover * 0.5 -
+    (c.publicTransport / 100) * 10;
   const pollutionRisk =
-    (c.industrialActivity / 100) * 28 + fossilShare * 20 - (c.wasteRecycling / 100) * 15;
-  const publicHealth = clamp(72 - heatRisk - pollutionRisk + (c.publicTransport / 100) * 6, 0, 100);
+    (c.industrialActivity / 100) * 28 +
+    fossilShare * 20 -
+    (c.wasteRecycling / 100) * 15;
+  const publicHealth = clamp(
+    72 - heatRisk - pollutionRisk + (c.publicTransport / 100) * 6,
+    0,
+    100
+  );
 
   // ---- equity (spec equations, reparameterized) ----
   const benefitLowIncome =
     (c.publicTransport / 100) * 30 +
     floodProtectionLowIncome(floodResilience, mangroveCoverage) +
     publicHealth * 0.02;
-  const energyPriceIncrease = Math.max(0, (c.renewableElectricity - 40) / 100) * 0.12 * (1 - rollout * 0.5);
+  const energyPriceIncrease =
+    Math.max(0, (c.renewableElectricity - 40) / 100) *
+    0.12 *
+    (1 - rollout * 0.5);
   const industrialPollution = (c.industrialActivity / 100) * 0.25;
   const burdenLowIncome =
     energyPriceIncrease * 35 +
@@ -157,7 +202,8 @@ function computeYear(
   const equity = clamp(55 + benefitLowIncome - burdenLowIncome, 0, 100);
 
   // ---- economic wellbeing (spec equations, reparameterized) ----
-  const industrialGrowthBonus = (c.industrialActivity / 100) * 30 * (1 + t * 0.005);
+  const industrialGrowthBonus =
+    (c.industrialActivity / 100) * 30 * (1 + t * 0.005);
   const transportBenefit = (c.publicTransport / 100) * 10;
   const infrastructureCost =
     ((c.renewableElectricity / 100) * 5 +
@@ -167,10 +213,18 @@ function computeYear(
       (c.wasteRecycling / 60) * 1.5) *
     (1 + t * 0.012);
   const disasterDamage =
-    Math.max(0, 40 - floodResilience) * 0.12 * rainfallFactorFor(year) * (1 + t * 0.02);
+    Math.max(0, 40 - floodResilience) *
+    0.12 *
+    rainfallFactorFor(year) *
+    (1 + t * 0.02);
   const fishingCollapse = c.fishingPressure > 85 && t > 12 ? (t - 12) * 2.5 : 0;
   const economicWellbeing = clamp(
-    61 + industrialGrowthBonus + transportBenefit - infrastructureCost - disasterDamage - fishingCollapse,
+    61 +
+      industrialGrowthBonus +
+      transportBenefit -
+      infrastructureCost -
+      disasterDamage -
+      fishingCollapse,
     0,
     100
   );
@@ -192,7 +246,11 @@ function computeYear(
 
   // ---- climate pressure (derived indicator: normalized emissions) ----
   // Baseline (~8.2 Mt) maps to ~54; aggressive action can push it toward 20.
-  const climatePressure = clamp(54 + (emissionsMtco2e - EMISSIONS_BUDGET_BASE_MT) * 6, 0, 100);
+  const climatePressure = clamp(
+    54 + (emissionsMtco2e - EMISSIONS_BUDGET_BASE_MT) * 6,
+    0,
+    100
+  );
 
   const indicators: Indicators = {
     climatePressure,
@@ -216,7 +274,10 @@ function computeYear(
   };
 }
 
-function floodProtectionLowIncome(floodResilience: number, mangroveCoverage: number): number {
+function floodProtectionLowIncome(
+  floodResilience: number,
+  mangroveCoverage: number
+): number {
   // low-income settlements get the largest share of mangrove/flood benefits
   const protection = (floodResilience / 100) * 0.4 + mangroveCoverage * 0.3;
   return protection * 10;
@@ -369,10 +430,22 @@ function generateEvents(years: SimYear[], controls: Controls): SimEvent[] {
 
   const canFire = (key: string, year: number, cooldown: number) =>
     !lastYear[key] || year - lastYear[key]! >= cooldown;
-  const mark = (key: string, year: number) => { lastYear[key] = year; };
+  const mark = (key: string, year: number) => {
+    lastYear[key] = year;
+  };
 
-  const push = (year: number, type: string, severity: SimEvent["severity"], lineKey?: string) => {
-    events.push({ year, type, severity, message: pickLine(lineKey ?? type, year) });
+  const push = (
+    year: number,
+    type: string,
+    severity: SimEvent["severity"],
+    lineKey?: string
+  ) => {
+    events.push({
+      year,
+      type,
+      severity,
+      message: pickLine(lineKey ?? type, year),
+    });
   };
 
   for (const y of years) {
@@ -393,7 +466,11 @@ function generateEvents(years: SimYear[], controls: Controls): SimEvent[] {
       deficitStreak = 0;
     }
 
-    if (i.floodResilience < 45 && floodYears.includes(y.year) && canFire("flood", y.year, 7)) {
+    if (
+      i.floodResilience < 45 &&
+      floodYears.includes(y.year) &&
+      canFire("flood", y.year, 7)
+    ) {
       push(y.year, "coastal_flood", "critical");
       mark("flood", y.year);
     }
@@ -407,7 +484,11 @@ function generateEvents(years: SimYear[], controls: Controls): SimEvent[] {
     }
 
     // Drought years with low water: a distinct short event (max once per drought).
-    if ((y.year === 2034 || y.year === 2043) && i.waterSecurity < 55 && !firedOnce.has(`dry_${y.year}`)) {
+    if (
+      (y.year === 2034 || y.year === 2043) &&
+      i.waterSecurity < 55 &&
+      !firedOnce.has(`dry_${y.year}`)
+    ) {
       firedOnce.add(`dry_${y.year}`);
       push(y.year, "dry_spell", "warning");
     }
@@ -450,47 +531,131 @@ function generateEvents(years: SimYear[], controls: Controls): SimEvent[] {
 }
 
 /* ---------- causal link engine (rules-based, deterministic) ---------- */
-export type CausalLink = { cause: string; effect: string; direction: "positive" | "negative"; strength: number };
+export type CausalLink = {
+  cause: string;
+  effect: string;
+  direction: "positive" | "negative";
+  strength: number;
+};
 
-export function computeCausalLinks(controls: Controls, baseline: Indicators, final: Indicators): CausalLink[] {
+export function computeCausalLinks(
+  controls: Controls,
+  baseline: Indicators,
+  final: Indicators
+): CausalLink[] {
   const links: CausalLink[] = [];
-  const push = (cause: string, effect: string, direction: "positive" | "negative", strength: number) =>
-    links.push({ cause, effect, direction, strength });
+  const push = (
+    cause: string,
+    effect: string,
+    direction: "positive" | "negative",
+    strength: number
+  ) => links.push({ cause, effect, direction, strength });
 
   const delta = (k: keyof Indicators) => final[k] - baseline[k];
 
   if (controls.renewableElectricity > 30)
-    push("Renewable electricity", "Climate pressure", delta("climatePressure") < 0 ? "positive" : "negative", clamp(controls.renewableElectricity / 100, 0.1, 0.9));
+    push(
+      "Renewable electricity",
+      "Climate pressure",
+      delta("climatePressure") < 0 ? "positive" : "negative",
+      clamp(controls.renewableElectricity / 100, 0.1, 0.9)
+    );
   if (controls.publicTransport > 20)
-    push("Public transport investment", "Climate pressure", "positive", clamp(controls.publicTransport / 100, 0.1, 0.7));
+    push(
+      "Public transport investment",
+      "Climate pressure",
+      "positive",
+      clamp(controls.publicTransport / 100, 0.1, 0.7)
+    );
   if (controls.mangroveRestoration > 0)
-    push("Mangrove restoration", "Flood resilience", delta("floodResilience") > 0 ? "positive" : "negative", clamp(controls.mangroveRestoration / 30, 0.1, 0.85));
+    push(
+      "Mangrove restoration",
+      "Flood resilience",
+      delta("floodResilience") > 0 ? "positive" : "negative",
+      clamp(controls.mangroveRestoration / 30, 0.1, 0.85)
+    );
   if (controls.mangroveRestoration > 0)
-    push("Mangrove restoration", "Biodiversity", delta("biodiversity") > 0 ? "positive" : "negative", clamp(controls.mangroveRestoration / 30, 0.1, 0.8));
+    push(
+      "Mangrove restoration",
+      "Biodiversity",
+      delta("biodiversity") > 0 ? "positive" : "negative",
+      clamp(controls.mangroveRestoration / 30, 0.1, 0.8)
+    );
   if (controls.coastalDevelopment > 10) {
-    push("Coastal development", "Biodiversity", "negative", clamp(controls.coastalDevelopment / 30, 0.1, 0.8));
-    push("Coastal development", "Flood resilience", "negative", clamp(controls.coastalDevelopment / 30, 0.1, 0.75));
+    push(
+      "Coastal development",
+      "Biodiversity",
+      "negative",
+      clamp(controls.coastalDevelopment / 30, 0.1, 0.8)
+    );
+    push(
+      "Coastal development",
+      "Flood resilience",
+      "negative",
+      clamp(controls.coastalDevelopment / 30, 0.1, 0.75)
+    );
   }
   if (controls.waterEfficiency > 15)
-    push("Water efficiency", "Water security", delta("waterSecurity") > 0 ? "positive" : "negative", clamp(controls.waterEfficiency / 60, 0.1, 0.8));
+    push(
+      "Water efficiency",
+      "Water security",
+      delta("waterSecurity") > 0 ? "positive" : "negative",
+      clamp(controls.waterEfficiency / 60, 0.1, 0.8)
+    );
   if (controls.industrialActivity > 40) {
-    push("Industrial activity", "Economic wellbeing", delta("economicWellbeing") > 0 ? "positive" : "negative", clamp(controls.industrialActivity / 100, 0.1, 0.7));
-    if (controls.industrialActivity > 60) push("Industrial activity", "Water security", "negative", clamp((controls.industrialActivity - 50) / 50, 0.1, 0.6));
-    if (controls.industrialActivity > 60) push("Industrial activity", "Public health", "negative", clamp((controls.industrialActivity - 50) / 50, 0.1, 0.5));
+    push(
+      "Industrial activity",
+      "Economic wellbeing",
+      delta("economicWellbeing") > 0 ? "positive" : "negative",
+      clamp(controls.industrialActivity / 100, 0.1, 0.7)
+    );
+    if (controls.industrialActivity > 60)
+      push(
+        "Industrial activity",
+        "Water security",
+        "negative",
+        clamp((controls.industrialActivity - 50) / 50, 0.1, 0.6)
+      );
+    if (controls.industrialActivity > 60)
+      push(
+        "Industrial activity",
+        "Public health",
+        "negative",
+        clamp((controls.industrialActivity - 50) / 50, 0.1, 0.5)
+      );
   }
   if (controls.fishingPressure > 70)
-    push("Fishing pressure", "Biodiversity", "negative", clamp((controls.fishingPressure - 50) / 50, 0.1, 0.6));
+    push(
+      "Fishing pressure",
+      "Biodiversity",
+      "negative",
+      clamp((controls.fishingPressure - 50) / 50, 0.1, 0.6)
+    );
   if (controls.wasteRecycling > 25)
-    push("Waste & recycling", "Biodiversity", delta("biodiversity") > 0 ? "positive" : "negative", clamp(controls.wasteRecycling / 60, 0.1, 0.5));
+    push(
+      "Waste & recycling",
+      "Biodiversity",
+      delta("biodiversity") > 0 ? "positive" : "negative",
+      clamp(controls.wasteRecycling / 60, 0.1, 0.5)
+    );
   if (controls.publicTransport > 30)
-    push("Public transport investment", "Equity", delta("equity") > 0 ? "positive" : "negative", clamp(controls.publicTransport / 100, 0.1, 0.6));
+    push(
+      "Public transport investment",
+      "Equity",
+      delta("equity") > 0 ? "positive" : "negative",
+      clamp(controls.publicTransport / 100, 0.1, 0.6)
+    );
 
   links.sort((a, b) => b.strength - a.strength);
   return links.slice(0, 8);
 }
 
 /* ---------- deterministic explanations (rules-based, no AI needed) ---------- */
-export function explainOutcome(controls: Controls, baseline: Indicators, final: Indicators): { biggestSuccess: string; biggestFailure: string } {
+export function explainOutcome(
+  controls: Controls,
+  baseline: Indicators,
+  final: Indicators
+): { biggestSuccess: string; biggestFailure: string } {
   const delta = (k: keyof Indicators) => final[k] - baseline[k];
   const meta = [
     { k: "climatePressure" as const, better: delta("climatePressure") < 0 },
@@ -513,10 +678,15 @@ export function explainOutcome(controls: Controls, baseline: Indicators, final: 
   };
   const label = (k: keyof Indicators) => labelOf[k];
 
-  const improved = meta.filter((m) => m.better).sort((a, b) => Math.abs(delta(b.k)) - Math.abs(delta(a.k)));
-  const worsened = meta.filter((m) => !m.better).sort((a, b) => Math.abs(delta(b.k)) - Math.abs(delta(a.k)));
+  const improved = meta
+    .filter(m => m.better)
+    .sort((a, b) => Math.abs(delta(b.k)) - Math.abs(delta(a.k)));
+  const worsened = meta
+    .filter(m => !m.better)
+    .sort((a, b) => Math.abs(delta(b.k)) - Math.abs(delta(a.k)));
 
-  let biggestSuccess = "No indicator clearly improved. A balanced, but stagnant, strategy.";
+  let biggestSuccess =
+    "No indicator clearly improved. A balanced, but stagnant, strategy.";
   if (improved.length > 0) {
     const k = improved[0].k;
     const reasons: string[] = [];
@@ -536,7 +706,8 @@ export function explainOutcome(controls: Controls, baseline: Indicators, final: 
       reasons.push(`public transport benefits reached low-income districts`);
     if (k === "economicWellbeing" && controls.industrialActivity > 50)
       reasons.push(`industrial activity created jobs and output`);
-    const cause = reasons.length > 0 ? reasons.join(" and ") : "your combined policy mix";
+    const cause =
+      reasons.length > 0 ? reasons.join(" and ") : "your combined policy mix";
     biggestSuccess = `${label(k)} improved by ${Math.abs(delta(k)).toFixed(1)} points. The main driver: ${cause}.`;
   }
 
@@ -544,7 +715,8 @@ export function explainOutcome(controls: Controls, baseline: Indicators, final: 
   if (worsened.length > 0) {
     const k = worsened[0].k;
     const reasons: string[] = [];
-    if (k === "climatePressure") reasons.push("emissions kept growing faster than the energy transition");
+    if (k === "climatePressure")
+      reasons.push("emissions kept growing faster than the energy transition");
     if (k === "biodiversity" && controls.coastalDevelopment > 15)
       reasons.push("coastal development destroyed habitat");
     if (k === "biodiversity" && controls.fishingPressure > 70)
@@ -555,10 +727,16 @@ export function explainOutcome(controls: Controls, baseline: Indicators, final: 
       reasons.push("more people needed more water than the taps could give");
     if (k === "floodResilience" && controls.mangroveRestoration < 10)
       reasons.push("insufficient natural protection against rising seas");
-    if (k === "equity") reasons.push("costs and risks fell disproportionately on low-income districts");
+    if (k === "equity")
+      reasons.push(
+        "costs and risks fell disproportionately on low-income districts"
+      );
     if (k === "publicHealth" && controls.industrialActivity > 60)
       reasons.push("industrial pollution and heat stress compounded");
-    const cause = reasons.length > 0 ? reasons[0] : "an unintended side effect of your policy mix";
+    const cause =
+      reasons.length > 0
+        ? reasons[0]
+        : "an unintended side effect of your policy mix";
     biggestFailure = `${label(k)} fell by ${Math.abs(delta(k)).toFixed(1)} points. The unintended consequence: ${cause}.`;
   }
 
@@ -568,7 +746,12 @@ export function explainOutcome(controls: Controls, baseline: Indicators, final: 
 /* ---------- scoring (spec §5.3, transparent weights) ---------- */
 export function scoreResult(final: Indicators): {
   score: number;
-  breakdown: { key: keyof Indicators; value: number; weight: number; points: number }[];
+  breakdown: {
+    key: keyof Indicators;
+    value: number;
+    weight: number;
+    points: number;
+  }[];
   penalties: string[];
 } {
   // Weights: C 0.20, B 0.15, W 0.15, F 0.15, H 0.15, E 0.10, Q 0.10
@@ -581,7 +764,12 @@ export function scoreResult(final: Indicators): {
     economicWellbeing: 0.1,
     equity: 0.1,
   };
-  const breakdown: { key: keyof Indicators; value: number; weight: number; points: number }[] = [];
+  const breakdown: {
+    key: keyof Indicators;
+    value: number;
+    weight: number;
+    points: number;
+  }[] = [];
   for (const k of Object.keys(weights) as (keyof Indicators)[]) {
     const performance = k === "climatePressure" ? 100 - final[k] : final[k];
     const points = performance * weights[k];
@@ -601,7 +789,11 @@ export function scoreResult(final: Indicators): {
     penalties.push("Severe inequality (equity below 35): −6");
     penaltyTotal += 6;
   }
-  let score = clamp(breakdown.reduce((s, b) => s + b.points, 0) - penaltyTotal, 0, 100);
+  let score = clamp(
+    breakdown.reduce((s, b) => s + b.points, 0) - penaltyTotal,
+    0,
+    100
+  );
   return { score: Number(score.toFixed(1)), breakdown, penalties };
 }
 
@@ -612,7 +804,12 @@ export function runSimulation(controls: Controls): {
   events: SimEvent[];
   causalLinks: CausalLink[];
   score: number;
-  scoreBreakdown: { key: keyof Indicators; value: number; weight: number; points: number }[];
+  scoreBreakdown: {
+    key: keyof Indicators;
+    value: number;
+    weight: number;
+    points: number;
+  }[];
   penalties: string[];
   biggestSuccess: string;
   biggestFailure: string;
@@ -627,10 +824,28 @@ export function runSimulation(controls: Controls): {
   const baselineYear = years[0];
   const final = years[years.length - 1].indicators;
   const events = generateEvents(years, controls);
-  const causalLinks = computeCausalLinks(controls, baselineYear.indicators, final);
+  const causalLinks = computeCausalLinks(
+    controls,
+    baselineYear.indicators,
+    final
+  );
   const { score, breakdown, penalties } = scoreResult(final);
-  const { biggestSuccess, biggestFailure } = explainOutcome(controls, baselineYear.indicators, final);
-  return { years, baselineYear, events, causalLinks, score, scoreBreakdown: breakdown, penalties, biggestSuccess, biggestFailure };
+  const { biggestSuccess, biggestFailure } = explainOutcome(
+    controls,
+    baselineYear.indicators,
+    final
+  );
+  return {
+    years,
+    baselineYear,
+    events,
+    causalLinks,
+    score,
+    scoreBreakdown: breakdown,
+    penalties,
+    biggestSuccess,
+    biggestFailure,
+  };
 }
 
 export { computeYear };

@@ -8,7 +8,14 @@
  * missing, or tampered values never reach the engine (a NaN slider would
  * poison every indicator).
  */
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import {
   Controls,
   CONTROL_RANGES,
@@ -42,7 +49,9 @@ const CONTROL_KEYS = Object.keys(DEFAULT_CONTROLS) as (keyof Controls)[];
 /** Coerce unknown data into a valid, in-range Controls object. */
 function sanitizeControls(input: unknown): Controls {
   const src =
-    typeof input === "object" && input !== null ? (input as Record<string, unknown>) : {};
+    typeof input === "object" && input !== null
+      ? (input as Record<string, unknown>)
+      : {};
   const out = { ...DEFAULT_CONTROLS };
   for (const key of CONTROL_KEYS) {
     const { min, max } = CONTROL_RANGES[key];
@@ -64,10 +73,10 @@ function sanitizeScenarios(input: unknown): SavedScenario[] {
         s !== null &&
         typeof (s as SavedScenario).id === "string" &&
         typeof (s as SavedScenario).name === "string" &&
-        Array.isArray((s as SavedScenario).result?.years),
+        Array.isArray((s as SavedScenario).result?.years)
     )
     .slice(0, MAX_SAVED_SCENARIOS)
-    .map((s) => ({ ...s, controls: sanitizeControls(s.controls) }));
+    .map(s => ({ ...s, controls: sanitizeControls(s.controls) }));
 }
 
 function loadPersisted(): { controls: Controls; scenarios: SavedScenario[] } {
@@ -100,8 +109,12 @@ function persist(controls: Controls, scenarios: SavedScenario[]): boolean {
 export function SimProvider({ children }: { children: React.ReactNode }) {
   const [persisted] = useState(loadPersisted);
   const [controls, setControls] = useState<Controls>(persisted.controls);
-  const [scenarios, setScenarios] = useState<SavedScenario[]>(persisted.scenarios);
-  const [currentResult, setCurrentResult] = useState<SimulationResult | null>(null);
+  const [scenarios, setScenarios] = useState<SavedScenario[]>(
+    persisted.scenarios
+  );
+  const [currentResult, setCurrentResult] = useState<SimulationResult | null>(
+    null
+  );
   const [playbackYear, setPlaybackYear] = useState<number | null>(null);
 
   useEffect(() => {
@@ -113,10 +126,13 @@ export function SimProvider({ children }: { children: React.ReactNode }) {
     const range = CONTROL_RANGES[k];
     const safe = Math.min(range.max, Math.max(range.min, Number(v)));
     if (!Number.isFinite(safe)) return;
-    setControls((prev) => ({ ...prev, [k]: safe }));
+    setControls(prev => ({ ...prev, [k]: safe }));
   }, []);
 
-  const resetControls = useCallback(() => setControls({ ...DEFAULT_CONTROLS }), []);
+  const resetControls = useCallback(
+    () => setControls({ ...DEFAULT_CONTROLS }),
+    []
+  );
 
   const run = useCallback(() => {
     const r = runSimulation(controls);
@@ -129,7 +145,7 @@ export function SimProvider({ children }: { children: React.ReactNode }) {
         population: r.baselineYear.population,
         emissionsMtco2e: r.baselineYear.emissionsMtco2e,
       },
-      years: r.years.map((y) => ({
+      years: r.years.map(y => ({
         year: y.year,
         indicators: { ...y.indicators },
         population: y.population,
@@ -165,11 +181,11 @@ export function SimProvider({ children }: { children: React.ReactNode }) {
       setScenarios(next);
       return ok;
     },
-    [run, scenarios],
+    [run, scenarios]
   );
 
   const deleteScenario = useCallback((id: string) => {
-    setScenarios((prev) => prev.filter((s) => s.id !== id));
+    setScenarios(prev => prev.filter(s => s.id !== id));
   }, []);
 
   const value = useMemo<SimState>(
@@ -185,7 +201,17 @@ export function SimProvider({ children }: { children: React.ReactNode }) {
       playbackYear,
       setPlaybackYear,
     }),
-    [controls, currentResult, scenarios, playbackYear, setControl, resetControls, run, saveScenario, deleteScenario],
+    [
+      controls,
+      currentResult,
+      scenarios,
+      playbackYear,
+      setControl,
+      resetControls,
+      run,
+      saveScenario,
+      deleteScenario,
+    ]
   );
 
   return <SimContext.Provider value={value}>{children}</SimContext.Provider>;

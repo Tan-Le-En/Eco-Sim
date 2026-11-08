@@ -15,7 +15,11 @@ export default function NotFound() {
         title="ECO//SIM — 404 · page not found"
         description="The page you asked for is not here. The town is a few clicks away."
       />
-      <main id="main" tabIndex={-1} className="flex-1 flex items-center justify-center px-6 py-16 outline-none">
+      <main
+        id="main"
+        tabIndex={-1}
+        className="flex-1 flex items-center justify-center px-6 py-16 outline-none"
+      >
         <div className="max-w-md w-full text-center">
           <div className="font-data text-[11px] tracking-[0.16em] uppercase text-muted-foreground mb-5">
             404 · nowhere on the map
@@ -46,7 +50,7 @@ export default function NotFound() {
               { href: "/simulator", label: "Simulator" },
               { href: "/transparency", label: "Transparency" },
               { href: "/faq", label: "FAQ" },
-            ].map((l) => (
+            ].map(l => (
               <Link
                 key={l.href}
                 href={l.href}

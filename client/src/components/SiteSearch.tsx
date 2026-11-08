@@ -26,19 +26,55 @@ interface Entry {
 }
 
 const QUESTIONS = [
-  { label: "How is the score calculated?", hint: "Seven registers, published weights", faqId: "score" },
-  { label: "Why can't I reach 100?", hint: "The economy trade-off caps scores near 77", faqId: "perfect" },
-  { label: "What are the mission targets?", hint: "Five thresholds you must hit by 2050", faqId: "targets" },
-  { label: "What happens when the budget runs out?", hint: "Projects stall and approval drops", faqId: "budget" },
-  { label: "Is Teluk Nusa a real town?", hint: "Fictional town, real Malaysian photographs", faqId: "real" },
-  { label: "Can a child play this?", hint: "Plain-language dials, rigorous numbers", faqId: "kids" },
-  { label: "How can teachers use this?", hint: "Save up to four plans and compare them", faqId: "teachers" },
-  { label: "Does it work on a phone?", hint: "Mobile-first single-column simulator", faqId: "phone" },
-  { label: "Is there a dark mode?", hint: "Sun/moon toggle in the header", faqId: "dark" },
+  {
+    label: "How is the score calculated?",
+    hint: "Seven registers, published weights",
+    faqId: "score",
+  },
+  {
+    label: "Why can't I reach 100?",
+    hint: "The economy trade-off caps scores near 77",
+    faqId: "perfect",
+  },
+  {
+    label: "What are the mission targets?",
+    hint: "Five thresholds you must hit by 2050",
+    faqId: "targets",
+  },
+  {
+    label: "What happens when the budget runs out?",
+    hint: "Projects stall and approval drops",
+    faqId: "budget",
+  },
+  {
+    label: "Is Teluk Nusa a real town?",
+    hint: "Fictional town, real Malaysian photographs",
+    faqId: "real",
+  },
+  {
+    label: "Can a child play this?",
+    hint: "Plain-language dials, rigorous numbers",
+    faqId: "kids",
+  },
+  {
+    label: "How can teachers use this?",
+    hint: "Save up to four plans and compare them",
+    faqId: "teachers",
+  },
+  {
+    label: "Does it work on a phone?",
+    hint: "Mobile-first single-column simulator",
+    faqId: "phone",
+  },
+  {
+    label: "Is there a dark mode?",
+    hint: "Sun/moon toggle in the header",
+    faqId: "dark",
+  },
 ];
 
 function buildIndex(): Entry[] {
-  const pages: Entry[] = NAV.map((n) => ({
+  const pages: Entry[] = NAV.map(n => ({
     kind: "page" as const,
     label: n.label,
     hint:
@@ -57,7 +93,7 @@ function buildIndex(): Entry[] {
     keywords: [n.label.toLowerCase(), n.href],
   }));
 
-  const faqs: Entry[] = QUESTIONS.map((q) => ({
+  const faqs: Entry[] = QUESTIONS.map(q => ({
     kind: "question" as const,
     label: q.label,
     hint: q.hint,
@@ -73,7 +109,7 @@ function buildIndex(): Entry[] {
 function matches(entry: Entry, q: string): boolean {
   if (!q.trim()) return false;
   const words = q.toLowerCase().split(/\s+/);
-  return words.every((w) => entry.keywords.some((k) => k.includes(w)));
+  return words.every(w => entry.keywords.some(k => k.includes(w)));
 }
 
 export default function SiteSearch({
@@ -90,7 +126,7 @@ export default function SiteSearch({
 
   const index = useMemo(() => buildIndex(), []);
   const results = useMemo(
-    () => (open ? index.filter((e) => matches(e, query)) : []),
+    () => (open ? index.filter(e => matches(e, query)) : []),
     [index, query, open]
   );
 
@@ -123,10 +159,10 @@ export default function SiteSearch({
       if (results.length === 0) return;
       if (e.key === "ArrowDown") {
         e.preventDefault();
-        setHighlighted((h) => Math.min(h + 1, results.length - 1));
+        setHighlighted(h => Math.min(h + 1, results.length - 1));
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
-        setHighlighted((h) => Math.max(h - 1, 0));
+        setHighlighted(h => Math.max(h - 1, 0));
       } else if (e.key === "Enter") {
         e.preventDefault();
         if (highlighted >= 0) go(results[highlighted]);
@@ -152,11 +188,14 @@ export default function SiteSearch({
       <DialogContent className="max-w-md rounded-none border-border p-0 overflow-hidden">
         <DialogTitle className="sr-only">Search the field study</DialogTitle>
         <div className="flex items-center gap-2 border-b border-border px-4 py-3">
-          <Search className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
+          <Search
+            className="w-4 h-4 text-muted-foreground shrink-0"
+            aria-hidden="true"
+          />
           <input
             ref={inputRef}
             value={query}
-            onChange={(e) => {
+            onChange={e => {
               setQuery(e.target.value);
               setHighlighted(-1);
             }}
@@ -184,7 +223,8 @@ export default function SiteSearch({
         {query.trim() && (
           <div className="px-4 py-2 text-left">
             <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
-              {results.length} result{results.length !== 1 ? "s" : ""} match “{query}”
+              {results.length} result{results.length !== 1 ? "s" : ""} match “
+              {query}”
             </span>
           </div>
         )}
@@ -192,7 +232,9 @@ export default function SiteSearch({
         <div className="max-h-80 overflow-y-auto py-1">
           {results.length === 0 ? (
             <div className="px-4 py-8 text-center font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground">
-              {query.trim() ? "No matches found" : "Start typing to search the study"}
+              {query.trim()
+                ? "No matches found"
+                : "Start typing to search the study"}
             </div>
           ) : (
             results.map((r, i) => (
@@ -204,18 +246,29 @@ export default function SiteSearch({
                 }`}
               >
                 {r.kind === "page" ? (
-                  <Compass className="w-4 h-4 text-vermilion shrink-0" aria-hidden="true" />
+                  <Compass
+                    className="w-4 h-4 text-vermilion shrink-0"
+                    aria-hidden="true"
+                  />
                 ) : (
-                  <HelpCircle className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
+                  <HelpCircle
+                    className="w-4 h-4 text-muted-foreground shrink-0"
+                    aria-hidden="true"
+                  />
                 )}
                 <span className="min-w-0">
-                  <span className="block text-sm font-medium truncate">{r.label}</span>
+                  <span className="block text-sm font-medium truncate">
+                    {r.label}
+                  </span>
                   <span className="block font-data text-[10px] tracking-wider uppercase text-muted-foreground truncate mt-0.5">
                     {r.hint}
                   </span>
                 </span>
                 {r.kind === "page" && (
-                  <FileText className="w-3.5 h-3.5 text-muted-foreground ml-auto shrink-0" aria-hidden="true" />
+                  <FileText
+                    className="w-3.5 h-3.5 text-muted-foreground ml-auto shrink-0"
+                    aria-hidden="true"
+                  />
                 )}
               </button>
             ))

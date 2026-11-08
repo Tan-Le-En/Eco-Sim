@@ -16,7 +16,12 @@ import {
   Legend,
   ReferenceLine,
 } from "recharts";
-import { INDICATOR_KEYS, INDICATOR_META, KID_INDICATORS, Indicators } from "@/lib/sim/types";
+import {
+  INDICATOR_KEYS,
+  INDICATOR_META,
+  KID_INDICATORS,
+  Indicators,
+} from "@/lib/sim/types";
 
 export interface ChartRow {
   year: number;
@@ -34,7 +39,12 @@ interface TimelineChartProps {
  * legible on both the light card and the dark archive plate; trace colors
  * come from INDICATOR_META.
  */
-const TICK = { fontFamily: "IBM Plex Mono", fontSize: 10, fontWeight: 400, fill: "oklch(0.62 0.015 75)" };
+const TICK = {
+  fontFamily: "IBM Plex Mono",
+  fontSize: 10,
+  fontWeight: 400,
+  fill: "oklch(0.62 0.015 75)",
+};
 
 /**
  * Custom tooltip: shows indicator values at the hovered year plus a plain-language
@@ -55,10 +65,11 @@ function CausalTooltip({
         Year {year} · vs 2026 baseline
       </div>
       <div className="space-y-0.5">
-        {payload.map((entry) => {
+        {payload.map(entry => {
           const key = entry.dataKey as string;
           const meta = INDICATOR_META[key as keyof Indicators];
-          const kidName = KID_INDICATORS[key as keyof Indicators]?.kidName ?? key;
+          const kidName =
+            KID_INDICATORS[key as keyof Indicators]?.kidName ?? key;
           const current = typeof entry.value === "number" ? entry.value : 0;
           const baseVal = baselineRow?.[key] ?? 50;
           const delta = current - baseVal;
@@ -72,14 +83,17 @@ function CausalTooltip({
               ? "text-ok"
               : "text-vermilion";
           return (
-            <div key={key} className="flex items-baseline justify-between gap-3 text-[11px]">
+            <div
+              key={key}
+              className="flex items-baseline justify-between gap-3 text-[11px]"
+            >
               <span className="font-data text-[10px] truncate">{kidName}</span>
               <span className="font-data text-[11px] tabular-nums">
-                <span className={color}>{dir}</span>{" "}
-                {current.toFixed(0)}
+                <span className={color}>{dir}</span> {current.toFixed(0)}
                 {Math.abs(delta) >= 1 && (
                   <span className={`text-[9px] ml-1 ${color}`}>
-                    ({delta > 0 ? "+" : ""}{delta.toFixed(0)})
+                    ({delta > 0 ? "+" : ""}
+                    {delta.toFixed(0)})
                   </span>
                 )}
               </span>
@@ -96,76 +110,95 @@ function CausalTooltip({
   );
 }
 
-export default function TimelineChart({ data, className, highlightKeys }: TimelineChartProps) {
+export default function TimelineChart({
+  data,
+  className,
+  highlightKeys,
+}: TimelineChartProps) {
   const keys = highlightKeys ?? INDICATOR_KEYS;
   const [hidden, setHidden] = useState<Record<string, boolean>>({});
   const baselineRow = data[0];
 
-  const toggle = (k: string) => setHidden((h) => ({ ...h, [k]: !h[k] }));
+  const toggle = (k: string) => setHidden(h => ({ ...h, [k]: !h[k] }));
 
   return (
-    <div className={`border border-border bg-card p-3 flex flex-col ${className ?? ""}`}>
+    <div
+      className={`border border-border bg-card p-3 flex flex-col ${className ?? ""}`}
+    >
       {/* Fill whatever definite-height box the caller gives (cockpit sizes this) */}
       <div className="min-h-0 flex-1">
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data} margin={{ top: 8, right: 12, left: -18, bottom: 0 }}>
-          <CartesianGrid stroke="oklch(0.55 0.015 75 / 0.22)" strokeDasharray="1 3" />
-          <XAxis
-            dataKey="year"
-            tick={TICK}
-            ticks={[2026, 2030, 2035, 2040, 2045, 2050]}
-            stroke="oklch(0.55 0.015 75 / 0.45)"
-          />
-          <YAxis
-            domain={[0, 100]}
-            tick={TICK}
-            ticks={[0, 25, 50, 75, 100]}
-            stroke="oklch(0.55 0.015 75 / 0.45)"
-          />
-          <Tooltip
-            content={<CausalTooltip baselineRow={baselineRow} />}
-            cursor={{ stroke: "oklch(0.55 0.015 75 / 0.5)", strokeWidth: 1 }}
-          />
-          <Legend
-            wrapperStyle={{ paddingTop: 8 }}
-            formatter={(value) => (
-              <button
-                type="button"
-                onClick={() => toggle(value as string)}
-                className="hover:opacity-70 transition-opacity"
-                aria-pressed={!hidden[value as string]}
-              >
-                <span
-                  style={{
-                    fontFamily: "IBM Plex Mono",
-                    fontSize: 10,
-                    fontWeight: 500,
-                    color: "oklch(0.62 0.015 75)",
-                    textDecoration: hidden[value as string] ? "line-through" : "none",
-                    opacity: hidden[value as string] ? 0.45 : 1,
-                  }}
-                >
-                  {KID_INDICATORS[value as keyof Indicators]?.kidName ?? value}
-                </span>
-              </button>
-            )}
-          />
-          <ReferenceLine y={50} stroke="oklch(0.55 0.015 75 / 0.35)" strokeDasharray="3 4" />
-          {keys.map((k) => (
-            <Line
-              key={k}
-              type="monotone"
-              dataKey={k}
-              stroke={INDICATOR_META[k].color}
-              strokeWidth={1.6}
-              dot={false}
-              activeDot={{ r: 3, strokeWidth: 0 }}
-              hide={hidden[k as string]}
-              animationDuration={400}
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={data}
+            margin={{ top: 8, right: 12, left: -18, bottom: 0 }}
+          >
+            <CartesianGrid
+              stroke="oklch(0.55 0.015 75 / 0.22)"
+              strokeDasharray="1 3"
             />
-          ))}
-        </LineChart>
-      </ResponsiveContainer>
+            <XAxis
+              dataKey="year"
+              tick={TICK}
+              ticks={[2026, 2030, 2035, 2040, 2045, 2050]}
+              stroke="oklch(0.55 0.015 75 / 0.45)"
+            />
+            <YAxis
+              domain={[0, 100]}
+              tick={TICK}
+              ticks={[0, 25, 50, 75, 100]}
+              stroke="oklch(0.55 0.015 75 / 0.45)"
+            />
+            <Tooltip
+              content={<CausalTooltip baselineRow={baselineRow} />}
+              cursor={{ stroke: "oklch(0.55 0.015 75 / 0.5)", strokeWidth: 1 }}
+            />
+            <Legend
+              wrapperStyle={{ paddingTop: 8 }}
+              formatter={value => (
+                <button
+                  type="button"
+                  onClick={() => toggle(value as string)}
+                  className="hover:opacity-70 transition-opacity"
+                  aria-pressed={!hidden[value as string]}
+                >
+                  <span
+                    style={{
+                      fontFamily: "IBM Plex Mono",
+                      fontSize: 10,
+                      fontWeight: 500,
+                      color: "oklch(0.62 0.015 75)",
+                      textDecoration: hidden[value as string]
+                        ? "line-through"
+                        : "none",
+                      opacity: hidden[value as string] ? 0.45 : 1,
+                    }}
+                  >
+                    {KID_INDICATORS[value as keyof Indicators]?.kidName ??
+                      value}
+                  </span>
+                </button>
+              )}
+            />
+            <ReferenceLine
+              y={50}
+              stroke="oklch(0.55 0.015 75 / 0.35)"
+              strokeDasharray="3 4"
+            />
+            {keys.map(k => (
+              <Line
+                key={k}
+                type="monotone"
+                dataKey={k}
+                stroke={INDICATOR_META[k].color}
+                strokeWidth={1.6}
+                dot={false}
+                activeDot={{ r: 3, strokeWidth: 0 }}
+                hide={hidden[k as string]}
+                animationDuration={400}
+              />
+            ))}
+          </LineChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

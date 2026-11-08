@@ -46,5 +46,12 @@ export default function ScrollProgress() {
     };
   }, []);
 
-  return <div ref={barRef} className="scroll-progress" aria-hidden="true" data-no-print="true" />;
+  return (
+    <div
+      ref={barRef}
+      className="scroll-progress"
+      aria-hidden="true"
+      data-no-print="true"
+    />
+  );
 }

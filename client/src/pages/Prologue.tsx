@@ -55,7 +55,8 @@ const CHAPTERS: Chapter[] = [
   },
   {
     n: "02",
-    voice: "My grandmother said the mangroves were a wall. We cut them down. Now waves knock at the door.",
+    voice:
+      "My grandmother said the mangroves were a wall. We cut them down. Now waves knock at the door.",
     title: "The wall we cut down",
     lesson:
       "Mangrove roots hold soil, slow waves, shelter baby fish. Clear them: more flooding, fewer fish. Plant them: both recover.",
@@ -68,7 +69,8 @@ const CHAPTERS: Chapter[] = [
   },
   {
     n: "03",
-    voice: "I leave before the sun. Some days the nets are heavy. Some days I bring home stories.",
+    voice:
+      "I leave before the sun. Some days the nets are heavy. Some days I bring home stories.",
     title: "The nets that come home lighter",
     lesson:
       "The sea only gives what it has. Catch too many today and there are fewer fish tomorrow. The hardest dial.",
@@ -126,14 +128,19 @@ export default function Prologue() {
     setChapter(0);
   }, [location]);
 
-  const next = () => setChapter((v) => Math.min(v + 1, total - 1));
-  const prev = () => setChapter((v) => Math.max(v - 1, 0));
+  const next = () => setChapter(v => Math.min(v + 1, total - 1));
+  const prev = () => setChapter(v => Math.max(v - 1, 0));
 
   // Keyboard: ← / → step through chapters
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight") { e.preventDefault(); next(); }
-      else if (e.key === "ArrowLeft") { e.preventDefault(); prev(); }
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        next();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        prev();
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -149,7 +156,11 @@ export default function Prologue() {
       />
       <SiteHeader backHref="/" />
 
-      <main id="main" tabIndex={-1} className="flex-1 min-h-0 flex flex-col outline-none lg:overflow-hidden">
+      <main
+        id="main"
+        tabIndex={-1}
+        className="flex-1 min-h-0 flex flex-col outline-none lg:overflow-hidden"
+      >
         {/* Chapter progress */}
         <div className="shrink-0 px-4 sm:px-8 lg:px-10 py-2 border-b border-border/60">
           <div className="flex items-center justify-between gap-4 mb-1.5">
@@ -182,7 +193,9 @@ export default function Prologue() {
               >
                 <div className="lg:pr-6 lg:border-r border-border min-w-0 flex flex-col justify-center">
                   <div className="flex items-baseline gap-3 mb-2">
-                    <span className="font-data text-vermilion text-sm">{c.n}</span>
+                    <span className="font-data text-vermilion text-sm">
+                      {c.n}
+                    </span>
                   </div>
                   <blockquote className="font-display italic text-lg sm:text-xl lg:text-[1.35rem] leading-snug border-l-2 border-vermilion pl-4 mb-3">
                     {c.voice}
@@ -200,7 +213,11 @@ export default function Prologue() {
                   </div>
                 </div>
                 <figure className="photo-plate overflow-hidden flex flex-col justify-center min-h-0 max-h-[48vh] lg:max-h-full">
-                  <FadeImg src={c.photo} alt={c.alt} className="h-full min-h-[160px] lg:min-h-0 w-full object-cover" />
+                  <FadeImg
+                    src={c.photo}
+                    alt={c.alt}
+                    className="h-full min-h-[160px] lg:min-h-0 w-full object-cover"
+                  />
                   <figcaption className="plate-caption shrink-0">
                     <span>{c.cap}</span>
                     <span>{c.fig}</span>
@@ -218,21 +235,35 @@ export default function Prologue() {
                   <span className="font-data text-vermilion text-sm">05</span>
                 </div>
                 <h1 className="font-display font-semibold tracking-tight leading-[1] text-[clamp(1.75rem,3.2vw,2.75rem)] mb-2">
-                  Teluk Nusa is yours. <span className="text-vermilion">Keep it alive</span> for 25 years.
+                  Teluk Nusa is yours.{" "}
+                  <span className="text-vermilion">Keep it alive</span> for 25
+                  years.
                 </h1>
                 <p className="text-[13px] leading-snug text-muted-foreground max-w-xl mb-3">
-                  One million people. <strong className="text-foreground">100 budget points for all 25 years</strong> — energy, buses, trees, water, housing. Keep three registers healthy.
+                  One million people.{" "}
+                  <strong className="text-foreground">
+                    100 budget points for all 25 years
+                  </strong>{" "}
+                  — energy, buses, trees, water, housing. Keep three registers
+                  healthy.
                 </p>
 
                 {/* Three registers */}
                 <div className="space-y-0 divide-y divide-border border-y border-border mb-3">
                   {KID_GOALS.map((g, i) => (
-                    <div key={g.id} className="py-1.5 flex items-baseline gap-3">
-                      <span className="font-data text-vermilion text-[11px] w-5 shrink-0">{String(i + 1).padStart(2, "0")}</span>
+                    <div
+                      key={g.id}
+                      className="py-1.5 flex items-baseline gap-3"
+                    >
+                      <span className="font-data text-vermilion text-[11px] w-5 shrink-0">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
                       <div className="flex-1 min-w-0">
-                        <div className="font-display font-semibold text-[15px] leading-tight">{g.title}</div>
+                        <div className="font-display font-semibold text-[15px] leading-tight">
+                          {g.title}
+                        </div>
                         <div className="font-data text-[9px] tracking-[0.06em] uppercase text-muted-foreground mt-0.5 leading-snug">
-                          {g.keys.map((k) => INDICATOR_META[k].label).join(" · ")}
+                          {g.keys.map(k => INDICATOR_META[k].label).join(" · ")}
                         </div>
                       </div>
                     </div>
@@ -245,12 +276,17 @@ export default function Prologue() {
                     Challenges ahead
                   </div>
                   <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
-                    {CHALLENGES.map((entry) => (
-                      <div key={entry[0]} className="border-l-2 border-vermilion pl-2.5">
+                    {CHALLENGES.map(entry => (
+                      <div
+                        key={entry[0]}
+                        className="border-l-2 border-vermilion pl-2.5"
+                      >
                         <div className="font-data text-[10px] tracking-[0.12em] uppercase text-vermilion leading-none mb-0.5">
                           {entry[0]}
                         </div>
-                        <p className="text-[11px] leading-snug text-muted-foreground">{entry[1]}</p>
+                        <p className="text-[11px] leading-snug text-muted-foreground">
+                          {entry[1]}
+                        </p>
                       </div>
                     ))}
                   </div>
@@ -259,7 +295,11 @@ export default function Prologue() {
 
               <div className="flex flex-col justify-center min-h-0 gap-2">
                 <figure className="photo-plate overflow-hidden shrink-0 hidden sm:block">
-                  <FadeImg src={PHOTOS.workingJetty} alt="Clan jetty houses on stilts over the sea" className="h-24 lg:h-28 w-full object-cover object-top" />
+                  <FadeImg
+                    src={PHOTOS.workingJetty}
+                    alt="Clan jetty houses on stilts over the sea"
+                    className="h-24 lg:h-28 w-full object-cover object-top"
+                  />
                   <figcaption className="plate-caption py-1">
                     <span>Clan jetty</span>
                     <span>Fig. 05</span>
@@ -268,11 +308,16 @@ export default function Prologue() {
 
                 <div className="border border-border bg-card grid grid-cols-2 lg:grid-cols-1 divide-x lg:divide-x-0 divide-y divide-border/60 min-h-0">
                   {DATUM.map(([label, value]) => (
-                    <div key={label} className="px-2.5 py-1 flex items-baseline justify-between gap-2">
+                    <div
+                      key={label}
+                      className="px-2.5 py-1 flex items-baseline justify-between gap-2"
+                    >
                       <span className="font-data text-[9px] tracking-[0.1em] uppercase text-muted-foreground leading-tight">
                         {label}
                       </span>
-                      <span className="font-data text-[11px] tabular-nums leading-tight text-right shrink-0">{value}</span>
+                      <span className="font-data text-[11px] tabular-nums leading-tight text-right shrink-0">
+                        {value}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -302,10 +347,16 @@ export default function Prologue() {
             </button>
           ) : (
             <div className="flex flex-wrap justify-end gap-2">
-              <Link href="/briefing" className="btn btn-outline px-4 py-2 text-[12px]">
+              <Link
+                href="/briefing"
+                className="btn btn-outline px-4 py-2 text-[12px]"
+              >
                 Mission briefing
               </Link>
-              <Link href="/simulator" className="btn btn-primary px-5 py-2.5 text-[14px]">
+              <Link
+                href="/simulator"
+                className="btn btn-primary px-5 py-2.5 text-[14px]"
+              >
                 Start the simulation <ArrowRight className="w-4 h-4" />
               </Link>
             </div>

@@ -49,7 +49,7 @@ const FAQS = [
   {
     id: "teachers",
     q: "How can teachers use this in class?",
-    a: "Save up to four plans and compare them on Results. Debrief: which trade-off surprised you? Why did a \"green\" plan hurt the poor?",
+    a: 'Save up to four plans and compare them on Results. Debrief: which trade-off surprised you? Why did a "green" plan hurt the poor?',
   },
   {
     id: "phone",
@@ -82,18 +82,32 @@ export default function Faq() {
       <main id="main" tabIndex={-1} className="flex-1 outline-none">
         <div className="px-6 sm:px-10 lg:px-14 py-10 max-w-[1000px] mx-auto">
           <h1 className="font-display text-4xl sm:text-5xl font-semibold tracking-tight leading-[1.05]">
-            Questions the field desk gets <span className="text-vermilion">most</span>.
+            Questions the field desk gets{" "}
+            <span className="text-vermilion">most</span>.
           </h1>
           <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
             Honest answers, published like everything else on this site. If the
-            answer you need isn't here, use the search above
-            (<kbd className="font-data text-[11px] border border-border px-1.5 py-0.5">⌘K</kbd>).
+            answer you need isn't here, use the search above (
+            <kbd className="font-data text-[11px] border border-border px-1.5 py-0.5">
+              ⌘K
+            </kbd>
+            ).
           </p>
 
           <div className="mt-10">
-            <Accordion type="single" collapsible defaultValue={initialOpen || undefined} className="border-t border-border">
+            <Accordion
+              type="single"
+              collapsible
+              defaultValue={initialOpen || undefined}
+              className="border-t border-border"
+            >
               {FAQS.map((f, i) => (
-                <AccordionItem key={f.id} value={f.id} id={f.id} className="border-b border-border scroll-mt-20">
+                <AccordionItem
+                  key={f.id}
+                  value={f.id}
+                  id={f.id}
+                  className="border-b border-border scroll-mt-20"
+                >
                   <AccordionTrigger className="py-5 text-left font-display text-lg sm:text-xl hover:no-underline hover:text-vermilion transition-colors">
                     <span className="flex items-baseline gap-3">
                       <span className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground">
