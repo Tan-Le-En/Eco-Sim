@@ -84,7 +84,7 @@ export default function SiteHeader({ backHref, bare }: { backHref?: string; bare
         </Link>
 
         {/* Desktop nav — flow first, trust layer last, numbered like a field report */}
-        <nav className="hidden md:flex items-center gap-1" aria-label="Primary">
+        <nav className={bare ? "hidden" : "hidden md:flex items-center gap-1"} aria-label="Primary">
           {backHref && (
             <Link
               href={backHref}
@@ -144,7 +144,7 @@ export default function SiteHeader({ backHref, bare }: { backHref?: string; bare
         </nav>
 
         {/* Mobile controls */}
-        <div className="flex md:hidden items-center gap-1">
+        <div className={bare ? "flex items-center gap-1" : "flex md:hidden items-center gap-1"}>
           {showSearch && (
             <button
               onClick={() => setSearchOpen(true)}
