@@ -113,7 +113,7 @@ export default function SiteHeader({
                 key={n.href}
                 href={n.href}
                 aria-current={active ? "page" : undefined}
-                className={`btn-press inline-flex items-center gap-1.5 font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 transition-colors border border-transparent ${
+                className={`btn-press inline-flex items-center gap-1.5 font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 transition-colors border ${n.label === "FAQ" ? "border-white" : "border-transparent"} ${
                   active
                     ? "bg-secondary text-secondary-foreground dark:bg-[oklch(0.24_0.012_75)]"
                     : muted
@@ -141,7 +141,7 @@ export default function SiteHeader({
           {showSearch && (
             <button
               onClick={() => setSearchOpen(true)}
-              className="btn-press inline-flex items-center gap-1.5 font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground border border-transparent hover:border-border hover:text-foreground px-3 py-2 transition-colors"
+              className="btn-press inline-flex items-center gap-1.5 font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground border border-white hover:border-border hover:text-foreground px-3 py-2 transition-colors"
               aria-label="Search the field study"
               title="Search (Cmd/Ctrl+K)"
             >
@@ -151,7 +151,7 @@ export default function SiteHeader({
           )}
           <button
             onClick={toggleTheme}
-            className="btn-press inline-flex items-center font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground border border-transparent hover:border-border hover:text-foreground px-3 py-2 transition-colors"
+            className="btn-press inline-flex items-center font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground border border-white hover:border-border hover:text-foreground px-3 py-2 transition-colors"
             aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
             title={dark ? "Light mode" : "Dark mode"}
           >

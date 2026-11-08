@@ -92,6 +92,19 @@ const CHAPTERS: Chapter[] = [
     fig: "Fig. 04",
     connects: "Connects to: every dial · every indicator",
   },
+  {
+    n: "05",
+    voice:
+      "You have met the town. Now spend twenty-five years trying to keep it standing.",
+    title: "Mission briefing",
+    lesson:
+      "The full briefing: controls, indicators, scoring, and how to govern Teluk Nusa from 2026 to 2050.",
+    photo: PHOTOS.workingJetty,
+    alt: "Clan jetty",
+    cap: "Life and work on the jetty",
+    fig: "Fig. 05",
+    connects: "Connects to: the simulator",
+  },
 ];
 
 const CHALLENGES: [string, string][] = [
@@ -232,7 +245,7 @@ export default function Prologue() {
             <section className="h-full px-4 sm:px-8 lg:px-10 py-3 lg:py-4 grid lg:grid-cols-[1.15fr_0.85fr] gap-4 lg:gap-6 items-start lg:items-center min-h-0 lg:overflow-hidden">
               <div className="flex flex-col justify-center min-w-0">
                 <div className="flex items-baseline gap-3 mb-2">
-                  <span className="font-data text-vermilion text-sm">05</span>
+                  <span className="font-data text-vermilion text-sm">06</span>
                 </div>
                 <h1 className="font-display font-semibold tracking-tight leading-[1] text-[clamp(1.75rem,3.2vw,2.75rem)] mb-2">
                   Teluk Nusa is yours.{" "}

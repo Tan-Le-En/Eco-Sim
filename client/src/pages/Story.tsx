@@ -26,10 +26,12 @@ import {
   Controls,
   INDICATOR_KEYS,
   INDICATOR_META,
+  KID_GOALS,
   KID_INDICATORS,
   KID_CONTROLS,
   SimEvent,
   SimulationResult,
+  BASELINE,
 } from "@/lib/sim/types";
 
 const PHOTOS = {
@@ -39,6 +41,28 @@ const PHOTOS = {
   mangroveAerial: "/storage/merbok-mangrove-real_ccdd2def.jpg",
   workingJetty: "/storage/clan-jetties-aerial-real_f756af5d.jpg",
 };
+
+const CHALLENGES: [string, string][] = [
+  ["Smoke", "Most power burns fuel."],
+  ["Monsoon", "Storms threaten seafront homes."],
+  ["Fewer fish", "Too many boats. Mangroves shrink."],
+  ["Dry taps", "Demand grows faster than supply."],
+];
+
+const DATUM: [string, string][] = [
+  ["Population", BASELINE.population.toLocaleString()],
+  ["Window", "2026 – 2050"],
+  ["Electricity demand", "8,000 GWh / year"],
+  ["Fossil share", "70%"],
+  ["Renewable share", "30%"],
+  ["Forest & mangroves", "18% of mapped area"],
+  ["Urbanized land", "52%"],
+  ["Annual rainfall", "2,400 mm"],
+  ["Water demand", "210 million m³ / year"],
+  ["Recycling", "18%"],
+  ["Private vehicles", "68% of motorized trips"],
+  ["Flood exposure", "Moderate"],
+];
 
 /* ── Chapter definitions for the "before you play" mode ── */
 
@@ -510,28 +534,119 @@ function Chapters() {
         >
           <div className="px-6 sm:px-10 lg:px-14 py-8 lg:py-10 lg:border-r border-border min-w-0 flex flex-col justify-between overflow-hidden">
             <div>
-              <div className="flex items-baseline gap-4 mb-4">
-                <span className="font-data text-vermilion text-base">
-                  {c.n}
-                </span>
-                <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
-                  Page {page + 1} of {CHAPTERS.length}
-                </span>
-              </div>
-              <blockquote className="font-display italic text-xl sm:text-2xl leading-snug border-l-2 border-vermilion pl-5 mb-4">
-                {c.voice}
-              </blockquote>
-              <h2 className="font-display font-semibold text-2xl sm:text-3xl tracking-tight mb-3">
-                {c.title}
-              </h2>
-              <p className="text-sm sm:text-[15px] leading-relaxed text-muted-foreground max-w-xl">
-                {c.lesson}
-              </p>
-              <div className="mt-4">
-                <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
-                  {c.connects}
-                </span>
-              </div>
+              {isLast ? (
+                <>
+                  <div className="flex items-baseline gap-4 mb-4">
+                    <span className="font-data text-vermilion text-base">
+                      {c.n}
+                    </span>
+                    <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
+                      Page {page + 1} of {CHAPTERS.length}
+                    </span>
+                  </div>
+                  <h1 className="font-display font-semibold tracking-tight leading-[1] text-[clamp(1.75rem,3.2vw,2.75rem)] mb-2">
+                    Teluk Nusa is yours.{" "}
+                    <span className="text-vermilion">Keep it alive</span> for 25
+                    years.
+                  </h1>
+                  <p className="text-[13px] leading-snug text-muted-foreground max-w-xl mb-3">
+                    One million people.{" "}
+                    <strong className="text-foreground">
+                      100 budget points for all 25 years
+                    </strong>{" "}
+                    — energy, buses, trees, water, housing. Keep three registers
+                    healthy.
+                  </p>
+
+                  {/* Three registers */}
+                  <div className="space-y-0 divide-y divide-border border-y border-border mb-4">
+                    {KID_GOALS.map((g, i) => (
+                      <div
+                        key={g.id}
+                        className="py-1.5 flex items-baseline gap-3"
+                      >
+                        <span className="font-data text-vermilion text-[11px] w-5 shrink-0">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-display font-semibold text-[15px] leading-tight">
+                            {g.title}
+                          </div>
+                          <div className="font-data text-[9px] tracking-[0.06em] uppercase text-muted-foreground mt-0.5 leading-snug">
+                            {g.keys
+                              .map(k => INDICATOR_META[k].label)
+                              .join(" · ")}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Challenges */}
+                  <div className="mb-4">
+                    <div className="font-data text-[9px] tracking-[0.14em] uppercase text-muted-foreground mb-1.5">
+                      Challenges ahead
+                    </div>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+                      {CHALLENGES.map(entry => (
+                        <div
+                          key={entry[0]}
+                          className="border-l-2 border-vermilion pl-2.5"
+                        >
+                          <div className="font-data text-[10px] tracking-[0.12em] uppercase text-vermilion leading-none mb-0.5">
+                            {entry[0]}
+                          </div>
+                          <p className="text-[11px] leading-snug text-muted-foreground">
+                            {entry[1]}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Datum */}
+                  <div className="mt-4 border border-border bg-card grid grid-cols-2 lg:grid-cols-1 divide-x lg:divide-x-0 divide-y divide-border/60 min-h-0">
+                    {DATUM.map(([label, value]) => (
+                      <div
+                        key={label}
+                        className="px-2.5 py-1 flex items-baseline justify-between gap-2"
+                      >
+                        <span className="font-data text-[9px] tracking-[0.1em] uppercase text-muted-foreground leading-tight">
+                          {label}
+                        </span>
+                        <span className="font-data text-[11px] tabular-nums leading-tight text-right shrink-0">
+                          {value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-baseline gap-4 mb-4">
+                    <span className="font-data text-vermilion text-base">
+                      {c.n}
+                    </span>
+                    <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
+                      Page {page + 1} of {CHAPTERS.length}
+                    </span>
+                  </div>
+                  <blockquote className="font-display italic text-xl sm:text-2xl leading-snug border-l-2 border-vermilion pl-5 mb-4">
+                    {c.voice}
+                  </blockquote>
+                  <h2 className="font-display font-semibold text-2xl sm:text-3xl tracking-tight mb-3">
+                    {c.title}
+                  </h2>
+                  <p className="text-sm sm:text-[15px] leading-relaxed text-muted-foreground max-w-xl">
+                    {c.lesson}
+                  </p>
+                  <div className="mt-4">
+                    <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
+                      {c.connects}
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
             <div className="flex items-center justify-between gap-4 mt-6">
               <button
