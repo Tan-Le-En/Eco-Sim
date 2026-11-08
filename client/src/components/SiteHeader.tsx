@@ -67,7 +67,7 @@ export default function SiteHeader({ backHref, bare }: { backHref?: string; bare
     <header
       className={
         bare
-          ? "w-full border-b border-border bg-background/92"
+          ? "w-full border-b border-border bg-white dark:bg-background"
           : "sticky top-0 z-50 bg-background/92 backdrop-blur-md border-b border-border"
       }
       data-no-print="true"
