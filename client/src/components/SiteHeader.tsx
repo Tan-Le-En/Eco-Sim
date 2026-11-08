@@ -161,14 +161,16 @@ export default function SiteHeader({ backHref, bare }: { backHref?: string; bare
           >
             {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
-          <button
-            onClick={() => setMenuOpen((v) => !v)}
-            className="btn-press inline-flex items-center p-2 text-muted-foreground hover:text-foreground transition-colors"
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            aria-expanded={menuOpen}
-          >
-            {menuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-          </button>
+          {!bare && (
+            <button
+              onClick={() => setMenuOpen((v) => !v)}
+              className="btn-press inline-flex items-center p-2 text-muted-foreground hover:text-foreground transition-colors"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={menuOpen}
+            >
+              {menuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            </button>
+          )}
         </div>
       </div>
 
