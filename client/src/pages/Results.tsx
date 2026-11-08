@@ -226,9 +226,6 @@ export default function Results() {
                           <span className="text-muted-foreground truncate">{KID_INDICATORS[k].kidName}</span>
                           <span className="font-data tabular-nums shrink-0">
                             {final[k].toFixed(0)}
-                            {!MISSION_TARGETS.some((t) => t.key === k) && (
-                              <span className="text-muted-foreground" title="No hard mission target">·</span>
-                            )}
                           </span>
                         </div>
                       ))}
@@ -402,7 +399,6 @@ export default function Results() {
                                   <tr key={k} className="border-b border-border/40">
                                     <td className="py-2.5 pr-4">
                                       <span className="flex items-center gap-2">
-                                        <span className="w-2 h-2 shrink-0" style={{ backgroundColor: meta.color }} />
                                         <span className="font-data text-[11px] uppercase tracking-wider">{meta.label}</span>
                                       </span>
                                     </td>

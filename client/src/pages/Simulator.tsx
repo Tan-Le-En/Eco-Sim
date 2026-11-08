@@ -397,7 +397,7 @@ export default function Simulator() {
                   key={s}
                   onClick={() => setSpeed(s)}
                   className={`btn-press px-2.5 py-2 font-data text-[10px] tracking-wider uppercase transition-colors ${
-                    speed === s ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
+                    speed === s ? (s === 1 ? "bg-accent text-accent-foreground" : "bg-foreground text-background") : "text-muted-foreground hover:text-foreground"
                   }`}
                   title={s === 1 ? "Film speed: ~2s per year" : "Brisk: ~1s per year"}
                 >

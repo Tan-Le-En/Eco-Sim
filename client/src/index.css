@@ -350,6 +350,11 @@ html.dark {
     transform: scale(0.97);
   }
 
+  /* Form controls (checkbox, range) tinted to the signature accent colour */
+  .accent-interactive {
+    accent-color: var(--accent);
+  }
+
   /* Universal hover affordance — flat editorial hover */
   a:hover {
     transition: opacity 160ms;
