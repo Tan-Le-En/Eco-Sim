@@ -10,7 +10,7 @@ import PageMeta from "@/components/PageMeta";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import WhiteNavBar from "@/components/WhiteNavBar";
+import SiteHeader from "@/components/SiteHeader";
 import FadeImg from "@/components/FadeImg";
 import { goalsMetCount } from "@/components/TownMood";
 import { runSimulation } from "@/lib/sim/engine";
@@ -144,7 +144,7 @@ export default function Home() {
       <section id="home-hero" className="relative flex-1 grid lg:grid-cols-[1.1fr_1fr] h-[92vh]">
         {/* Left: typographic hero, offset */}
         <div className="relative flex flex-col justify-between px-4 sm:px-6 lg:px-10 py-4 lg:py-6 border-r border-border">
-          <WhiteNavBar />
+          <SiteHeader bare />
 
           <motion.div
             initial={{ opacity: 0, y: 14 }}
