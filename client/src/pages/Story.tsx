@@ -12,11 +12,13 @@
  *      town, the keys) so a child understands before touching a dial.
  */
 import { Link } from "wouter";
+import { useState } from "react";
+import { useTheme } from "@/contexts/ThemeContext";
 import PageMeta from "@/components/PageMeta";
 import SiteFooter from "@/components/SiteFooter";
 import FadeImg from "@/components/FadeImg";
 import { motion } from "framer-motion";
-import { ArrowRight, Undo2 } from "lucide-react";
+import { ArrowRight, Undo2, Sun, Moon } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
 import { useSim } from "@/contexts/SimContext";
 import {
@@ -416,85 +418,62 @@ function WhatHappened({ result }: { result: SimulationResult }) {
 /* ── The "Before you play" chapters page ── */
 
 function Chapters() {
+  const [page, setPage] = useState(0);
+  const { theme, toggleTheme } = useTheme();
+  const dark = theme === "dark";
+  const c = CHAPTERS[page];
+  const isFirst = page === 0;
+  const isLast = page === CHAPTERS.length - 1;
+
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="h-screen overflow-hidden flex flex-col bg-background">
       <PageMeta
-        title="ECO//SIM — Five Chapters of Teluk Nusa · the story"
-        description="Walk through Teluk Nusa as it is today: five chapters about a town that lives on the water, its mangrove shield, and the people you decide for."
+        title="ECO//SIM - Five Chapters of Teluk Nusa"
+        description="Walk through Teluk Nusa as it is today."
       />
       <SiteHeader backHref="/" />
 
-      <main id="main" tabIndex={-1} className="flex-1 outline-none">
-        {/* Chapter masthead */}
-        <section className="px-6 sm:px-10 lg:px-14 pt-12 pb-10 border-b border-border">
-          <h1 className="font-display font-semibold tracking-tight leading-[0.98] text-[clamp(2.4rem,5.5vw,4.2rem)] max-w-3xl">
-            Five chapters. <span className="text-vermilion">No numbers.</span>
-          </h1>
-          <p className="mt-6 max-w-2xl text-base sm:text-lg leading-relaxed text-muted-foreground">
-            Meet the town first. The dials will make sense after.
-          </p>
-        </section>
-
-        {/* Chapters */}
-        <div className="divide-y divide-border">
-          {CHAPTERS.map((c, i) => (
-            <motion.section
-              key={c.n}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ delay: Math.min(i * 0.05, 0.15), duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
-              className="grid lg:grid-cols-[1fr_1.15fr] gap-0 min-w-0"
-            >
-              {/* Voice + lesson */}
-              <div className="px-6 sm:px-10 lg:px-14 py-10 lg:py-14 lg:border-r border-border min-w-0">
-                <div className="flex items-baseline gap-4 mb-6">
-                  <span className="font-data text-vermilion text-base">{c.n}</span>
-                </div>
-                <blockquote className="font-display italic text-xl sm:text-2xl leading-snug border-l-2 border-vermilion pl-5 mb-6">
-                  {c.voice}
-                </blockquote>
-                <h2 className="font-display font-semibold text-2xl sm:text-3xl tracking-tight mb-4">{c.title}</h2>
-                <p className="text-sm sm:text-[15px] leading-relaxed text-muted-foreground max-w-xl">{c.lesson}</p>
-                <div className="mt-6">
-                  <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">{c.connects}</span>
-                </div>
-              </div>
-              {/* Photo plate */}
-              <figure className="photo-plate overflow-hidden m-6 sm:m-8 lg:m-8">
-                <FadeImg src={c.photo} alt={c.alt} className="h-full min-h-56 w-full object-cover" />
-                <figcaption className="plate-caption">
-                  <span>{c.cap}</span>
-                  <span>{c.fig}</span>
-                </figcaption>
-              </figure>
-            </motion.section>
-          ))}
-        </div>
-
-        {/* Closing band */}
-        <section className="border-t border-border bg-secondary text-secondary-foreground dark:bg-[oklch(0.12_0.01_75)] dark:border-border">
-          <div className="px-6 sm:px-10 lg:px-14 py-14 grid lg:grid-cols-[1.4fr_auto] items-center gap-8">
+      <main id="main" tabIndex={-1} className="flex-1 outline-none overflow-hidden">
+        <motion.section
+          key={c.n}
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+          className="h-full grid lg:grid-cols-[1fr_1.15fr] gap-0 min-w-0"
+        >
+          <div className="px-6 sm:px-10 lg:px-14 py-8 lg:py-10 lg:border-r border-border min-w-0 flex flex-col justify-between overflow-hidden">
             <div>
-              <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-3">
-                End of story
+              <div className="flex items-baseline gap-4 mb-4">
+                <span className="font-data text-vermilion text-base">{c.n}</span>
+                <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">Page {page + 1} of {CHAPTERS.length}</span>
               </div>
-              <p className="font-display italic text-xl sm:text-2xl max-w-xl leading-snug">
-                You have met the town. Now spend twenty-five years trying to
-                keep it standing.
-              </p>
+              <blockquote className="font-display italic text-xl sm:text-2xl leading-snug border-l-2 border-vermilion pl-5 mb-4">
+                {c.voice}
+              </blockquote>
+              <h2 className="font-display font-semibold text-2xl sm:text-3xl tracking-tight mb-3">{c.title}</h2>
+              <p className="text-sm sm:text-[15px] leading-relaxed text-muted-foreground max-w-xl">{c.lesson}</p>
+              <div className="mt-4">
+                <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">{c.connects}</span>
+              </div>
             </div>
-            <div className="flex flex-wrap gap-3">
-              <Link href="/simulator" className="btn btn-primary px-8 py-4 text-[15px]">
-                Start the simulation <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link href="/briefing" className="btn btn-outline">
-                Mission briefing
-              </Link>
+            <div className="flex items-center justify-between gap-4 mt-6">
+              <button onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={isFirst} className="btn btn-outline disabled:opacity-40">Previous</button>
+              <button onClick={() => setPage((p) => Math.min(CHAPTERS.length - 1, p + 1))} disabled={isLast} className="btn btn-primary">{isLast ? "Finish" : "Next"}</button>
             </div>
           </div>
-        </section>
+          <figure className="photo-plate overflow-hidden m-6 sm:m-8 lg:m-8 h-full">
+            <FadeImg src={c.photo} alt={c.alt} className="h-full w-full object-cover" />
+            <figcaption className="plate-caption">
+              <span>{c.cap}</span>
+              <span>{c.fig}</span>
+            </figcaption>
+          </figure>
+        </motion.section>
       </main>
+
+      <button onClick={toggleTheme} aria-label={dark ? "Switch to light mode" : "Switch to dark mode"} className="fixed bottom-4 right-4 z-50 btn-press inline-flex items-center p-3 border border-border bg-background/90 backdrop-blur rounded-full shadow-md">
+        {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+      </button>
 
       <SiteFooter />
     </div>
