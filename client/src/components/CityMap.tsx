@@ -1,9 +1,14 @@
 /**
- * ECO//SIM — City map (20×20 tile grid, Editorial Field Study v3)
+ * ECO//SIM — City map (20×20 tile grid, Editorial Field Study v4)
  * PERFORMANCE: single <svg> with 400 <rect> elements updated via inline
  * styles + CSS transitions. Hover state stores cell indices (never layout
  * reads) and only updates when the hovered cell changes, so scanning the
  * map stays at 60fps while dragging sliders or running years.
+ *
+ * HONESTY (v4): the base layer is a real photograph, so the hover readout
+ * reports only overlay *semantics* — what the tint means for the town
+ * ("Mangrove restored — less surge, more fish"). No invented elevations or
+ * population figures, which the photo cannot support.
  */
 import { useCallback, useMemo, useRef, useState } from "react";
 import { buildCityMap, CELL_LABELS, MapCell } from "@/lib/sim/cityMap";
@@ -16,55 +21,79 @@ interface CityMapProps {
   indicators: Indicators | null;
   year: number;
   className?: string;
+  /** Sizing of the stage box; hover geometry is percent-based so any box works. */
+  heightClass?: string;
 }
 
 const staticMap = buildCityMap();
 const COLS = staticMap[0].length;
 const ROWS = staticMap.length;
 
-// Colored swatches shown on the illustrated base map. The fills match the
-// default-intensity colors returned by overlayTint so the legend doesn't lie.
+// Overlay semantics — one line each, no invented data.
+const TAG_LOW_WATER = "Low water — drought risk";
+const TAG_MANGROVE = "Mangrove restored — less surge, more fish";
+const TAG_COAST = "Coast built over — habitat loss";
+const TAG_WETLAND = "Wetland filled — buffering drops";
+const TAG_FLOOD = "Flood-prone kampung — protect first";
+
+// Swatches shown in the legend. One per fill the overlays can paint,
+// so the legend never lies about what is on screen.
 const OVERLAY_LEGEND: [string, string][] = [
-  ["rgba(47,157,191,0.65)", "Sungai Kedah (River)"],
+  ["rgba(47,157,191,0.65)", "River — clear"],
+  ["rgba(185,145,100,0.65)", "Low water — drought"],
   ["rgba(34,120,60,0.55)", "Mangrove restored"],
   ["rgba(185,154,107,0.6)", "Coast built over"],
   ["rgba(201,107,66,0.55)", "Flood-prone kampung"],
 ];
 
-/** Overlay tint for the illustrated base map: near-transparent so the map
- *  shows through, with colored tints only where the data changes something. */
-function overlayTint(cell: MapCell, controls: Controls, indicators: Indicators | null, t: number): string {
+/** Overlay fill + hover tag for one cell. Fills match the legend exactly. */
+function overlayFor(
+  cell: MapCell,
+  controls: Controls,
+  indicators: Indicators | null,
+  t: number,
+): { fill: string; tag?: string } {
   const rollout = Math.min(1, t / 10);
-  const isLate = t > 18; // near 2050: overlays become more dramatic for the consequence reveal
+  const isLate = t > 18; // near 2050: overlays deepen for the consequence reveal
   const intensity = isLate ? 0.75 : 0.55;
 
-  // River corridor: Sungai Kedah
+  // River corridor: clear water, or muddied low water in drought
   if (cell.type === "river") {
     if (indicators && indicators.waterSecurity < 45) {
-      return "rgba(185,145,100,0.65)"; // dry / muddy in drought
+      return { fill: "rgba(185,145,100,0.65)", tag: TAG_LOW_WATER };
     }
-    return "rgba(47,157,191,0.65)"; // clear river water
+    return { fill: "rgba(47,157,191,0.65)" };
+  }
+
+  // Flood consequence takes precedence on kampung cells: the stakes outrank the build
+  if (indicators && cell.type === "residentialLow" && indicators.floodResilience < 45 && t > 10) {
+    return { fill: `rgba(201,107,66,${isLate ? 0.7 : 0.55})`, tag: TAG_FLOOD };
   }
 
   // Mangrove restoration: green overlay grows with investment
   if (cell.type === "mangrove") {
     const boost = (controls.mangroveRestoration / 30) * rollout;
-    if (boost > 0.3) return `rgba(34,120,60,${boost > 0.7 && isLate ? 0.7 : intensity})`;
+    if (boost > 0.3) {
+      return {
+        fill: `rgba(34,120,60,${boost > 0.7 && isLate ? 0.7 : intensity})`,
+        tag: TAG_MANGROVE,
+      };
+    }
   }
 
-  // Coastal development: brown overlay shows built-over coast
+  // Coastal development: built-over tint shares one color for beach, kampung, wetland
   if (cell.type === "beach" || cell.type === "residentialLow") {
-    if ((controls.coastalDevelopment / 30) * rollout > 0.5) return `rgba(185,154,107,${isLate ? 0.7 : 0.6})`;
+    if ((controls.coastalDevelopment / 30) * rollout > 0.5) {
+      return { fill: `rgba(185,154,107,${isLate ? 0.7 : 0.6})`, tag: TAG_COAST };
+    }
   }
   if (cell.type === "wetland") {
-    if ((controls.coastalDevelopment / 30) * rollout > 0.4) return `rgba(168,148,106,${isLate ? 0.65 : 0.55})`;
+    if ((controls.coastalDevelopment / 30) * rollout > 0.4) {
+      return { fill: `rgba(185,154,107,${isLate ? 0.65 : 0.55})`, tag: TAG_WETLAND };
+    }
   }
 
-  // Flood consequence: orange-red overlay on low-resilience areas near 2050
-  if (indicators && cell.type === "residentialLow" && indicators.floodResilience < 45 && t > 10) {
-    return `rgba(201,107,66,${isLate ? 0.7 : 0.55})`;
-  }
-  return "transparent";
+  return { fill: "transparent" };
 }
 
 interface HoverInfo {
@@ -73,28 +102,42 @@ interface HoverInfo {
   row: number;
 }
 
-export default function CityMap({ controls, indicators, year, className }: CityMapProps) {
+export default function CityMap({
+  controls,
+  indicators,
+  year,
+  className,
+  heightClass = "aspect-[4/3] min-h-[180px]",
+}: CityMapProps) {
   const t = year - 2026;
   const [hover, setHover] = useState<HoverInfo | null>(null);
   const hoverCell = useRef<string | null>(null);
-  // Grid geometry + tint fills are recomputed only when the inputs change
-  // (never per pointer move).
+  // Grid geometry + tint fills + tags are recomputed only when the inputs
+  // change (never per pointer move).
   const cells = useMemo(() => {
-    const out: { key: string; x: number; y: number; cell: MapCell; fill: string }[] = [];
+    const out: { key: string; x: number; y: number; fill: string; tag?: string }[] = [];
+    const tags = new Map<string, string | undefined>();
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
         const cell = staticMap[r][c];
+        const { fill, tag } = overlayFor(cell, controls, indicators, t);
         out.push({
           key: cell.id,
           x: (c / COLS) * 100,
           y: (r / ROWS) * 100,
-          cell,
-          fill: overlayTint(cell, controls, indicators, t),
+          fill,
+          tag,
         });
+        tags.set(cell.id, tag);
       }
     }
     return out;
   }, [controls, indicators, t]);
+  const tagsById = useMemo(() => {
+    const m = new Map<string, string | undefined>();
+    for (const c of cells) m.set(c.key, c.tag);
+    return m;
+  }, [cells]);
 
   const cellWidth = 100 / COLS;
   const cellHeight = 100 / ROWS;
@@ -120,21 +163,25 @@ export default function CityMap({ controls, indicators, year, className }: CityM
     setHover(null);
   }, []);
 
+  // Hover readout: what the overlay says about this cell — never fabricated
+  // numbers the photograph can't support.
+  const hoverText = hover
+    ? tagsById.get(hover.cell.id) ?? CELL_LABELS[hover.cell.type]
+    : "Pointer over map to survey";
+
   return (
     <div className={className}>
       <div className="flex items-baseline justify-between gap-4 mb-2">
         <span className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground">
-          Town Survey · {year}
+          Town Survey
         </span>
         <span className="font-data text-[11px] tracking-[0.08em] uppercase text-muted-foreground truncate hidden sm:block">
-          {hover
-            ? `${CELL_LABELS[hover.cell.type]} · elev ${hover.cell.elevationM} m${hover.cell.population > 0 ? ` · pop ~${hover.cell.population.toLocaleString()}` : ""}`
-            : "Pointer over map to survey"}
+          {hoverText}
         </span>
       </div>
       <div className="border border-border bg-card p-1.5 overflow-hidden">
         <div
-          className="relative select-none aspect-[4/3] min-h-[180px] bg-[oklch(0.88_0.02_80)] dark:bg-[oklch(0.25_0.015_75)]"
+          className={`relative select-none bg-[oklch(0.88_0.02_80)] dark:bg-[oklch(0.25_0.015_75)] ${heightClass}`}
           onPointerMove={onMove}
           onPointerLeave={onLeave}
         >
@@ -164,7 +211,7 @@ export default function CityMap({ controls, indicators, year, className }: CityM
                 width={cellWidth * 0.92}
                 height={cellHeight * 0.92}
                 fill={r.fill}
-                style={{ transition: "fill 500ms ease" }}
+                style={{ transition: "fill 120ms ease" }}
               />
             ))}
           </svg>
@@ -182,7 +229,7 @@ export default function CityMap({ controls, indicators, year, className }: CityM
           )}
         </div>
       </div>
-      {/* Overlay legend */}
+      {/* Overlay legend — exactly the fills the overlays can paint */}
       <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1">
         {OVERLAY_LEGEND.map(([color, label]) => (
           <div key={label} className="flex items-center gap-1.5">

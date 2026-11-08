@@ -24,7 +24,7 @@ export default function NotFound() {
             <Compass className="w-12 h-12 text-vermilion" strokeWidth={1.5} />
           </div>
           <h1 className="font-display text-5xl sm:text-6xl font-semibold tracking-tight leading-tight">
-            Lost in the <span className="italic text-vermilion">field.</span>
+            Lost in the <span className="text-vermilion">field</span>.
           </h1>
           <p className="mt-5 text-[15px] leading-relaxed text-muted-foreground">
             The page you asked for is not here. It may never have existed, or
@@ -33,16 +33,10 @@ export default function NotFound() {
           </p>
 
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              href="/story"
-              className="btn-press inline-flex items-center justify-center gap-2 bg-vermilion text-primary-foreground font-display italic text-lg px-8 py-3.5 hover:brightness-105 transition-all"
-            >
+            <Link href="/story" className="btn btn-primary">
               Start the story <ArrowRight className="w-4 h-4" />
             </Link>
-            <Link
-              href="/"
-              className="btn-press inline-flex items-center justify-center gap-2 border border-current/40 font-data text-[11px] tracking-[0.14em] uppercase px-6 py-3 hover:bg-primary-foreground/10 transition-colors"
-            >
+            <Link href="/" className="btn btn-outline">
               Back home
             </Link>
           </div>

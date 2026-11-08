@@ -10,6 +10,7 @@
  */
 import { useMemo, useState } from "react";
 import SiteFooter from "@/components/SiteFooter";
+import FadeImg from "@/components/FadeImg";
 import { Link, useLocation } from "wouter";
 import PageMeta from "@/components/PageMeta";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
@@ -104,14 +105,11 @@ export default function Results() {
           <h1 className="font-display text-2xl sm:text-3xl font-semibold">No report yet</h1>
           <p className="text-muted-foreground text-sm max-w-md leading-relaxed">
             This page fills itself in after you run the town to 2050.
-            Open the simulator, make a few decisions, press <em>Run</em> — and the
+            Open the simulator, make a few decisions, press <span className="font-data">Run</span> — and the
             score, the story, and the causal chain appear here. Saved plans
             (kept on this device) also open here.
           </p>
-          <Link
-            href="/simulator"
-            className="btn-press inline-flex items-center gap-2 bg-vermilion text-primary-foreground font-data text-[11px] tracking-[0.14em] uppercase px-6 py-3 hover:brightness-105 transition-all"
-          >
+          <Link href="/simulator" className="btn btn-primary">
             Go to simulator <ArrowLeft className="w-4 h-4 rotate-180" />
           </Link>
         </main>
@@ -158,11 +156,10 @@ export default function Results() {
           className="grid lg:grid-cols-[46%_1fr] gap-0 border border-border"
         >
           <figure className="photo-plate relative overflow-hidden min-h-[300px] lg:min-h-0 lg:h-full lg:aspect-auto">
-            <img
+            <FadeImg
+              eager
               src={photo}
               alt={photoAlt}
-              fetchPriority="high"
-              decoding="async"
               className="absolute inset-0 h-full w-full object-cover object-center"
               onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
             />
@@ -217,7 +214,7 @@ export default function Results() {
                   <div key={g.id} className={`px-2 first:pl-0 ${i > 0 ? "border-l border-border" : ""}`}>
                     <div className="flex items-center gap-1.5 mb-1 min-w-0">
                       {goalsMet[i] ? (
-                        <Check className="w-4 h-4 text-emerald-700 shrink-0" aria-hidden="true" />
+                        <Check className="w-4 h-4 text-ok shrink-0" aria-hidden="true" />
                       ) : (
                         <X className="w-4 h-4 text-vermilion shrink-0" aria-hidden="true" />
                       )}
@@ -246,10 +243,7 @@ export default function Results() {
 
               <div className="flex flex-wrap gap-2 mt-5">
                 <CopyButton text={shareText} label="Share score" className="gap-1.5 px-4 py-2 text-[11px] tracking-[0.12em]" />
-                <button
-                  onClick={handleReplay}
-                  className="btn-press inline-flex items-center gap-1.5 bg-vermilion text-primary-foreground px-5 py-2 text-[11px] font-data tracking-[0.12em] uppercase hover:brightness-105 transition-all"
-                >
+                <button onClick={handleReplay} className="btn btn-primary">
                   <RefreshCw className="w-3.5 h-3.5" /> Play again
                 </button>
               </div>
@@ -261,9 +255,9 @@ export default function Results() {
         <section className="grid sm:grid-cols-2 gap-4">
           <motion.div
             {...entrance(0.08)}
-            className="border border-border border-l-2 border-l-emerald-700 bg-card p-5"
+            className="border border-border border-l-2 border-l-ok bg-card p-5"
           >
-            <div className="field-label mb-2 !text-emerald-800">Worked</div>
+            <div className="field-label mb-2 !text-ok">Worked</div>
             <p className="text-[13px] leading-relaxed">{latest.biggestSuccess}</p>
           </motion.div>
           <motion.div
@@ -364,9 +358,6 @@ export default function Results() {
                             ))}
                           </div>
                         )}
-                        <div className="status-chip mt-4 inline-block">
-                          Scoring weights fixed &amp; published on the transparency page
-                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -418,7 +409,7 @@ export default function Results() {
                                     <td className="text-right tabular-nums text-muted-foreground px-3">{base[k].toFixed(0)}</td>
                                     <td className="text-right tabular-nums px-3">{final[k].toFixed(0)}</td>
                                     <td className="text-right tabular-nums px-3">
-                                      <span className={`font-data text-[12px] ${good ? "text-emerald-700" : "text-vermilion"}`}>
+                                      <span className={`font-data text-[12px] ${good ? "text-ok" : "text-vermilion"}`}>
                                         {delta === 0 ? "—" : delta > 0 ? "+" : ""}{delta.toFixed(1)}
                                       </span>
                                     </td>

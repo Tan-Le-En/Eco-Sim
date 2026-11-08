@@ -69,7 +69,7 @@ function CausalTooltip({
           const color = isNeutral
             ? "text-muted-foreground"
             : isBetter
-              ? "text-emerald-700"
+              ? "text-ok"
               : "text-vermilion";
           return (
             <div key={key} className="flex items-baseline justify-between gap-3 text-[11px]">
@@ -104,8 +104,10 @@ export default function TimelineChart({ data, className, highlightKeys }: Timeli
   const toggle = (k: string) => setHidden((h) => ({ ...h, [k]: !h[k] }));
 
   return (
-    <div className={`border border-border bg-card p-3 ${className ?? ""}`}>
-      <ResponsiveContainer width="100%" height={260}>
+    <div className={`border border-border bg-card p-3 flex flex-col ${className ?? ""}`}>
+      {/* Fill whatever definite-height box the caller gives (cockpit sizes this) */}
+      <div className="min-h-0 flex-1">
+      <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 8, right: 12, left: -18, bottom: 0 }}>
           <CartesianGrid stroke="oklch(0.55 0.015 75 / 0.22)" strokeDasharray="1 3" />
           <XAxis
@@ -164,8 +166,6 @@ export default function TimelineChart({ data, className, highlightKeys }: Timeli
           ))}
         </LineChart>
       </ResponsiveContainer>
-      <div className="mt-1">
-        <span className="status-chip">Fictional town · educational model · not a forecast</span>
       </div>
     </div>
   );

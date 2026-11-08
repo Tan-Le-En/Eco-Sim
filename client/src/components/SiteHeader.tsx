@@ -1,28 +1,35 @@
 /**
- * ECO//SIM — site header (Editorial Field Study v3 + v7 production layer)
+ * ECO//SIM — site header (Editorial Field Study v4 + v7 production layer)
  * Sticky top bar with backdrop blur, scroll progress, hamburger mobile menu
  * (animated slide-down drawer), dark-mode toggle, and site-search entry.
  * Editorial discipline: hairlines, mono labels, zero radius.
+ *
+ * IA spine (v4): the nav mirrors the visitor's flow —
+ *   01 Story → 02 Briefing → 03 Simulator → 04 Report (state-aware)
+ * then the quieter trust layer: Transparency, FAQ.
+ * Flow items read as foreground; reference items sit back in muted.
  */
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Menu, X, Sun, Moon, Search } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useSim } from "@/contexts/SimContext";
 import SiteSearch from "@/components/SiteSearch";
 
-export const NAV = [
-  { href: "/", label: "Home" },
-  { href: "/briefing", label: "Briefing" },
-  { href: "/story", label: "Story" },
-  { href: "/simulator", label: "Simulator" },
-  { href: "/transparency", label: "Transparency" },
-  { href: "/faq", label: "FAQ" },
+export const NAV: { href: string; label: string; tier: "flow" | "ref" }[] = [
+  { href: "/story", label: "Story", tier: "flow" },
+  { href: "/briefing", label: "Briefing", tier: "flow" },
+  { href: "/simulator", label: "Simulator", tier: "flow" },
+  { href: "/results", label: "Report", tier: "flow" },
+  { href: "/transparency", label: "Transparency", tier: "ref" },
+  { href: "/faq", label: "FAQ", tier: "ref" },
 ];
 
 export default function SiteHeader({ backHref, bare }: { backHref?: string; bare?: boolean }) {
   const [location] = useLocation();
   const { theme, toggleTheme } = useTheme();
+  const { currentResult } = useSim();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
 
@@ -54,7 +61,6 @@ export default function SiteHeader({ backHref, bare }: { backHref?: string; bare
   // In bare/immersive mode the search palette stays unmounted so its
   // Cmd/Ctrl+K listener can't interrupt reel keyboard controls.
   const showSearch = !bare;
-
   const dark = theme === "dark";
 
   return (
@@ -64,8 +70,8 @@ export default function SiteHeader({ backHref, bare }: { backHref?: string; bare
           ECO<span className="text-vermilion">//</span>SIM
         </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-1">
+        {/* Desktop nav — flow first, trust layer last, numbered like a field report */}
+        <nav className="hidden md:flex items-center gap-1" aria-label="Primary">
           {backHref && (
             <Link
               href={backHref}
@@ -74,19 +80,35 @@ export default function SiteHeader({ backHref, bare }: { backHref?: string; bare
               <ArrowLeft className="w-3.5 h-3.5" /> Back
             </Link>
           )}
-          {(bare ? NAV.filter((n) => n.href !== "/") : NAV).map((n) => (
-            <Link
-              key={n.href}
-              href={n.href}
-              className={`btn-press inline-flex font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 transition-colors ${
-                location === n.href
-                  ? "bg-secondary text-secondary-foreground dark:bg-[oklch(0.24_0.012_75)]"
-                  : "text-muted-foreground hover:text-foreground border border-transparent hover:border-border"
-              }`}
-            >
-              {n.label}
-            </Link>
-          ))}
+          {NAV.map((n, i) => {
+            const active = location === n.href;
+            const muted = n.tier === "ref";
+            return (
+              <Link
+                key={n.href}
+                href={n.href}
+                aria-current={active ? "page" : undefined}
+                className={`btn-press inline-flex items-center gap-1.5 font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 transition-colors border border-transparent ${
+                  active
+                    ? "bg-secondary text-secondary-foreground dark:bg-[oklch(0.24_0.012_75)]"
+                    : muted
+                      ? "text-muted-foreground hover:text-foreground hover:border-border"
+                      : "text-foreground hover:border-border hover:bg-secondary/60"
+                }`}
+              >
+                <span className={active ? "text-vermilion" : "text-muted-foreground/80"}>
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                {n.label}
+                {n.href === "/results" && (
+                  <span
+                    aria-hidden="true"
+                    className={`inline-block w-1.5 h-1.5 ml-0.5 ${currentResult ? "bg-vermilion" : "border border-muted-foreground/60"}`}
+                  />
+                )}
+              </Link>
+            );
+          })}
           {showSearch && (
             <button
               onClick={() => setSearchOpen(true)}
@@ -147,16 +169,25 @@ export default function SiteHeader({ backHref, bare }: { backHref?: string; bare
             transition={{ duration: 0.22, ease: [0.23, 1, 0.32, 1] }}
             className="md:hidden overflow-hidden border-t border-border bg-background"
           >
-            <nav className="px-6 py-4 flex flex-col divide-y divide-border">
-              {NAV.map((n) => (
+            <nav className="px-6 py-4 flex flex-col divide-y divide-border" aria-label="Primary">
+              {NAV.map((n, i) => (
                 <Link
                   key={n.href}
                   href={n.href}
-                  className={`btn-press py-3.5 flex items-center justify-between font-data text-[12px] tracking-[0.14em] uppercase ${
-                    location === n.href ? "text-vermilion" : "text-foreground"
+                  aria-current={location === n.href ? "page" : undefined}
+                  className={`btn-press py-3.5 flex items-center gap-3 justify-between font-data text-[12px] tracking-[0.14em] uppercase ${
+                    location === n.href ? "text-vermilion" : n.tier === "ref" ? "text-muted-foreground" : "text-foreground"
                   }`}
                 >
-                  {n.label}
+                  <span className="flex items-center gap-3">
+                    <span className={location === n.href ? "text-vermilion" : "text-muted-foreground/80"}>
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    {n.label}
+                    {n.href === "/results" && currentResult && (
+                      <span aria-hidden="true" className="inline-block w-1.5 h-1.5 bg-vermilion" />
+                    )}
+                  </span>
                   <span className={`inline-block w-1.5 h-1.5 ${location === n.href ? "bg-vermilion" : "bg-border"}`} />
                 </Link>
               ))}

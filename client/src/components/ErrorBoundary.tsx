@@ -57,7 +57,7 @@ function FriendlyErrorPage({ error }: { error: Error | null }) {
             <AlertTriangle className="w-12 h-12 text-vermilion" strokeWidth={1.5} />
           </div>
           <h1 className="font-display text-4xl sm:text-5xl font-semibold tracking-tight leading-tight">
-            The town went <span className="italic text-vermilion">quiet.</span>
+            The town went <span className="text-vermilion">quiet</span>.
           </h1>
           <p className="mt-5 text-[15px] leading-relaxed text-muted-foreground">
             Something on this page stopped working. Nothing you typed is lost,
@@ -66,16 +66,10 @@ function FriendlyErrorPage({ error }: { error: Error | null }) {
           </p>
 
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-            <button
-              onClick={() => window.location.reload()}
-              className="btn-press inline-flex items-center justify-center gap-2 bg-vermilion text-primary-foreground font-data text-[11px] tracking-[0.14em] uppercase px-6 py-3 hover:brightness-105 transition-all"
-            >
+            <button onClick={() => window.location.reload()} className="btn btn-primary">
               <RefreshCw className="w-3.5 h-3.5" /> Reload the page
             </button>
-            <a
-              href="/"
-              className="btn-press inline-flex items-center justify-center gap-2 border border-current/40 font-data text-[11px] tracking-[0.14em] uppercase px-6 py-3 hover:bg-primary-foreground/10 transition-colors"
-            >
+            <a href="/" className="btn btn-outline">
               <Home className="w-3.5 h-3.5" /> Back to the study
             </a>
           </div>

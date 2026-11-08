@@ -7,6 +7,7 @@
 import { Link } from "wouter";
 import PageMeta from "@/components/PageMeta";
 import SiteFooter from "@/components/SiteFooter";
+import FadeImg from "@/components/FadeImg";
 import { useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import { motion, AnimatePresence } from "framer-motion";
@@ -57,7 +58,7 @@ export default function Briefing() {
           <h1 className="font-display font-semibold tracking-tight leading-[0.98] text-[clamp(2.4rem,5.5vw,4.2rem)]">
             Teluk Nusa is yours.
             <br />
-            <em className="text-vermilion">Keep it alive</em> for 25 years.
+            <span className="text-vermilion">Keep it alive</span> for 25 years.
           </h1>
           <p className="mt-6 max-w-xl text-base sm:text-lg leading-relaxed text-muted-foreground">
             One million people. <strong className="text-foreground">100 budget points for all 25 years</strong> — energy, buses, trees, water, housing. Keep three registers healthy throughout.
@@ -105,16 +106,10 @@ export default function Briefing() {
 
           {/* CTA */}
           <div className="mt-10 flex flex-wrap items-center gap-3">
-            <Link
-              href="/simulator"
-              className="btn-press inline-flex items-center gap-3 bg-vermilion text-primary-foreground font-display italic text-lg px-8 py-3.5 hover:brightness-105 transition-all"
-            >
+            <Link href="/simulator" className="btn btn-primary px-8 py-4 text-[15px]">
               Begin the study <ArrowRight className="w-4 h-4" />
             </Link>
-            <Link
-              href="/transparency"
-              className="btn-press inline-flex items-center border border-foreground px-6 py-3.5 font-data text-[11px] tracking-[0.14em] uppercase hover:bg-foreground hover:text-background transition-colors"
-            >
+            <Link href="/transparency" className="btn btn-outline">
               The equations
             </Link>
           </div>
@@ -128,24 +123,24 @@ export default function Briefing() {
             viewport={{ once: true, margin: "-80px" }}
             transition={{ delay: 0.15, duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
           >
-          <figure className="photo-plate overflow-hidden group">
-            <img src={PHOTO} alt="Malaysian fishermen at dawn" className="h-64 w-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.03]" loading="lazy" />
+          <figure className="photo-plate overflow-hidden">
+            <FadeImg src={PHOTO} alt="Malaysian fishermen at dawn" className="h-64 w-full object-cover object-top" />
             <figcaption className="plate-caption">
               <span>Fishermen at dawn, East Coast</span>
               <span>Fig. 02</span>
             </figcaption>
           </figure>
 
-          <figure className="photo-plate overflow-hidden hidden lg:block group">
-            <img src={RIVER} alt="Mangrove river in Langkawi" className="h-40 w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]" loading="lazy" />
+          <figure className="photo-plate overflow-hidden hidden lg:block">
+            <FadeImg src={RIVER} alt="Mangrove river in Langkawi" className="h-40 w-full object-cover" />
             <figcaption className="plate-caption">
               <span>Mangrove river, Kilim Geopark</span>
               <span>Fig. 03</span>
             </figcaption>
           </figure>
 
-          <figure className="photo-plate overflow-hidden hidden lg:block group">
-            <img src={JETTY} alt="Clan jetty houses on stilts over the sea" className="h-40 w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]" loading="lazy" />
+          <figure className="photo-plate overflow-hidden hidden lg:block">
+            <FadeImg src={JETTY} alt="Clan jetty houses on stilts over the sea" className="h-40 w-full object-cover" />
             <figcaption className="plate-caption">
               <span>Where your town lives · clan jetty</span>
               <span>Fig. 04</span>
@@ -180,9 +175,6 @@ export default function Briefing() {
                       <span className="font-data text-[13px] tabular-nums">{value}</span>
                     </div>
                   ))}
-                  <div className="px-4 py-2.5">
-                    <span className="status-chip">Fictional baseline · not real data</span>
-                  </div>
                 </div>
               </motion.div>
             )}

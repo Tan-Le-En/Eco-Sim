@@ -24,7 +24,8 @@ interface SimState {
   resetControls: () => void;
   currentResult: SimulationResult | null;
   run: () => SimulationResult;
-  saveScenario: (name: string) => void;
+  /** Returns false when the browser refuses the write (private mode, quota). */
+  saveScenario: (name: string) => boolean;
   deleteScenario: (id: string) => void;
   scenarios: SavedScenario[];
   playbackYear: number | null; // null = not playing
@@ -85,6 +86,17 @@ function loadPersisted(): { controls: Controls; scenarios: SavedScenario[] } {
   return { controls: { ...DEFAULT_CONTROLS }, scenarios: [] };
 }
 
+/** Single write path. Reports whether the browser actually accepted the data. */
+function persist(controls: Controls, scenarios: SavedScenario[]): boolean {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ controls, scenarios }));
+    return true;
+  } catch {
+    /* private mode, quota exceeded — caller must tell the user, not lie */
+    return false;
+  }
+}
+
 export function SimProvider({ children }: { children: React.ReactNode }) {
   const [persisted] = useState(loadPersisted);
   const [controls, setControls] = useState<Controls>(persisted.controls);
@@ -93,11 +105,7 @@ export function SimProvider({ children }: { children: React.ReactNode }) {
   const [playbackYear, setPlaybackYear] = useState<number | null>(null);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ controls, scenarios }));
-    } catch {
-      /* storage may be unavailable (private mode, quota) — persistence is best-effort */
-    }
+    persist(controls, scenarios);
   }, [controls, scenarios]);
 
   const setControl = useCallback((k: keyof Controls, v: number) => {
@@ -150,9 +158,14 @@ export function SimProvider({ children }: { children: React.ReactNode }) {
         controls: { ...result.controls },
         result,
       };
-      setScenarios((prev) => [saved, ...prev].slice(0, MAX_SAVED_SCENARIOS));
+      const next = [saved, ...scenarios].slice(0, MAX_SAVED_SCENARIOS);
+      // Keep in memory even if the disk write fails — the plan still lives
+      // for this session; the caller decides what to tell the user.
+      const ok = persist(result.controls, next);
+      setScenarios(next);
+      return ok;
     },
-    [run],
+    [run, scenarios],
   );
 
   const deleteScenario = useCallback((id: string) => {

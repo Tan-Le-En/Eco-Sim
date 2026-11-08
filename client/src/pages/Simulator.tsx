@@ -8,10 +8,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import PageMeta from "@/components/PageMeta";
-import { Play, Pause, FastForward, Save, Lightbulb, Coins, ChevronLeft, ChevronRight, AlertTriangle, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Play, Pause, FastForward, Save, Lightbulb, Coins, ChevronLeft, ChevronRight, AlertTriangle, X, Check } from "lucide-react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { goalsMetCount } from "@/components/TownMood";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { MISSION_TARGETS, INDICATOR_META, KID_INDICATORS } from "@/lib/sim/types";
 import { toast } from "sonner";
 import SiteHeader from "@/components/SiteHeader";
@@ -22,7 +21,6 @@ import TownMood from "@/components/TownMood";
 import TimelineChart, { ChartRow } from "@/components/TimelineChart";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { useSim } from "@/contexts/SimContext";
 import { runSimulation } from "@/lib/sim/engine";
 import { INDICATOR_KEYS } from "@/lib/sim/types";
@@ -42,7 +40,15 @@ export default function Simulator() {
   const [reelOpen, setReelOpen] = useState(false);
   const [saveOpen, setSaveOpen] = useState(false);
   const [saveName, setSaveName] = useState("");
+  const [missionOpen, setMissionOpen] = useState(false);
+  const [savedFlash, setSavedFlash] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Reel focus trap: the overlay is a dialog, so Tab must stay inside and
+  // focus must return to whoever opened it.
+  const reelRef = useRef<HTMLDivElement | null>(null);
+  const exitReelRef = useRef<HTMLButtonElement | null>(null);
+  const prevReelFocus = useRef<HTMLElement | null>(null);
+  const reduced = useReducedMotion();
 
   // Precompute the full simulation once per controls change; every other
   // read is a plain array lookup (no re-run).
@@ -123,11 +129,23 @@ export default function Simulator() {
   };
 
   // Keyboard: ← / → step, space play-pause, Esc close reel (when not typing).
+  // While the reel is open, Tab is trapped inside the overlay (dialog discipline).
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement | null;
       if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
       if (e.key === "Escape" && reelOpen) { e.preventDefault(); setPlaying(false); setReelOpen(false); return; }
+      if (e.key === "Tab" && reelOpen && reelRef.current) {
+        const nodes = reelRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        );
+        if (nodes.length === 0) return;
+        const first = nodes[0]!;
+        const last = nodes[nodes.length - 1]!;
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        return;
+      }
       if (e.key === "ArrowRight") { e.preventDefault(); stepBy(1); }
       else if (e.key === "ArrowLeft") { e.preventDefault(); stepBy(-1); }
       else if (e.key === " ") { e.preventDefault(); togglePlay(); }
@@ -136,6 +154,18 @@ export default function Simulator() {
     return () => window.removeEventListener("keydown", onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [displayYear, pauseOnEvents, eventsByYear, reelOpen, playing]);
+
+  // Reel focus: move focus into the dialog on open, hand it back on close.
+  useEffect(() => {
+    if (reelOpen) {
+      prevReelFocus.current =
+        document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      exitReelRef.current?.focus();
+    } else if (prevReelFocus.current) {
+      prevReelFocus.current.focus();
+      prevReelFocus.current = null;
+    }
+  }, [reelOpen]);
 
   // Reel open: lock scroll so the film stays centred.
   useEffect(() => {
@@ -201,14 +231,29 @@ export default function Simulator() {
   const finished = displayYear >= 2050 && previewResult;
 
   const handleSave = () => {
+    if (savedFlash) return;
     if (!saveName.trim()) {
       toast.error("Give your plan a name first");
       return;
     }
-    saveScenario(saveName.trim());
-    setSaveOpen(false);
-    setSaveName("");
-    toast.success("Plan saved", { description: "Compare up to 4 plans on the results screen." });
+    const ok = saveScenario(saveName.trim());
+    if (ok) {
+      // "Saved ✓" morph on the button, dialog closes a beat later.
+      setSavedFlash(true);
+      window.setTimeout(() => {
+        setSavedFlash(false);
+        setSaveOpen(false);
+        setSaveName("");
+      }, 700);
+      toast.success("Plan saved", { description: "Compare up to 4 plans on the results screen." });
+    } else {
+      // Storage refused the write — say so, never fake success.
+      setSaveOpen(false);
+      setSaveName("");
+      toast.error("This browser is blocking storage — the plan lives only for this session.", {
+        duration: 6000,
+      });
+    }
   };
 
   const runningBudget = useMemo(() => {
@@ -270,29 +315,22 @@ export default function Simulator() {
                 {displayYear}
               </div>
             </div>
-            {/* Mission chip: the clear goal, always visible while playing */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="flex items-center gap-2 border border-border bg-card px-3 py-1.5 cursor-help hover:border-vermilion/60 transition-colors">
-                  <span className="font-data text-[10px] tracking-[0.14em] uppercase text-vermilion font-semibold whitespace-nowrap">
-                    Mission
-                  </span>
-                  <span className="font-data text-[11px] tabular-nums whitespace-nowrap">
-                    {indicatorsAtDisplay ? goalsMetCount(indicatorsAtDisplay) : 0} / 5 targets
-                  </span>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent className="rounded-none border-border max-w-xs" side="bottom">
-                <p className="font-data text-[11px] leading-relaxed">
-                  <span className="font-bold uppercase tracking-wider text-vermilion">Your 5 targets by 2050:</span>
-                  {MISSION_TARGETS.map((m) => (
-                    <span key={m.key} className="block">
-                      · {missionLabel(m.key)} {m.direction === "above" ? "≥ " + m.threshold : "≤ " + m.threshold}
-                    </span>
-                  ))}
-                </p>
-              </TooltipContent>
-            </Tooltip>
+            {/* Mission chip: the clear goal, always visible. Tap to open the
+                target list — hover was unreachable on touch devices. */}
+            <button
+              type="button"
+              onClick={() => setMissionOpen(true)}
+              aria-haspopup="dialog"
+              className="btn-press flex items-center gap-2 border border-border bg-card px-3 py-1.5 hover:border-vermilion/60 transition-colors text-left"
+              title="Your five targets — tap for details"
+            >
+              <span className="font-data text-[10px] tracking-[0.14em] uppercase text-vermilion font-semibold whitespace-nowrap">
+                Mission
+              </span>
+              <span className="font-data text-[11px] tabular-nums whitespace-nowrap">
+                {indicatorsAtDisplay ? goalsMetCount(indicatorsAtDisplay) : 0} / 5 targets
+              </span>
+            </button>
             <div className="h-8 w-px bg-border hidden sm:block" />
             <div className="flex items-center gap-2">
               <Coins className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
@@ -300,7 +338,7 @@ export default function Simulator() {
                 <div className="font-data text-[10px] tracking-[0.16em] uppercase text-muted-foreground">Budget</div>
                 <div
                   className={`font-data text-xl tabular-nums leading-tight ${
-                    runningBudget < 20 ? "text-vermilion" : runningBudget < 40 ? "text-vermilion/70" : "text-foreground"
+                    runningBudget < 20 ? "text-vermilion" : runningBudget < 40 ? "text-warn" : "text-foreground"
                   }`}
                 >
                   {runningBudget.toFixed(0)} pts
@@ -332,14 +370,15 @@ export default function Simulator() {
             {!playing ? (
               <button
                 onClick={handleRun}
-                className="btn-press inline-flex items-center gap-2 bg-vermilion text-primary-foreground font-data text-[11px] tracking-[0.14em] uppercase px-5 py-2.5 hover:brightness-105 transition-all"
+                className="btn btn-primary"
+                title="Run to 2050 with story pauses (Space)"
               >
                 <Play className="w-3.5 h-3.5" /> {displayYear > 2026 && displayYear < 2050 ? `Play from ${displayYear}` : displayYear >= 2050 ? "Restart" : "Play"}
               </button>
             ) : (
               <button
                 onClick={handleStop}
-                className="btn-press inline-flex items-center gap-2 border border-foreground px-4 py-2.5 font-data text-[11px] tracking-[0.14em] uppercase hover:bg-foreground hover:text-background transition-colors"
+                className="btn btn-outline"
               >
                 <Pause className="w-3 h-3" /> Pause
               </button>
@@ -366,12 +405,15 @@ export default function Simulator() {
                 </button>
               ))}
             </div>
-            <label className="inline-flex items-center gap-1.5 font-data text-[10px] tracking-wider uppercase text-muted-foreground cursor-pointer select-none" title="Pause automatically when an event happens">
+            <label
+              className="inline-flex items-center gap-1.5 py-2 font-data text-[10px] tracking-wider uppercase text-muted-foreground cursor-pointer select-none"
+              title="Pause automatically when an event happens"
+            >
               <input
                 type="checkbox"
                 checked={pauseOnEvents}
                 onChange={(e) => setPauseOnEvents(e.target.checked)}
-                className="accent-vermilion w-3.5 h-3.5"
+                className="accent-interactive w-3.5 h-3.5 shrink-0"
               />
               Pause on events
             </label>
@@ -379,16 +421,17 @@ export default function Simulator() {
         </div>
       </div>
 
-      <main id="main" tabIndex={-1} className="flex-1 px-4 sm:px-6 lg:px-8 py-3 grid lg:grid-cols-[1fr_340px] gap-4 max-w-[1500px] w-full lg:h-[calc(100vh-8.5rem)] lg:overflow-hidden overflow-y-auto outline-none">
-        {/* Left: mood → map → indicators → trajectory */}
-        <div className="space-y-3 min-w-0 flex flex-col lg:overflow-hidden">
+      <main id="main" tabIndex={-1} className="flex-1 px-4 sm:px-6 lg:px-8 py-3 grid lg:grid-cols-[1fr_340px] gap-4 max-w-[1500px] w-full outline-none">
+        {/* Left: mood → map → indicators → trajectory. Normal flow: a clipped
+            instrument is a worse crime than a scroll on short laptops. */}
+        <div className="space-y-3 min-w-0">
           {indicatorsAtDisplay && <TownMood indicators={indicatorsAtDisplay} year={displayYear} />}
 
           {/* This year — digest + what happened */}
           <div className="border border-border bg-card">
             <div className="px-4 py-2 flex flex-wrap items-center justify-between gap-2 border-b border-border/60">
               <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
-                {displayYear} — Year {displayYear - 2026 + 1} of 25
+                Year {displayYear - 2026 + 1} of 25
               </span>
               <span className="font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground tabular-nums">
                 {progressPct}% · {eventsSoFar.length} events so far
@@ -405,8 +448,8 @@ export default function Simulator() {
                   {eventsHere.length > 0 ? (
                     <div className="space-y-1.5">
                       {eventsHere.map((e, i) => (
-                        <p key={i} className={e.severity === "critical" ? "text-vermilion font-medium" : e.severity === "warning" ? "text-foreground" : "text-emerald-700 font-medium"}>
-                          <AlertTriangle className={`w-3 h-3 inline mr-1 -mt-0.5 ${e.severity === "info" ? "hidden" : ""}`} aria-hidden="true" />
+                        <p key={i} className={e.severity === "critical" ? "text-vermilion font-medium" : e.severity === "warning" ? "text-warn font-medium" : "text-ok font-medium"}>
+                          {e.severity !== "info" && <AlertTriangle className="w-3 h-3 inline mr-1 -mt-0.5" aria-hidden="true" />}
                           <span className="font-data text-[10px] tracking-[0.12em] uppercase opacity-70 mr-1.5">{e.severity}</span>{e.message}
                         </p>
                       ))}
@@ -417,9 +460,15 @@ export default function Simulator() {
                   {yearMovers.length > 0 && (
                     <div className="mt-1.5 flex flex-wrap gap-1.5">
                       {yearMovers.map((m) => (
-                        <span key={m.key} className={`inline-flex items-center gap-1 border px-1.5 py-0.5 font-data text-[10px] tabular-nums ${m.good ? "border-emerald-700/40 text-emerald-700" : "border-vermilion/40 text-vermilion"}`}>
+                        <motion.span
+                          key={`${displayYear}:${m.key}`}
+                          initial={reduced ? false : { opacity: 0, y: 6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.18, ease: "easeOut" }}
+                          className={`inline-flex items-center gap-1 border px-1.5 py-0.5 font-data text-[10px] tabular-nums ${m.good ? "border-ok/40 text-ok" : "border-vermilion/40 text-vermilion"}`}
+                        >
                           {KID_INDICATORS[m.key].kidName} {m.delta > 0 ? "+" : ""}{m.delta.toFixed(1)}
-                        </span>
+                        </motion.span>
                       ))}
                     </div>
                   )}
@@ -433,7 +482,7 @@ export default function Simulator() {
                   {eventsSoFar.slice(-5).map((e, i) => (
                     <div key={i} className="flex items-baseline gap-2 text-[11px]">
                       <span className="font-data tabular-nums text-muted-foreground w-8 shrink-0">{e.year}</span>
-                      <span className={e.severity === "critical" ? "text-vermilion" : e.severity === "info" ? "text-emerald-700" : "text-foreground/80"}>{e.message}</span>
+                      <span className={e.severity === "critical" ? "text-vermilion" : e.severity === "info" ? "text-ok" : "text-muted-foreground"}>{e.message}</span>
                     </div>
                   ))}
                 </div>
@@ -441,12 +490,17 @@ export default function Simulator() {
             )}
           </div>
 
-          <CityMap controls={controls} indicators={indicatorsAtDisplay} year={displayYear} />
+          <CityMap
+            controls={controls}
+            indicators={indicatorsAtDisplay}
+            year={displayYear}
+            heightClass="h-[40vh] min-h-[200px] max-h-[440px]"
+          />
 
           {indicatorsAtDisplay && (
             <div className="shrink-0">
               <div className="flex items-baseline justify-between gap-4 mb-1">
-                <span className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground">Registers · {displayYear}</span>
+                <span className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground">Registers</span>
                 <span className="font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground hidden sm:block">
                   tap a row for the plain-language reading
                 </span>
@@ -459,10 +513,10 @@ export default function Simulator() {
             </div>
           )}
 
-          <div className="flex-1 min-h-0">
+          <div>
             <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
               <span className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground">
-                Trajectory · {chartData[0]?.year ?? 2026} – {displayYear}
+                Trajectory
               </span>
               <div className="flex items-center gap-2">
                 <span className="font-data text-[10px] uppercase text-muted-foreground">Scrub year:</span>
@@ -475,15 +529,14 @@ export default function Simulator() {
                     setPlaying(false);
                     setDisplayYear(Number(e.target.value));
                   }}
-                  className="w-24 sm:w-32 h-1.5 accent-vermilion bg-secondary rounded-none cursor-pointer"
+                  className="w-24 sm:w-32 h-1.5 accent-interactive bg-secondary rounded-none cursor-pointer"
                   aria-label="Timeline year scrubber"
                 />
                 <span className="font-data text-[11px] tabular-nums font-semibold text-foreground w-10 text-right">{displayYear}</span>
               </div>
             </div>
-            <div className="h-full">
-              <TimelineChart data={chartData} className="h-full flex flex-col" />
-            </div>
+            {/* Fixed chart box: the only overflow-hidden region — content never clips silently */}
+            <TimelineChart data={chartData} className="h-[260px] sm:h-[300px] overflow-hidden" />
           </div>
 
           {finished && (
@@ -494,7 +547,7 @@ export default function Simulator() {
                   alt={moodPhotoAlt(previewResult!.score)}
                   loading="lazy"
                   decoding="async"
-                  className="h-40 w-full object-cover animate-in zoom-in-50 duration-1000"
+                  className="h-40 w-full object-cover animate-in fade-in duration-700"
                 />
                 {/* Weather event overlay: appears based on score */}
                 {previewResult!.score < 58 && (
@@ -512,31 +565,31 @@ export default function Simulator() {
                     </div>
                     <div className="font-display text-2xl font-semibold tracking-tight mt-0.5">
                       Verdict:{" "}
-                      <span className={previewResult!.score >= 58 ? "text-emerald-700" : "text-vermilion"}>
+                      <span className={previewResult!.score >= 58 ? "text-ok" : "text-vermilion"}>
                         {previewResult!.score.toFixed(0)} / 100
                       </span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" className="btn-press rounded-none border-border" onClick={() => setSaveOpen(true)}>
-                      <Save className="w-3.5 h-3.5 mr-1" /> Save plan
-                    </Button>
-                    <Button
-                      className="btn-press rounded-none bg-vermilion text-primary-foreground hover:bg-vermilion/90"
+                    <button className="btn btn-outline" onClick={() => setSaveOpen(true)}>
+                      <Save className="w-3.5 h-3.5" /> Save plan
+                    </button>
+                    <button
+                      className="btn btn-primary"
                       onClick={() => {
                         run();
                         navigate("/results");
                       }}
                     >
-                      Full account <FastForward className="w-3.5 h-3.5 ml-1" />
-                    </Button>
+                      Full account <FastForward className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </div>
                 <div className="grid sm:grid-cols-2 gap-3 text-[13px] leading-relaxed">
-                  <div className="border-l-2 border-emerald-700 pl-3">
+                  <div className="border-l-2 border-ok pl-3">
                     <div className="flex items-center gap-1.5 mb-0.5">
-                      <Lightbulb className="w-3.5 h-3.5 text-emerald-700" aria-hidden="true" />
-                      <span className="font-data text-[10px] uppercase tracking-wider text-emerald-700 font-bold">Worked</span>
+                      <Lightbulb className="w-3.5 h-3.5 text-ok" aria-hidden="true" />
+                      <span className="font-data text-[10px] uppercase tracking-wider text-ok font-bold">Worked</span>
                     </div>
                     {previewResult!.biggestSuccess}
                   </div>
@@ -550,8 +603,9 @@ export default function Simulator() {
           )}
         </div>
 
-        {/* Right: decision ledger */}
-        <aside className="lg:sticky lg:top-14 lg:self-start lg:h-[calc(100vh-8.5rem)] lg:overflow-y-auto pr-1 pb-2 shrink-0">
+        {/* Right: decision ledger — sticky with its own scroll; the page scrolls,
+            never silently clips. max-h assumes only the sticky header above. */}
+        <aside className="lg:sticky lg:top-14 lg:self-start lg:max-h-[calc(100vh-3.5rem)] lg:overflow-y-auto pr-1 pb-2 shrink-0">
           <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-1">Policy · 2026 – 2050</div>
           <ControlPanel controls={controls} onChange={setControl} onReset={resetControls} />
           <div className="mt-3 px-1">
@@ -579,6 +633,7 @@ export default function Simulator() {
             role="dialog"
             aria-label="Year reel: watch Teluk Nusa from 2026 to 2050"
             onClick={togglePlay}
+            ref={reelRef}
           >
             {/* Plain map, washed out */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
@@ -599,7 +654,7 @@ export default function Simulator() {
             {/* Floating chrome: label left, speed + exit right */}
             <div className="relative z-10 flex items-center justify-between px-4 sm:px-6 py-3" onClick={(e) => e.stopPropagation()}>
               <span className="font-data text-[10px] tracking-[0.18em] uppercase text-muted-foreground">
-                Teluk Nusa · Year {displayYear - 2026 + 1} of 25
+                Teluk Nusa
               </span>
               <div className="flex items-center gap-1.5">
                 <button
@@ -610,6 +665,7 @@ export default function Simulator() {
                   {speed === 2 ? "Turbo" : "Fast"}
                 </button>
                 <button
+                  ref={exitReelRef}
                   onClick={() => { setPlaying(false); setReelOpen(false); }}
                   className="btn-press inline-flex items-center gap-1.5 font-data text-[10px] tracking-wider uppercase border border-border px-2.5 py-1.5 text-muted-foreground hover:text-foreground transition-colors"
                   title="Exit to cockpit (Esc)"
@@ -642,7 +698,7 @@ export default function Simulator() {
                         ) : eventsHere.length > 0 ? (
                           <div className="space-y-1">
                             {eventsHere.map((e, i) => (
-                              <p key={i} className={`font-display italic text-2xl sm:text-3xl leading-tight ${e.severity === "info" ? "text-emerald-800" : e.severity === "critical" ? "text-vermilion" : "text-foreground"}`}>
+                              <p key={i} className={`font-display italic text-2xl sm:text-3xl leading-tight ${e.severity === "info" ? "text-ok" : e.severity === "critical" ? "text-vermilion" : "text-foreground"}`}>
                                 {e.message}
                               </p>
                             ))}
@@ -658,7 +714,7 @@ export default function Simulator() {
                         {eventsHere.length > 0 && yearMovers.length > 0 && (
                           <div className="mt-2.5 flex flex-wrap justify-center gap-1.5">
                             {yearMovers.map((m) => (
-                              <span key={m.key} className={`inline-flex items-center gap-1 border px-2 py-1 font-data text-[11px] tabular-nums ${m.good ? "border-emerald-700/50 text-emerald-800" : "border-vermilion/50 text-vermilion"}`}>
+                              <span key={m.key} className={`inline-flex items-center gap-1 border px-2 py-1 font-data text-[11px] tabular-nums ${m.good ? "border-ok/40 text-ok" : "border-vermilion/50 text-vermilion"}`}>
                                 {KID_INDICATORS[m.key].kidName} {m.delta > 0 ? "+" : ""}{m.delta.toFixed(1)}
                               </span>
                             ))}
@@ -689,7 +745,7 @@ export default function Simulator() {
               </button>
               <button
                 onClick={togglePlay}
-                className="btn-press inline-flex items-center gap-2 bg-vermilion text-primary-foreground px-5 py-2 font-data text-[11px] tracking-[0.14em] uppercase hover:brightness-105 transition-all"
+                className="btn btn-primary"
                 title="Play / pause (Space, or tap anywhere)"
               >
                 {playing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
@@ -706,7 +762,7 @@ export default function Simulator() {
               {displayYear >= 2050 ? (
                 <button
                   onClick={() => { run(); setPlaying(false); setReelOpen(false); navigate("/results"); }}
-                  className="btn-press inline-flex items-center gap-2 border border-foreground px-4 py-2 font-data text-[11px] tracking-[0.14em] uppercase hover:bg-foreground hover:text-background transition-colors"
+                  className="btn btn-outline"
                 >
                   Full account <FastForward className="w-3.5 h-3.5" />
                 </button>
@@ -742,10 +798,43 @@ export default function Simulator() {
               onKeyDown={(e) => e.key === "Enter" && handleSave()}
               className="font-data rounded-none"
             />
-            <Button onClick={handleSave} className="btn-press rounded-none bg-vermilion text-primary-foreground hover:bg-vermilion/90">
-              Save
-            </Button>
+            <button onClick={handleSave} className="btn btn-primary shrink-0">
+              {savedFlash ? "Saved ✓" : "Save"}
+            </button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Mission targets: tap-to-open, touch + keyboard reachable (was hover-only) */}
+      <Dialog open={missionOpen} onOpenChange={setMissionOpen}>
+        <DialogContent className="bg-popover rounded-none border-border max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="font-display">Your five targets by 2050</DialogTitle>
+            <DialogDescription className="text-sm">
+              Where Teluk Nusa stands right now, {displayYear}. Reach all five for the full mission.
+            </DialogDescription>
+          </DialogHeader>
+          <ul className="divide-y divide-border/60 text-[13px]">
+            {MISSION_TARGETS.map((m) => {
+              const value = indicatorsAtDisplay ? indicatorsAtDisplay[m.key] : null;
+              const met = value !== null && (m.direction === "above" ? value >= m.threshold : value <= m.threshold);
+              return (
+                <li key={m.key} className="flex items-center justify-between gap-3 py-2.5">
+                  <span>{missionLabel(m.key)}</span>
+                  <span className="flex items-center gap-2.5 font-data text-[12px] tabular-nums">
+                    <span className={met ? "text-ok" : "text-muted-foreground"}>
+                      {value !== null ? value.toFixed(0) : "—"} {" "}{m.direction === "above" ? "≥" : "≤"} {m.threshold}
+                    </span>
+                    {met ? (
+                      <Check className="w-3.5 h-3.5 text-ok" aria-label="target met" />
+                    ) : (
+                      <span className="w-3.5 text-center text-border" aria-hidden="true">·</span>
+                    )}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
         </DialogContent>
       </Dialog>
     </div>
@@ -787,17 +876,39 @@ function quietLine(year: number): string {
 
 function OdometerYear({ year, large = false }: { year: number; large?: boolean }) {
   const digits = String(year).padStart(4, "0").split("");
+  const reduced = useReducedMotion();
   return (
     <div className="flex items-center gap-1" aria-label={`Year ${year}`}>
       {digits.map((d, i) => (
-        <RollingDigit key={i} digit={d} delay={i * 0.015} large={large} />
+        <RollingDigit key={i} digit={d} delay={i * 0.015} large={large} reduced={reduced ?? false} />
       ))}
     </div>
   );
 }
 
-function RollingDigit({ digit, delay = 0, large = false }: { digit: string; delay?: number; large?: boolean }) {
+function RollingDigit({
+  digit,
+  delay = 0,
+  large = false,
+  reduced = false,
+}: {
+  digit: string;
+  delay?: number;
+  large?: boolean;
+  reduced?: boolean;
+}) {
   const n = Number(digit) || 0;
+  // Reduced motion honored: a motion-sensitive user gets the digit, no roll.
+  if (reduced) {
+    return (
+      <span
+        className={`inline-block font-display font-semibold tabular-nums text-foreground ${large ? "text-8xl sm:text-9xl leading-[1.1em]" : "text-2xl leading-[1.1em]"}`}
+        aria-hidden="true"
+      >
+        {digit}
+      </span>
+    );
+  }
   return (
     <span
       className="inline-block overflow-hidden leading-none"

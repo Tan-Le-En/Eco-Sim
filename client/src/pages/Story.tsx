@@ -14,6 +14,7 @@
 import { Link } from "wouter";
 import PageMeta from "@/components/PageMeta";
 import SiteFooter from "@/components/SiteFooter";
+import FadeImg from "@/components/FadeImg";
 import { motion } from "framer-motion";
 import { ArrowRight, Undo2 } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
@@ -139,9 +140,9 @@ function classifyRun(r: SimulationResult): { tone: "hope" | "struggle" | "balanc
 function toneColor(tone: string): string {
   switch (tone) {
     case "hope":
-      return "text-emerald-700";
+      return "text-ok";
     case "balance":
-      return "text-amber-700";
+      return "text-warn";
     case "struggle":
       return "text-vermilion";
     default:
@@ -175,9 +176,9 @@ const POSITIVE_EVENT_TYPES = new Set([
 ]);
 
 function eventAccent(e: SimEvent): string {
-  if (POSITIVE_EVENT_TYPES.has(e.type)) return "border-l-emerald-700";
+  if (POSITIVE_EVENT_TYPES.has(e.type)) return "border-l-ok";
   if (e.severity === "critical") return "border-l-vermilion";
-  if (e.severity === "warning") return "border-l-amber-500";
+  if (e.severity === "warning") return "border-l-warn";
   return "border-l-border";
 }
 
@@ -251,7 +252,7 @@ function WhatHappened({ result }: { result: SimulationResult }) {
             </span>
             <Link
               href="/simulator"
-              className="btn-press inline-flex items-center gap-2 font-data text-[10px] tracking-[0.14em] uppercase text-vermilion hover:text-vermilion/70 transition-colors"
+              className="inline-flex items-center gap-2 font-data text-[10px] tracking-[0.14em] uppercase text-vermilion hover:text-foreground transition-colors"
             >
               <Undo2 className="w-3 h-3" /> Try a different path
             </Link>
@@ -323,7 +324,7 @@ function WhatHappened({ result }: { result: SimulationResult }) {
               {topLinks.map((link, i) => (
                 <div key={i} className="py-4 flex items-baseline gap-4">
                   <span className="font-data text-[11px] tracking-[0.06em] uppercase w-40 shrink-0">{link.cause}</span>
-                  <span className={`text-lg ${link.direction === "positive" ? "text-emerald-700" : "text-vermilion"}`}>
+                  <span className={`text-lg ${link.direction === "positive" ? "text-ok" : "text-vermilion"}`}>
                     {link.direction === "positive" ? "built up" : "pulled down"}
                   </span>
                   <span className="font-data text-[11px] tracking-[0.06em] uppercase">{link.effect}</span>
@@ -350,13 +351,13 @@ function WhatHappened({ result }: { result: SimulationResult }) {
                     <span className="font-data text-[12px] tabular-nums text-muted-foreground">{baseline[m.key].toFixed(0)}</span>
                     <div className="flex-1 h-px bg-border relative">
                       <span
-                        className={`absolute top-1/2 -translate-y-1/2 w-2 h-2 ${m.good ? "bg-emerald-700" : "bg-vermilion"}`}
+                        className={`absolute top-1/2 -translate-y-1/2 w-2 h-2 ${m.good ? "bg-ok" : "bg-vermilion"}`}
                         style={{ left: `${final[m.key]}%` }}
                       />
                     </div>
                     <span className="font-data text-[12px] tabular-nums">{final[m.key].toFixed(0)}</span>
                   </div>
-                  <span className={`font-data text-[11px] tabular-nums ${m.good ? "text-emerald-700" : "text-vermilion"}`}>
+                  <span className={`font-data text-[11px] tabular-nums ${m.good ? "text-ok" : "text-vermilion"}`}>
                     {m.delta > 0 ? "+" : ""}{m.delta.toFixed(0)}
                   </span>
                 </div>
@@ -369,7 +370,7 @@ function WhatHappened({ result }: { result: SimulationResult }) {
         <section className="px-6 sm:px-10 lg:px-14 py-10">
           <div className="grid sm:grid-cols-2 gap-6 max-w-3xl">
             <div className="border border-border bg-card p-5">
-              <div className="font-data text-[10px] tracking-[0.14em] uppercase text-emerald-700 mb-3">
+              <div className="font-data text-[10px] tracking-[0.14em] uppercase text-ok mb-3">
                 What worked
               </div>
               <p className="text-sm leading-relaxed">{result.biggestSuccess}</p>
@@ -387,7 +388,7 @@ function WhatHappened({ result }: { result: SimulationResult }) {
         <section className="border-t border-border bg-secondary text-secondary-foreground dark:bg-[oklch(0.12_0.01_75)] dark:border-border">
           <div className="px-6 sm:px-10 lg:px-14 py-14 grid lg:grid-cols-[1.4fr_auto] items-center gap-8">
             <div>
-              <div className="font-data text-[11px] tracking-[0.14em] uppercase text-secondary-foreground/60 dark:text-[oklch(0.62_0.01_80)] mb-3">
+              <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-3">
                 End of the record
               </div>
               <p className="font-display italic text-xl sm:text-2xl max-w-xl leading-snug">
@@ -396,16 +397,10 @@ function WhatHappened({ result }: { result: SimulationResult }) {
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Link
-                href="/simulator"
-                className="btn-press inline-flex items-center gap-3 bg-vermilion text-primary-foreground font-display italic text-lg px-8 py-3.5 hover:brightness-110 transition-all"
-              >
+              <Link href="/simulator" className="btn btn-primary px-8 py-4 text-[15px]">
                 Run again <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link
-                href="/"
-                className="btn-press inline-flex items-center border border-current/40 px-6 py-3.5 font-data text-[11px] tracking-[0.14em] uppercase hover:bg-primary-foreground/10 transition-colors"
-              >
+              <Link href="/" className="btn btn-outline">
                 Home
               </Link>
             </div>
@@ -433,7 +428,7 @@ function Chapters() {
         {/* Chapter masthead */}
         <section className="px-6 sm:px-10 lg:px-14 pt-12 pb-10 border-b border-border">
           <h1 className="font-display font-semibold tracking-tight leading-[0.98] text-[clamp(2.4rem,5.5vw,4.2rem)] max-w-3xl">
-            Five chapters. <em className="text-vermilion">No numbers.</em>
+            Five chapters. <span className="text-vermilion">No numbers.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-base sm:text-lg leading-relaxed text-muted-foreground">
             Meet the town first. The dials will make sense after.
@@ -448,8 +443,8 @@ function Chapters() {
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
-              transition={{ delay: i * 0.08, duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
-              className="grid lg:grid-cols-[1fr_1.15fr] gap-0 min-w-0 group"
+              transition={{ delay: Math.min(i * 0.05, 0.15), duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
+              className="grid lg:grid-cols-[1fr_1.15fr] gap-0 min-w-0"
             >
               {/* Voice + lesson */}
               <div className="px-6 sm:px-10 lg:px-14 py-10 lg:py-14 lg:border-r border-border min-w-0">
@@ -462,12 +457,12 @@ function Chapters() {
                 <h2 className="font-display font-semibold text-2xl sm:text-3xl tracking-tight mb-4">{c.title}</h2>
                 <p className="text-sm sm:text-[15px] leading-relaxed text-muted-foreground max-w-xl">{c.lesson}</p>
                 <div className="mt-6">
-                  <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground/70">{c.connects}</span>
+                  <span className="font-data text-[10px] tracking-[0.14em] uppercase text-muted-foreground">{c.connects}</span>
                 </div>
               </div>
               {/* Photo plate */}
-              <figure className="photo-plate overflow-hidden m-6 sm:m-8 lg:m-8 group">
-                <img src={c.photo} alt={c.alt} className="h-full min-h-56 w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]" loading="lazy" />
+              <figure className="photo-plate overflow-hidden m-6 sm:m-8 lg:m-8">
+                <FadeImg src={c.photo} alt={c.alt} className="h-full min-h-56 w-full object-cover" />
                 <figcaption className="plate-caption">
                   <span>{c.cap}</span>
                   <span>{c.fig}</span>
@@ -481,7 +476,7 @@ function Chapters() {
         <section className="border-t border-border bg-secondary text-secondary-foreground dark:bg-[oklch(0.12_0.01_75)] dark:border-border">
           <div className="px-6 sm:px-10 lg:px-14 py-14 grid lg:grid-cols-[1.4fr_auto] items-center gap-8">
             <div>
-              <div className="font-data text-[11px] tracking-[0.14em] uppercase text-secondary-foreground/60 dark:text-[oklch(0.62_0.01_80)] mb-3">
+              <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-3">
                 End of story
               </div>
               <p className="font-display italic text-xl sm:text-2xl max-w-xl leading-snug">
@@ -490,16 +485,10 @@ function Chapters() {
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Link
-                href="/simulator"
-                className="btn-press inline-flex items-center gap-3 bg-vermilion text-primary-foreground font-display italic text-lg px-8 py-3.5 hover:brightness-110 transition-all"
-              >
+              <Link href="/simulator" className="btn btn-primary px-8 py-4 text-[15px]">
                 Start the simulation <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link
-                href="/briefing"
-                className="btn-press inline-flex items-center border border-current/40 px-6 py-3.5 font-data text-[11px] tracking-[0.14em] uppercase hover:bg-primary-foreground/10 transition-colors"
-              >
+              <Link href="/briefing" className="btn btn-outline">
                 Mission briefing
               </Link>
             </div>

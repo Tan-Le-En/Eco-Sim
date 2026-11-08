@@ -52,7 +52,7 @@ export default function CookieBanner() {
         >
           <div className="px-6 sm:px-10 py-4 max-w-[1400px] mx-auto flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <p className="flex-1 text-[13px] leading-relaxed">
-              <span className="font-data text-[10px] tracking-[0.16em] uppercase block mb-1 text-secondary-foreground/70 dark:text-[oklch(0.62_0.01_80)]">
+              <span className="font-data text-[10px] tracking-[0.16em] uppercase block mb-1 text-secondary-foreground dark:text-[oklch(0.62_0.01_80)]">
                 Field note · cookies
               </span>
               Right now this study sends nothing anywhere: plans, theme, and scores live

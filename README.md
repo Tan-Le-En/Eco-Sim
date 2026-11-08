@@ -85,6 +85,18 @@ water ≥ 60, flood resilience ≥ 65, equity ≥ 60. Trade-offs mean scores cap
 There is no application server; the production artifact is a static bundle plus the one
 storage function.
 
+### Color-role tokens (index.css v4)
+
+| Token | Role | Where it is allowed |
+|---|---|---|
+| `--vermilion` | brand slash, alarms, primary CTA | primary buttons, critical data |
+| `--interactive` | teal (hue 205) — interaction only | links, focus rings, sliders, checkboxes, scrubber — **never data** |
+| `--ok` / `--warn` / `--bad` | data verdicts | indicator deltas, event severity, target status |
+| `--muted-foreground` | secondary text | labels, captions ≥ 4.5:1 contrast |
+
+Rule of thumb: interactive teal marks *things you can act on*; ok/warn/bad mark
+*what the town did*. Mixing the two is a bug.
+
 ---
 
 ## Getting started

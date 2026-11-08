@@ -10,7 +10,7 @@ import {
   Bus,
   TreePine,
   Building2,
-  Droplets,
+  Waves,
   Recycle,
   Fish,
   Factory,
@@ -21,12 +21,14 @@ import { CONTROL_RANGES, Controls, KID_CONTROLS } from "@/lib/sim/types";
 
 export type ControlKey = keyof Controls;
 
+/* Icon table (v4): one icon per concept across the whole site. Water
+   efficiency takes Waves — Droplets belongs to the waterSecurity register. */
 const ICONS: Record<ControlKey, LucideIcon> = {
   renewableElectricity: Sun,
   publicTransport: Bus,
   mangroveRestoration: TreePine,
   coastalDevelopment: Building2,
-  waterEfficiency: Droplets,
+  waterEfficiency: Waves,
   wasteRecycling: Recycle,
   fishingPressure: Fish,
   industrialActivity: Factory,
@@ -84,8 +86,8 @@ export default function ControlPanel({ controls, onChange, onReset }: ControlPan
             />
             <div className="mt-1.5 space-y-0.5">
               <div className="flex items-start gap-2 text-[11px] leading-snug">
-                <span className="font-data text-emerald-700 font-bold text-[10px] tracking-wider uppercase pt-px shrink-0">+</span>
-                <span className="text-foreground/80">{kid.goodWhenMore}</span>
+                <span className="font-data text-ok font-bold text-[10px] tracking-wider uppercase pt-px shrink-0">+</span>
+                <span className="text-muted-foreground">{kid.goodWhenMore}</span>
               </div>
               <div className="flex items-start gap-2 text-[11px] leading-snug">
                 <span className="font-data text-vermilion font-bold text-[10px] tracking-wider uppercase pt-px shrink-0">−</span>

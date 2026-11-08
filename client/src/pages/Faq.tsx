@@ -29,7 +29,7 @@ const FAQS = [
   {
     id: "targets",
     q: "What are the five mission targets?",
-    a: "By 2050: heat-loaded air pressure below its cap (45), and nature, water, flood safety, and fairness above their floors (70, 60, 65, 60). The Mission chip shows how many you hit live. Hover it for the numbers.",
+    a: "By 2050: heat-loaded air pressure below its cap (45), and nature, water, flood safety, and fairness above their floors (70, 60, 65, 60). The Mission chip shows how many you hit live. Tap it for the numbers.",
   },
   {
     id: "budget",
@@ -82,7 +82,7 @@ export default function Faq() {
       <main id="main" tabIndex={-1} className="flex-1 outline-none">
         <div className="px-6 sm:px-10 lg:px-14 py-10 max-w-[1000px] mx-auto">
           <h1 className="font-display text-4xl sm:text-5xl font-semibold tracking-tight leading-[1.05]">
-            Asked at the <span className="italic text-vermilion">field desk.</span>
+            Questions the field desk gets <span className="text-vermilion">most</span>.
           </h1>
           <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
             Honest answers, published like everything else on this site. If the
@@ -121,10 +121,7 @@ export default function Faq() {
                 Every equation is published.
               </div>
             </div>
-            <Link
-              href="/transparency"
-              className="btn-press inline-flex items-center gap-2 bg-vermilion text-primary-foreground font-data text-[11px] tracking-[0.14em] uppercase px-5 py-2.5 hover:brightness-105 transition-all"
-            >
+            <Link href="/transparency" className="btn btn-primary">
               Open transparency →
             </Link>
           </div>

@@ -85,7 +85,7 @@ export default function IndicatorStrip({ indicators, baseline, history }: Indica
                 {value.toFixed(0)}
               </span>
               <span
-                className={`font-data text-[11px] tabular-nums w-14 text-right ${good ? "text-emerald-700" : "text-vermilion"}`}
+                className={`font-data text-[11px] tabular-nums w-14 text-right ${good ? "text-ok" : "text-vermilion"}`}
                 title="Change vs 2026 baseline"
               >
                 {delta === 0 ? "—" : `${delta > 0 ? "+" : ""}${delta.toFixed(1)}`}
@@ -109,7 +109,7 @@ export default function IndicatorStrip({ indicators, baseline, history }: Indica
                 />
               </svg>
               <span
-                className={`inline-block w-2 h-2 shrink-0 ${isGoodNow ? "bg-emerald-700" : "bg-vermilion"}`}
+                className={`inline-block w-2 h-2 shrink-0 ${isGoodNow ? "bg-ok" : "bg-vermilion"}`}
                 aria-hidden="true"
               />
             </div>

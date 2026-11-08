@@ -174,7 +174,7 @@ export default function Transparency() {
                   initial={{ opacity: 0, y: 8 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.04 }}
+                  transition={{ delay: Math.min(i * 0.04, 0.16) }}
                   className="soft-card p-4"
                 >
                   <div className="flex items-baseline justify-between gap-3 flex-wrap mb-1.5">
@@ -244,7 +244,7 @@ export default function Transparency() {
 
           {/* Limits */}
           <section className="mb-12">
-            <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-3">04 · What this model does <em>not</em> do</div>
+            <div className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-3">04 · What this model does not do</div>
             <div className="space-y-3">
               {LIMITS.map((lim, i) => (
                 <div key={i} className="border border-border border-l-2 border-l-vermilion bg-card pl-4 py-2.5">
@@ -278,7 +278,7 @@ export default function Transparency() {
                     </a>
                   </div>
                   <p className="text-[11px] text-muted-foreground leading-snug mb-1.5">{s.name}</p>
-                  <p className="text-xs text-muted-foreground/80 leading-relaxed">{s.detail}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{s.detail}</p>
                 </div>
               ))}
             </div>
@@ -300,10 +300,7 @@ export default function Transparency() {
             </div>
           </div>
 
-          <Link
-            href="/simulator"
-            className="btn-press inline-flex items-center gap-2 bg-vermilion text-primary-foreground font-data text-[11px] tracking-[0.14em] uppercase px-6 py-3 hover:brightness-105 transition-all"
-          >
+          <Link href="/simulator" className="btn btn-primary">
             Back to the simulator <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </motion.div>

@@ -14,13 +14,13 @@ interface CausalChainProps {
 
 const SEVERITY_BORDER: Record<SimEvent["severity"], string> = {
   info: "border-border",
-  warning: "border-vermilion/60",
+  warning: "border-warn",
   critical: "border-vermilion",
 };
 
 const SEVERITY_TEXT: Record<SimEvent["severity"], string> = {
   info: "text-muted-foreground",
-  warning: "text-vermilion/80",
+  warning: "text-warn",
   critical: "text-vermilion",
 };
 
@@ -61,16 +61,16 @@ export default function CausalChain({ links, events, eventsToShow = 5 }: CausalC
           </div>
           {links.map((l, i) => (
             <div key={i} className="flex items-center gap-2.5 text-[12px] py-1">
-              <span className="font-data text-[11px] text-foreground/80 shrink-0">{l.cause}</span>
+              <span className="font-data text-[11px] shrink-0">{l.cause}</span>
               <ArrowRight className="w-3 h-3 text-muted-foreground shrink-0" />
               <span
-                className={`font-data text-[11px] shrink-0 ${l.direction === "positive" ? "text-emerald-700" : "text-vermilion"}`}
+                className={`font-data text-[11px] shrink-0 ${l.direction === "positive" ? "text-ok" : "text-vermilion"}`}
               >
                 {l.effect}
               </span>
               <div className="flex-1 h-1 bg-secondary max-w-[90px]">
                 <div
-                  className={`h-full ${l.direction === "positive" ? "bg-emerald-700" : "bg-vermilion"}`}
+                  className={`h-full ${l.direction === "positive" ? "bg-ok" : "bg-vermilion"}`}
                   style={{ width: `${l.strength * 100}%` }}
                 />
               </div>
@@ -81,10 +81,6 @@ export default function CausalChain({ links, events, eventsToShow = 5 }: CausalC
           ))}
         </div>
       )}
-
-      <div className="px-4 py-2">
-        <span className="status-chip">Deterministic model · not a forecast</span>
-      </div>
     </div>
   );
 }

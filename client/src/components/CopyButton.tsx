@@ -46,7 +46,7 @@ export default function CopyButton({
       className={`btn-press inline-flex items-center gap-1.5 font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 border border-border text-muted-foreground hover:border-foreground hover:text-foreground transition-colors ${className}`}
       aria-label={copied ? "Copied" : `${label} to clipboard`}
     >
-      {copied ? <Check className="w-3.5 h-3.5 text-emerald-700" /> : <Copy className="w-3.5 h-3.5" />}
+      {copied ? <Check className="w-3.5 h-3.5 text-ok" /> : <Copy className="w-3.5 h-3.5" />}
       {copied ? "Copied" : label}
     </button>
   );

@@ -1,8 +1,10 @@
 /**
- * ECO//SIM — "Editorial Field Study" design system (v3)
+ * ECO//SIM — "Editorial Field Study" design system (v4)
  * International documentary-editorial style. Real photography, asymmetric grids,
  * hairline rules, paper grain, single vermilion accent. ZERO border radius.
  * Fonts: Newsreader (display serif) / Public Sans (body) / IBM Plex Mono (labels).
+ * Voice rules (v4): serif = headlines & voice, sans = body & buttons,
+ * mono = numbers, coordinates, field labels, keycaps. Italic only for voice.
  * Anti-AI-slop: custom palette only, thin borders + contrast instead of shadows,
  * no stacked centered card rows, concrete copy, no emojis.
  */
@@ -45,13 +47,20 @@
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --color-paper: var(--paper);
+  --color-interactive: var(--interactive);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-bad: var(--bad);
   --font-display: "Newsreader", serif;
   --font-mono: "IBM Plex Mono", monospace;
   --font-sans: "Public Sans", sans-serif;
 }
 
 /* Theme tokens are deliberately OUTSIDE @layer so user CSS wins layer ordering.
-   :root = warm paper; .dark = night archive (ink-paper reversed). */
+   :root = warm paper; .dark = night archive (ink-paper reversed).
+   Color roles: vermilion = brand slash + alarms + primary CTA;
+   interactive teal = links, focus, toggles, controls (never data);
+   ok/warn/bad = data verdicts only — never decoration. */
 :root {
   color-scheme: light;
   --radius: 0px; /* zero-radius discipline — depth via hairlines & contrast */
@@ -70,20 +79,25 @@
   --secondary: oklch(0.93 0.01 85);
   --secondary-foreground: oklch(0.32 0.015 75);
   --muted: oklch(0.93 0.008 85);
-  --muted-foreground: oklch(0.5 0.012 75);
+  --muted-foreground: oklch(0.43 0.012 75);
   --accent: oklch(0.55 0.16 35);
   --accent-foreground: oklch(0.985 0.005 85);
   --destructive: oklch(0.55 0.16 35);
   --destructive-foreground: oklch(0.985 0.005 85);
   --border: oklch(0.86 0.01 85);
   --input: oklch(0.86 0.01 85);
-  --ring: oklch(0.55 0.16 35);
+  --ring: oklch(0.45 0.08 205);
 
   --vermilion: oklch(0.55 0.16 35);
   --deepsea: oklch(0.42 0.06 195);
   --ink: oklch(0.22 0.012 75);
-  --ink-soft: oklch(0.5 0.012 75);
+  --ink-soft: oklch(0.43 0.012 75);
   --paper: oklch(0.962 0.008 85);
+
+  --interactive: oklch(0.45 0.08 205);
+  --ok: oklch(0.47 0.1 155);
+  --warn: oklch(0.55 0.11 68);
+  --bad: var(--vermilion);
 
   --chart-1: var(--vermilion);
   --chart-2: var(--deepsea);
@@ -105,23 +119,27 @@ html.dark {
   --secondary: oklch(0.24 0.012 75);
   --secondary-foreground: oklch(0.92 0.008 85);
   --muted: oklch(0.24 0.012 75);
-  --muted-foreground: oklch(0.62 0.01 80);
+  --muted-foreground: oklch(0.67 0.01 80);
   --accent: oklch(0.65 0.15 35);
   --accent-foreground: oklch(0.15 0.01 75);
   --destructive: oklch(0.62 0.16 30);
   --destructive-foreground: oklch(0.985 0.005 85);
   --border: oklch(0.3 0.012 75);
   --input: oklch(0.3 0.012 75);
-  --ring: oklch(0.65 0.15 35);
+  --ring: oklch(0.72 0.09 205);
 
   --vermilion: oklch(0.65 0.15 35);
   --deepsea: oklch(0.62 0.06 200);
   --ink: oklch(0.92 0.008 85);
-  --ink-soft: oklch(0.62 0.01 80);
+  --ink-soft: oklch(0.67 0.01 80);
   --paper: oklch(0.16 0.01 75);
 
-  /* Stock emerald-700/800 are calibrated for light plates; lifted so
-     "worked / healthy" data stays legible on the dark archive. */
+  --interactive: oklch(0.72 0.09 205);
+  --ok: oklch(0.76 0.12 155);
+  --warn: oklch(0.79 0.11 75);
+  --bad: var(--vermilion);
+
+  /* Residual stock emerald classes (kept for safety); v4 code uses --ok/--warn */
   --color-emerald-700: oklch(0.74 0.13 155);
   --color-emerald-800: oklch(0.8 0.12 155);
 
@@ -134,8 +152,13 @@ html.dark {
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
     border-radius: 0;
+  }
+  /* Full-opacity focus indicator (WCAG 2.4.13 focus appearance) */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
   }
   body {
     @apply bg-background text-foreground;
@@ -144,9 +167,13 @@ html.dark {
   h1, h2, h3, .font-display {
     font-family: "Newsreader", serif;
     letter-spacing: -0.015em;
+    /* No orphaned single words on long editorial headlines */
+    text-wrap: balance;
   }
   .font-data {
     font-family: "IBM Plex Mono", monospace;
+    /* IBM Plex Mono is not tabular by default — align every readout */
+    font-feature-settings: "tnum";
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -185,6 +212,53 @@ html.dark {
       padding-right: 2rem;
       max-width: 1360px;
     }
+  }
+
+  /* ── Button system (v4): sans, semibold, no italics. One primary per viewport. ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0;
+    font-family: "Public Sans", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1.15;
+    white-space: nowrap;
+    padding: 0.7rem 1.4rem;
+    cursor: pointer;
+    transition: filter 160ms, background-color 160ms, border-color 160ms,
+      color 160ms, opacity 160ms, transform 160ms;
+  }
+  .btn:active {
+    transform: scale(0.985);
+  }
+  .btn-primary {
+    background: var(--vermilion);
+    color: var(--primary-foreground);
+    border: 1px solid transparent;
+  }
+  .btn-primary:hover {
+    filter: brightness(1.07);
+  }
+  .btn-outline {
+    background: transparent;
+    color: var(--foreground);
+    border: 1px solid var(--border);
+  }
+  .btn-outline:hover {
+    border-color: var(--foreground);
+  }
+  .btn-quiet {
+    background: transparent;
+    color: var(--muted-foreground);
+    border: 1px solid var(--border);
+  }
+  .btn-quiet:hover {
+    color: var(--foreground);
   }
 
   /* Photo loading state: warm paper tone while the image downloads */
@@ -246,7 +320,7 @@ html.dark {
     background: var(--card);
   }
 
-  /* Specimen label (honesty chip) — square, mono */
+  /* Specimen label (honesty chip) — square, mono. ONE per page at most. */
   .status-chip {
     font-family: "IBM Plex Mono", monospace;
     font-size: 0.625rem;
@@ -260,7 +334,9 @@ html.dark {
     background: var(--card);
   }
 
-  /* Flat editorial cards: hairline border, no shadow, no radius */
+  /* Flat editorial cards: hairline border, no shadow, no radius.
+     Nested discipline: one hairline per nesting level; inside, use
+     border-border/40 + spacing — never two full-strength borders. */
   .soft-card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -278,7 +354,7 @@ html.dark {
   a:hover {
     transition: opacity 160ms;
   }
-  a:not(.btn-press):hover {
+  a:not(.btn-press):not([class*="btn"]):hover {
     opacity: 0.75;
   }
 
