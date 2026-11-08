@@ -21,8 +21,6 @@ interface CityMapProps {
   indicators: Indicators | null;
   year: number;
   className?: string;
-  /** Sizing of the stage box; hover geometry is percent-based so any box works. */
-  heightClass?: string;
 }
 
 const staticMap = buildCityMap();
@@ -107,7 +105,6 @@ export default function CityMap({
   indicators,
   year,
   className,
-  heightClass = "aspect-[4/3] min-h-[180px]",
 }: CityMapProps) {
   const t = year - 2026;
   const [hover, setHover] = useState<HoverInfo | null>(null);
@@ -170,7 +167,7 @@ export default function CityMap({
     : "Pointer over map to survey";
 
   return (
-    <div className={className}>
+    <div className={`${className ?? ""} w-full max-w-[680px] mx-auto`}>
       <div className="flex items-baseline justify-between gap-4 mb-2">
         <span className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground">
           Town Survey
@@ -180,8 +177,11 @@ export default function CityMap({
         </span>
       </div>
       <div className="border border-border bg-card p-1.5 overflow-hidden">
+        {/* Stage locked to the photo's native 4:3 aspect (the file is 1920×1440):
+            object-cover then shows the whole picture at every size, so a grid
+            cell always refers to the same place on the map. */}
         <div
-          className={`relative select-none bg-[oklch(0.88_0.02_80)] dark:bg-[oklch(0.25_0.015_75)] ${heightClass}`}
+          className="relative select-none w-full aspect-[4/3] bg-[oklch(0.88_0.02_80)] dark:bg-[oklch(0.25_0.015_75)]"
           onPointerMove={onMove}
           onPointerLeave={onLeave}
         >

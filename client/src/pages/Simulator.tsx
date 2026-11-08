@@ -490,12 +490,7 @@ export default function Simulator() {
             )}
           </div>
 
-          <CityMap
-            controls={controls}
-            indicators={indicatorsAtDisplay}
-            year={displayYear}
-            heightClass="h-[40vh] min-h-[200px] max-h-[440px]"
-          />
+          <CityMap controls={controls} indicators={indicatorsAtDisplay} year={displayYear} />
 
           {indicatorsAtDisplay && (
             <div className="shrink-0">

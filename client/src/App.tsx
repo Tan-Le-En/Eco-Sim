@@ -16,6 +16,7 @@ import Transparency from "./pages/Transparency";
 import Faq from "./pages/Faq";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import MapLab from "./pages/MapLab"; // internal annotation lab, URL-only
 import ScrollProgress from "./components/ScrollProgress";
 import SkipToContent from "./components/SkipToContent";
 import CookieBanner from "./components/CookieBanner";
@@ -86,6 +87,7 @@ function Router() {
           <Route path={"/faq"} component={Faq} />
           <Route path={"/privacy"} component={Privacy} />
           <Route path={"/terms"} component={Terms} />
+          <Route path={"/map-lab"} component={MapLab} />
           {/* Final fallback route */}
           <Route component={NotFound} />
         </Switch>
