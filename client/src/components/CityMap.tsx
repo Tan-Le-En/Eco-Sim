@@ -37,7 +37,6 @@ const TAG_FLOOD = "Flood-prone kampung — protect first";
 // Swatches shown in the legend. One per fill the overlays can paint,
 // so the legend never lies about what is on screen.
 const OVERLAY_LEGEND: [string, string][] = [
-  ["rgba(47,157,191,0.65)", "River — clear"],
   ["rgba(185,145,100,0.65)", "Low water — drought"],
   ["rgba(34,120,60,0.55)", "Mangrove restored"],
   ["rgba(185,154,107,0.6)", "Coast built over"],
@@ -55,12 +54,13 @@ function overlayFor(
   const isLate = t > 18; // near 2050: overlays deepen for the consequence reveal
   const intensity = isLate ? 0.75 : 0.55;
 
-  // River corridor: clear water, or muddied low water in drought
+  // River corridor: the photograph already shows the water — no tint while
+  // it is healthy. Only the drought excursion gets painted (muddy low water).
   if (cell.type === "river") {
     if (indicators && indicators.waterSecurity < 45) {
       return { fill: "rgba(185,145,100,0.65)", tag: TAG_LOW_WATER };
     }
-    return { fill: "rgba(47,157,191,0.65)" };
+    return { fill: "transparent" };
   }
 
   // Flood consequence takes precedence on kampung cells: the stakes outrank the build
@@ -206,10 +206,10 @@ export default function CityMap({
             {cells.map((r) => (
               <rect
                 key={r.key}
-                x={r.x + cellWidth * 0.04}
-                y={r.y + cellHeight * 0.04}
-                width={cellWidth * 0.92}
-                height={cellHeight * 0.92}
+                x={r.x}
+                y={r.y}
+                width={cellWidth}
+                height={cellHeight}
                 fill={r.fill}
                 style={{ transition: "fill 120ms ease" }}
               />
