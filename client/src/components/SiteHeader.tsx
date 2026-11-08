@@ -64,8 +64,21 @@ export default function SiteHeader({ backHref, bare }: { backHref?: string; bare
   const dark = theme === "dark";
 
   return (
-    <header className="sticky top-0 z-50 bg-background/92 backdrop-blur-md border-b border-border" data-no-print="true">
-        <div className="px-6 sm:px-10 lg:px-14 flex items-center justify-between h-16">
+    <header
+      className={
+        bare
+          ? "w-full border-b border-border bg-background/92"
+          : "sticky top-0 z-50 bg-background/92 backdrop-blur-md border-b border-border"
+      }
+      data-no-print="true"
+    >
+      <div
+        className={
+          bare
+            ? "flex items-center justify-between h-16 px-1 sm:px-2"
+            : "flex items-center justify-between h-16 px-6 sm:px-10 lg:px-14"
+        }
+      >
         <Link href="/" className="font-display italic font-semibold text-xl tracking-tight whitespace-nowrap">
           ECO<span className="text-vermilion">//</span>SIM
         </Link>

@@ -167,7 +167,7 @@ export default function CityMap({
     : "Pointer over map to survey";
 
   return (
-    <div className={`${className ?? ""} w-full max-w-[680px] mx-auto`}>
+    <div className={`${className ?? ""} w-full`}>
       <div className="flex items-baseline justify-between gap-4 mb-2">
         <span className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground">
           Town Survey
