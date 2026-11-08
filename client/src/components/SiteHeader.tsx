@@ -79,7 +79,7 @@ export default function SiteHeader({ backHref, bare }: { backHref?: string; bare
             : "flex items-center justify-between h-16 px-6 sm:px-10 lg:px-14"
         }
       >
-        <Link href="/" className="font-display italic font-semibold text-xl tracking-tight whitespace-nowrap">
+        <Link href="/" className="font-display italic font-semibold text-xl tracking-tight whitespace-nowrap border border-border px-2 py-1">
           ECO<span className="text-vermilion">//</span>SIM
         </Link>
 

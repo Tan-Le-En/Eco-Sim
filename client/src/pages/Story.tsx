@@ -469,7 +469,11 @@ function Chapters() {
             </div>
             <div className="flex items-center justify-between gap-4 mt-6">
               <button onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={isFirst} className="btn btn-outline disabled:opacity-40">Previous</button>
-              <button onClick={() => setPage((p) => Math.min(CHAPTERS.length - 1, p + 1))} disabled={isLast} className="btn btn-primary">{isLast ? "Finish" : "Next"}</button>
+              {isLast ? (
+                <Link href="/simulator" className="btn btn-primary">Finish</Link>
+              ) : (
+                <button onClick={() => setPage((p) => Math.min(CHAPTERS.length - 1, p + 1))} className="btn btn-primary">Next</button>
+              )}
             </div>
           </div>
           <figure className="photo-plate overflow-hidden m-6 sm:m-8 lg:m-8 h-full">
