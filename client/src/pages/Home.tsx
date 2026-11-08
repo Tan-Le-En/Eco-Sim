@@ -82,9 +82,10 @@ const BENCH = BENCH_PRESETS.map((p) => {
     ...p,
     score: result.score,
     targets: finalYear ? goalsMetCount(finalYear.indicators) : 0,
-    // Score ≥ 58 reads as a town holding on: show what worked, else what broke.
-    verdict: result.score >= 58 ? result.biggestSuccess : result.biggestFailure,
-    happy: result.score >= 58,
+    // Score ≥ 45 (engine.runTone ladder) = the town holding on: show what
+    // worked, else what broke — same words the rest of the site uses.
+    verdict: result.score >= 45 ? result.biggestSuccess : result.biggestFailure,
+    happy: result.score >= 45,
   };
 });
 

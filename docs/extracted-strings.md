@@ -140,7 +140,7 @@
 ### WhatHappened (post-sim mode)
 - PageMeta title: "ECO//SIM — What happened to Teluk Nusa"
 - description: `${range} · ${classification.label}: score ${score} out of 100.`
-- classifyRun: "The town is better off" (>=65) / "The town held, but barely" (>=45) / "The town struggled" (>=30) / "The town lost ground" (<30)
+- runTone (engine.ts; shared by Story, Results, Simulator, Home bench): "The town is better off" (>=65) / "The town held, but barely" (>=45) / "The town struggled" (>=30) / "The town lost ground" (<30)
 - eventEmoji: "Flood" / "Water" / "Nature" / "People" / "Health" / "Money" / "Event"
 - "{range} · {events.length} events recorded"
 - "Over twenty-five years, {classification.label.toLowerCase()}. Here is what the town remembers."
@@ -151,7 +151,7 @@
 - "What caused what" / "built up" / "pulled down"
 - "What changed most"
 - "What worked" / "What went wrong"
-- "End of the record" / "The town remembers everything. Try again with different choices, and see which path it remembers better." / "Run again" / "Home"
+- "End of the record" / "The town remembers everything. Try again with different choices, and see which path it remembers better." / "Play again" / "Home"
 - Chapters masthead: "Five chapters. No numbers. The town tells you what is wrong."
 - Chapters intro: "Before you touch a dial, walk through Teluk Nusa as it is today. Listen to the people. When you run the simulation afterward, you will already know why each decision matters."
 - Chapters end: "End of story" / "You have met the town. Now spend twenty-five years trying to keep it standing." / "Start the simulation" / "Mission briefing"
@@ -184,9 +184,9 @@
 - Empty state PageMeta: "ECO//SIM — Your field report · what changed and why" / "Your 2050 score, the causal chain behind every number, and a side-by-side comparison of up to four saved plans."
 - Empty: "No report yet" / "Run the simulation to 2050 first, or return to the simulator to play." / "Go to simulator"
 - Results PageMeta: "ECO//SIM — Final Report · Score {score}" / "Teluk Nusa 2050 Report: Score {score}. A summary of environmental and economic outcomes for a fictional Malaysian coastal town."
-- verdict: "Teluk Nusa held its own." / "Teluk Nusa is still struggling. That is where most real plans begin."
-- happy desc: "Your decisions kept the mangroves breathing, the drains holding through the monsoon, and households able to afford clean water. No goal was sacrificed to reach another. That is the sign of a planner who understood the trade-offs."
-- sad desc: "At least one of the three foundations, the sea, the town, or the people, gave way. Read the causal chain below. The model tells you exactly which decision led where. Adjust one variable and run again."
+- verdict (engine.runTone): "Teluk Nusa is better off." (>=65) / "Teluk Nusa held, but barely." (>=45) / "Teluk Nusa struggled." / "Teluk Nusa lost ground." (<30)
+- held desc (tone hope): "Sea, water, and fairness protected to 2050." / (tone balance): "The thresholds held. See where it strained below."
+- below desc (struggle/loss): "A threshold broke. See what caused it below."
 - "Field report · the year is 2050"
 - "Score" / "Population 2050" / "Budget remaining" / "Goals reached" / "· sea · town · people"
 - Caption: "Field photograph · Teluk Nusa · December 2050" / "Teluk Nusa · 2050, work ahead"
@@ -205,9 +205,9 @@
 - Alt: "Teluk Nusa at sunset, 2050" / "Fishermen at dawn, 2050"
 
 ## Briefing.tsx
-- PageMeta: "ECO//SIM — Mission briefing · keep the town alive for 25 years" / "Your mission: govern a fictional Malaysian coastal town from 2026 to 2050. RM 100 a year, eight decisions, seven vital signs."
+- PageMeta: "ECO//SIM — Mission briefing · keep the town alive for 25 years" / "Your mission: govern a fictional Malaysian coastal town from 2026 to 2050. A 100-point budget across 25 years, eight decisions, seven registers, three goals."
 - "Teluk Nusa is yours. Keep it alive for 25 years."
-- "One million people live in this fictional Malaysian town. You receive RM 100 every year to spend on it: energy, buses, trees, mangroves, water, housing. Every year from 2026 to 2050, the town responds. You win by keeping three registers healthy; you lose by neglecting any one of them."
+- "One million people. 100 budget points for all 25 years — energy, buses, trees, water, housing. Three goals, seven registers: keep them healthy to 2050."
 - CHALLENGES: ["Smoke", "Most electricity comes from burning fuel."] / ["Monsoon", "Stronger storms put seafront homes at risk."] / ["Fewer fish", "Too many boats; the mangroves are shrinking."] / ["Dry taps", "Water demand is growing faster than supply."]
 - DATUM labels: "Population" / "Window" / "Electricity demand" / "Fossil share" / "Renewable share" / "Forest & mangroves" / "Urbanized land" / "Annual rainfall" / "Water demand" / "Recycling" / "Private vehicles" / "Flood exposure"
 - "Begin the study" / "The equations"
@@ -224,7 +224,7 @@
 - "Allow analytics" / "Decline"
 
 ## TownMood.tsx
-- "Teluk Nusa is stable today." / "Teluk Nusa is under pressure. Watch the amber registers." / "Teluk Nusa is in trouble. Red registers need action now."
+- "Teluk Nusa is stable today." / "Teluk Nusa is under pressure. Watch the low registers."
 - "Year {year} · {met} of 5 mission targets reached"
 
 ## CausalChain.tsx

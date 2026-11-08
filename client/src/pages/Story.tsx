@@ -29,6 +29,7 @@ import {
   SimEvent,
   SimulationResult,
 } from "@/lib/sim/types";
+import { runTone } from "@/lib/sim/engine";
 
 const PHOTOS = {
   riverVillage: "/storage/stilt-houses-real_4d70b8ec.jpg",
@@ -130,13 +131,6 @@ function yearRange(years: SimulationResult["years"]): string {
   return `${first} to ${last}`;
 }
 
-function classifyRun(r: SimulationResult): { tone: "hope" | "struggle" | "balance" | "loss"; label: string } {
-  if (r.score >= 65) return { tone: "hope", label: "The town is better off" };
-  if (r.score >= 45) return { tone: "balance", label: "The town held, but barely" };
-  if (r.score >= 30) return { tone: "struggle", label: "The town struggled" };
-  return { tone: "loss", label: "The town lost ground" };
-}
-
 function toneColor(tone: string): string {
   switch (tone) {
     case "hope":
@@ -185,7 +179,7 @@ function eventAccent(e: SimEvent): string {
 /* ── The "What Happened" page ── */
 
 function WhatHappened({ result }: { result: SimulationResult }) {
-  const classification = classifyRun(result);
+  const classification = runTone(result.score);
   const range = yearRange(result.years);
   const baseline = result.baselineYear.indicators;
   const finalYear = result.years[result.years.length - 1];
@@ -398,7 +392,7 @@ function WhatHappened({ result }: { result: SimulationResult }) {
             </div>
             <div className="flex flex-wrap gap-3">
               <Link href="/simulator" className="btn btn-primary px-8 py-4 text-[15px]">
-                Run again <ArrowRight className="w-4 h-4" />
+                Play again <ArrowRight className="w-4 h-4" />
               </Link>
               <Link href="/" className="btn btn-outline">
                 Home

@@ -10,7 +10,7 @@ export default function SiteFooter() {
     <footer className="border-t border-border mt-auto" data-no-print="true">
       <div className="px-6 sm:px-10 lg:px-14 py-5 flex flex-wrap items-center justify-between gap-3">
         <span className="font-data text-[11px] tracking-[0.12em] uppercase text-muted-foreground">
-          ECO//SIM · Teluk Nusa · an open educational model, not real-world advice
+          ECO//SIM · Teluk Nusa · an open learning model, not a forecast
         </span>
         <nav className="flex items-center gap-4" aria-label="Legal">
           <Link

@@ -27,7 +27,7 @@ const CHALLENGES: [string, string][] = [
 
 const DATUM: [string, string][] = [
   ["Population", BASELINE.population.toLocaleString()],
-  ["Window", "2026 – 2050"],
+  ["Window", "2026–2050"],
   ["Electricity demand", "8,000 GWh / year"],
   ["Fossil share", "70%"],
   ["Renewable share", "30%"],
@@ -48,7 +48,7 @@ export default function Briefing() {
 
       <PageMeta
         title="ECO//SIM — Mission briefing · keep the town alive for 25 years"
-        description="Your mission: govern a fictional Malaysian coastal town from 2026 to 2050. A 100-point budget across 25 years, eight decisions, seven vital signs."
+        description="Your mission: govern a fictional Malaysian coastal town from 2026 to 2050. A 100-point budget across 25 years, eight decisions, seven registers, three goals."
       />
       <SiteHeader />
 
@@ -61,7 +61,7 @@ export default function Briefing() {
             <span className="text-vermilion">Keep it alive</span> for 25 years.
           </h1>
           <p className="mt-6 max-w-xl text-base sm:text-lg leading-relaxed text-muted-foreground">
-            One million people. <strong className="text-foreground">100 budget points for all 25 years</strong> — energy, buses, trees, water, housing. Keep three registers healthy throughout.
+            One million people. <strong className="text-foreground">100 budget points for all 25 years</strong> — energy, buses, trees, water, housing. Three goals, seven registers: keep them healthy to 2050.
           </p>
 
           {/* The three registers */}

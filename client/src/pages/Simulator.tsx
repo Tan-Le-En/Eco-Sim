@@ -544,11 +544,11 @@ export default function Simulator() {
                   decoding="async"
                   className="h-40 w-full object-cover animate-in fade-in duration-700"
                 />
-                {/* Weather event overlay: appears based on score */}
-                {previewResult!.score < 58 && (
+                {/* Weather overlay + verdict color on the shared 45 = held ladder */}
+                {previewResult!.score < 45 && (
                   <div className="absolute inset-0 bg-gradient-to-t from-[rgba(185,154,107,0.4)] via-transparent to-[rgba(201,107,66,0.25)] pointer-events-none animate-in fade-in duration-700 delay-300" />
                 )}
-                {previewResult!.score >= 58 && (
+                {previewResult!.score >= 45 && (
                   <div className="absolute inset-0 bg-gradient-to-t from-[rgba(47,122,72,0.3)] via-transparent to-[rgba(100,180,140,0.15)] pointer-events-none animate-in fade-in duration-700 delay-300" />
                 )}
               </figure>
@@ -560,7 +560,8 @@ export default function Simulator() {
                     </div>
                     <div className="font-display text-2xl font-semibold tracking-tight mt-0.5">
                       Verdict:{" "}
-                      <span className={previewResult!.score >= 58 ? "text-ok" : "text-vermilion"}>
+                      {/* 45 = the town held (engine.runTone shared ladder) */}
+                      <span className={previewResult!.score >= 45 ? "text-ok" : "text-vermilion"}>
                         {previewResult!.score.toFixed(0)} / 100
                       </span>
                     </div>
@@ -655,9 +656,9 @@ export default function Simulator() {
                 <button
                   onClick={() => setSpeed(speed === 1 ? 2 : 1)}
                   className="btn-press font-data text-[10px] tracking-wider uppercase border border-border px-2.5 py-1.5 text-muted-foreground hover:text-foreground transition-colors"
-                  title="Toggle speed: Fast / Turbo"
+                  title="Playback speed: Slow / Brisk"
                 >
-                  {speed === 2 ? "Turbo" : "Fast"}
+                  {speed === 2 ? "Brisk" : "Slow"}
                 </button>
                 <button
                   ref={exitReelRef}
@@ -847,12 +848,14 @@ function missionLabel(key: string): string {
   return labels[key] ?? key;
 }
 
+/* Finishing photo + verdict color share the engine's runTone ladder:
+   45 = the town held), so the cockpit never disagrees with Results/Story. */
 function moodPhoto(score: number): string {
-  return score >= 58 ? FINISH_PHOTO : DAWN_PHOTO;
+  return score >= 45 ? FINISH_PHOTO : DAWN_PHOTO;
 }
 
 function moodPhotoAlt(score: number): string {
-  return score >= 58
+  return score >= 45
     ? "Fishermen with nets at dawn, Kuala Kedah. The town is alive."
     : "Fisherman casting a net at first light. The town still needs help.";
 }

@@ -188,7 +188,7 @@ export default function CityMap({
           {/* Base layer: illustrated field map of Teluk Nusa */}
           <img
             src={ILLUSTRATED_MAP}
-            alt="Aerial photograph of Teluk Nusa — estuary, coastal settlement, and forest"
+            alt="Illustrated map of Teluk Nusa: estuary, coastal settlement, and forest"
             loading="eager"
             decoding="async"
             className="absolute inset-0 w-full h-full object-cover"

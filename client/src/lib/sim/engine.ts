@@ -176,7 +176,7 @@ function computeYear(
   );
 
   // ---- budget accounting ----
-  // spendRate: normalized so max total spend ≈ 12 pts/yr; revenue 1–8 pts/yr.
+  // spendRate: normalized so max total spend ≈ 12 pts/yr; revenue 1–6 pts/yr.
   // At default settings → ~break-even. Full green + no industry → deficit after ~8 yrs.
   const spendRate =
     (c.renewableElectricity / 100) * 4 +
@@ -563,6 +563,18 @@ export function explainOutcome(controls: Controls, baseline: Indicators, final: 
   }
 
   return { biggestSuccess, biggestFailure };
+}
+
+/* ---------- one outcome vocabulary for the whole study ----------
+ * Story, Results, the Simulator finish card and the Home bench all read
+ * their verdict words from this single ladder — no page keeps its own
+ * thresholds, so the same run says the same thing everywhere. */
+export type RunTone = "hope" | "balance" | "struggle" | "loss";
+export function runTone(score: number): { tone: RunTone; label: string } {
+  if (score >= 65) return { tone: "hope", label: "The town is better off" };
+  if (score >= 45) return { tone: "balance", label: "The town held, but barely" };
+  if (score >= 30) return { tone: "struggle", label: "The town struggled" };
+  return { tone: "loss", label: "The town lost ground" };
 }
 
 /* ---------- scoring (spec §5.3, transparent weights) ---------- */

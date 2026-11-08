@@ -26,6 +26,7 @@ import SiteHeader from "@/components/SiteHeader";
 import CausalChain from "@/components/CausalChain";
 import CopyButton from "@/components/CopyButton";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import { runTone } from "@/lib/sim/engine";
 import { useSim } from "@/contexts/SimContext";
 import {
   CONTROL_RANGES,
@@ -119,14 +120,24 @@ export default function Results() {
   }
 
   const { base, final, budgetFinal, populationFinal, goalsMet } = derived;
-  const happy = goalsMet.filter(Boolean).length >= 2;
-  const photo = happy ? LIGHT_NETS_PHOTO : NET_CAST_PHOTO;
-  const verdict = happy ? "Teluk Nusa held its own." : "Teluk Nusa struggled.";
+  // One verdict ladder for the whole study (engine.runTone) — the same words
+  // the story page and the cockpit finish card use, no page-local thresholds.
+  const ended = runTone(latest.score);
+  const held = ended.tone === "hope" || ended.tone === "balance";
+  const photo = held ? LIGHT_NETS_PHOTO : NET_CAST_PHOTO;
+  const verdict =
+    ended.tone === "hope"
+      ? "Teluk Nusa is better off."
+      : ended.tone === "balance"
+        ? "Teluk Nusa held, but barely."
+        : ended.tone === "struggle"
+          ? "Teluk Nusa struggled."
+          : "Teluk Nusa lost ground.";
 
-  const photoAlt = happy
+  const photoAlt = held
     ? "Fishermen working their nets at first light, 2050"
     : "A fisherman casting a net at first light, 2050";
-  const photoCaption = happy
+  const photoCaption = held
     ? "Field photograph · the nets still go out, 2050"
     : "Field photograph · 2050, work ahead";
 
@@ -177,9 +188,11 @@ export default function Results() {
                 {verdict}
               </h1>
               <p className="text-sm text-muted-foreground mt-3 max-w-lg leading-relaxed">
-                {happy
+                {ended.tone === "hope"
                   ? "Sea, water, and fairness protected to 2050."
-                  : "A threshold broke. See what caused it below."}
+                  : ended.tone === "balance"
+                    ? "The thresholds held. See where it strained below."
+                    : "A threshold broke. See what caused it below."}
               </p>
             </div>
 

@@ -29,7 +29,7 @@ const FAQS = [
   {
     id: "targets",
     q: "What are the five mission targets?",
-    a: "By 2050: heat-loaded air pressure below its cap (45), and nature, water, flood safety, and fairness above their floors (70, 60, 65, 60). The Mission chip shows how many you hit live. Tap it for the numbers.",
+    a: "By 2050: air & sea pressure under 45; nature, water, flood safety, and fairness above their floors — 70, 60, 65, 60. The Mission chip counts them live. Tap it for the numbers.",
   },
   {
     id: "budget",
