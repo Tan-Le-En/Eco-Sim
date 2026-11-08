@@ -122,6 +122,17 @@ const CHAPTERS: Chapter[] = [
     fig: "Fig. 05",
     connects: "Connects to: the simulator · the whole study",
   },
+  {
+    n: "06",
+    voice: "You have met the town. Now spend twenty-five years trying to keep it standing.",
+    title: "Mission briefing",
+    lesson: "The full briefing: controls, indicators, scoring, and how to govern Teluk Nusa from 2026 to 2050.",
+    photo: PHOTOS.workingJetty,
+    alt: "Clan jetty",
+    cap: "Life and work on the jetty",
+    fig: "Fig. 06",
+    connects: "Connects to: the simulator",
+  },
 ];
 
 /* ── After-the-simulation story pieces ── */
