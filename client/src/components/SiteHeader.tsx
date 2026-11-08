@@ -75,7 +75,7 @@ export default function SiteHeader({ backHref, bare }: { backHref?: string; bare
       <div
         className={
           bare
-            ? "flex items-center justify-between h-16 px-1 sm:px-2"
+            ? "flex items-center justify-between h-16 px-4 sm:px-6 lg:px-10 w-[calc(100%+200px)]"
             : "flex items-center justify-between h-16 px-6 sm:px-10 lg:px-14"
         }
       >
