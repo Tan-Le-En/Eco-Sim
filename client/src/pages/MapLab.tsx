@@ -11,7 +11,7 @@
  */
 import { useCallback, useMemo, useRef, useState } from "react";
 import PageMeta from "@/components/PageMeta";
-import { buildCityMap, type CellType } from "@/lib/sim/cityMap";
+import { ANNOTATED_ROWS, buildCityMap, type CellType } from "@/lib/sim/cityMap";
 
 const MAP_IMAGE = "/storage/teluk-nusa-map-illustrated_e05d6285.png";
 const SIZE = 20; // rows & cols, matching cityMap.ts GRID
@@ -55,36 +55,6 @@ const PALETTE: PaletteEntry[] = [
   { letter: ".", name: "Clear", hint: "leave undrawn", color: "transparent" },
 ];
 
-/**
- * Starting point: the developer's reading of the photograph. The river enters
- * from the WEST edge (rows 8-11 south of the red-roof core), industry at the
- * top-right docks, orange-roof core in the middle, kampung on the southern
- * spit, mangrove headland in the southeast. Fix whatever is wrong — the tool
- * starts from this draft, not from square one.
- */
-const DRAFT: string[] = [
-  /* r00 */ "TTTTTGGHHHIIIBOOOOOO",
-  /* r01 */ "TTTTTGGHHHIIIBBOOOOO",
-  /* r02 */ "TTTTTGHVVVVIIBOOOOOO",
-  /* r03 */ "TTTTGGHVVVVIIBBOOOOO",
-  /* r04 */ "TTGGGHHHVVVGBBOOOOOO",
-  /* r05 */ "GGGGUUUUUUGGBBOOOOOO",
-  /* r06 */ "GGGUUUUUUUGWBBOOOOOO",
-  /* r07 */ "GGGGUUUUUUGGGBBOOOOO",
-  /* r08 */ "GRRRGGUUUUUWWBOOOOOO",
-  /* r09 */ "RRRRUUUUUUWWWBOOOOOO",
-  /* r10 */ "GGGRRRRRRRRWBBOOOOOO",
-  /* r11 */ "GGGGRRRRRRWWWBOOOOOO",
-  /* r12 */ "GGGGHHHHHWWWWOOOOOOO",
-  /* r13 */ "GGGGHHHHHHWWMOOOOOOO",
-  /* r14 */ "GGGGKKKKKKWMMOOOOOOO",
-  /* r15 */ "GGGGKKKKKKKMMMOOOOOO",
-  /* r16 */ "GGGGKKKKKKKMMMOOOOOO",
-  /* r17 */ "GGGGKKKKKKKKMMOOOOOO",
-  /* r18 */ "GGGGGOOOOOOOMMMOOOOO",
-  /* r19 */ "GGGGGOOOOOOOMMOOOOOO",
-];
-
 const BLANK = (): string[] => Array.from({ length: SIZE }, () => ".".repeat(SIZE));
 
 function lettersFromLiveGrid(): string[] {
@@ -92,7 +62,7 @@ function lettersFromLiveGrid(): string[] {
 }
 
 export default function MapLab() {
-  const [rows, setRows] = useState<string[]>(DRAFT);
+  const [rows, setRows] = useState<string[]>(() => ANNOTATED_ROWS.slice());
   const [brush, setBrush] = useState("R");
   const [hover, setHover] = useState<{ r: number; c: number } | null>(null);
   const [copied, setCopied] = useState(false);
@@ -172,8 +142,8 @@ export default function MapLab() {
           <span className="font-data">Copy annotation</span> and paste the result back to the
           developer. Rows run <span className="font-data">00–19</span> top to bottom, columns{" "}
           <span className="font-data">00–19</span> left to right. Each cell is 5% of the image.
-          Ignore the drawn compass and legend insets in the bottom-left. It starts from the
-          developer's draft — only fix the wrong cells.
+          Ignore the drawn compass and legend insets in the bottom-left. The grid the site
+          already uses is pre-loaded — paint only what it gets wrong.
         </p>
 
         {/* Palette */}
@@ -295,8 +265,8 @@ export default function MapLab() {
           <button onClick={copyForDev} className="btn btn-primary">
             {copied ? "Copied ✓" : "Copy annotation"}
           </button>
-          <button onClick={() => setRows(DRAFT)} className="btn btn-quiet">
-            Back to the developer's draft
+          <button onClick={() => setRows(ANNOTATED_ROWS.slice())} className="btn btn-quiet">
+            Reset to the accepted grid
           </button>
           <button onClick={() => setRows(liveGrid)} className="btn btn-quiet">
             Load the live site's grid

@@ -1,12 +1,19 @@
 /**
  * ECO//SIM — City map (20×20 grid)
- * Style note: generated deterministic zone map of fictional Teluk Nusa.
- * Geography matches the illustrated field map: SEA on the EAST forming a
- * protected bay (teluk) curving into the south; MANGROVE belt hugging the
- * southeast shore; RIVER flowing west→east through the middle and emptying
- * into the bay, WETLANDS around the mouth; URBAN CORE center-west;
- * INDUSTRIAL zone north near the docks; KAMPUNG (low-income) houses on the
- * southern coast; FARMLAND far west; FOREST hill rising in the northwest.
+ * v5: the zone grid is no longer drawn by formulas — it is a transcription
+ * of the ACTUAL illustrated map photo, painted cell-by-cell in the internal
+ * annotation lab (/map-lab) and transcribed verbatim below. Rows run
+ * top→bottom, columns left→right; one letter per cell:
+ *   O sea/bay  R river  W wetlands  M mangrove  B beach/sand
+ *   H houses   U town core  V villas  K kampung  I industry
+ *   G fields   T forest
+ * Geography per the annotated photo: forest hill along the north from the
+ * west edge; industrial docks top-right; residential band below them;
+ * orange-roof town core in the center, threaded by the Sungai Nusa, which
+ * enters from the WEST edge and exits southeast through wetlands/mangrove
+ * into the bay; kampung on the southern sand spit; mangrove headland
+ * reaching the water in the southeast; agricultural flanks and sand flats
+ * in the southwest (the drawn compass/legend insets are left alone).
  * All values are fictional educational-model assumptions.
  */
 
@@ -40,6 +47,57 @@ export interface MapCell {
 
 const GRID = 20;
 
+/**
+ * The annotated map, transcribed verbatim from the /map-lab export
+ * (verified: 20 rows × 20 columns, no empty cells). This is the single
+ * source of truth for what is where in Teluk Nusa.
+ */
+export const ANNOTATED_ROWS: string[] = [
+  /* r00 */ "TTTTTTTTBBBBBBOOOOOO",
+  /* r01 */ "TTTTTTTTHHHHBOOOOOOO",
+  /* r02 */ "TTTTTTTTHHHIIOOOOOOO",
+  /* r03 */ "TTTTTTTTHHHIIIIOOOOO",
+  /* r04 */ "TTTTTTTHHHHIIIIIOOOO",
+  /* r05 */ "TTTTTTUUUHHIIBOOOOOO",
+  /* r06 */ "TTTTTUUUUUHWBBOOOOOO",
+  /* r07 */ "RGTTUUUUUUWWBOOOOOOO",
+  /* r08 */ "GRGGUUUUUUWWBOOOOOOO",
+  /* r09 */ "GGRRRRUUUUWWBBOOOOOO",
+  /* r10 */ "GGGGGRRRURRWWBBOOOOO",
+  /* r11 */ "GGGGGURRRRMRWWBOOOOO",
+  /* r12 */ "GGGGGUUUUMMMRRROOOOO",
+  /* r13 */ "BBGGGGUUKKMMMMMMOOOO",
+  /* r14 */ "BBBBGKKKKKKMMMMMOOOO",
+  /* r15 */ "BBBBBKKKKKKKMMMMMOOO",
+  /* r16 */ "BBBBBKKOOOOOKMMMMOOO",
+  /* r17 */ "BBBBBBOOOOOOOOMMMMOO",
+  /* r18 */ "BBBBBOOOOOOOOOOOOOOO",
+  /* r19 */ "BBBBBOOOOOOOOOOOOOOO",
+];
+
+/** Export letter → zone type (mirror of the palette in /map-lab). */
+const TYPE_BY_LETTER: Record<string, CellType> = {
+  O: "ocean",
+  R: "river",
+  W: "wetland",
+  M: "mangrove",
+  B: "beach",
+  H: "residential",
+  U: "urbanCore",
+  V: "highIncome",
+  K: "residentialLow",
+  I: "industrial",
+  G: "agriculture",
+  T: "forest",
+};
+
+/** Parsed once at module load: CELL_TYPES[row][col]. */
+const CELL_TYPES: CellType[][] = ANNOTATED_ROWS.map((row) =>
+  row
+    .split("")
+    .map((letter) => TYPE_BY_LETTER[letter] ?? "residential"),
+);
+
 // Deterministic pseudo-random for stable map layout (simple LCG)
 function makeRng(seed: number) {
   let s = seed;
@@ -49,60 +107,9 @@ function makeRng(seed: number) {
   };
 }
 
-/** River path: x from 0..19, river y-center per column (wavy, crosses the city). */
-function riverY(x: number): number {
-  return 6 + 4 * Math.sin((x / 19) * Math.PI * 1.6 + 0.5) + 0.4 * Math.sin(x * 2.3);
-}
-
+/** The annotated photo is the truth: a cell simply is what was painted. */
 function cellTypeFor(x: number, y: number): CellType {
-  const r = riverY(x);
-
-  // ── Sea: the bay curves into the southeast corner ──
-  const seaEdge = 16 + 3 * Math.sin(((y - 11) / 9) * Math.PI * 0.5 + 0.9); // curves landward below y=11
-  if (y >= 11 && x >= seaEdge) return "ocean";
-  if (x >= 19 && y <= 10) return "ocean"; // open water north-east
-
-  // ── Beach: coastal fringe on land side of the sea ──
-  if (y >= 11 && x === Math.max(0, Math.floor(seaEdge) - 1)) return "beach";
-  if (x >= 18 && y >= 4 && y <= 10) return "beach"; // north-east beach
-
-  // ── River band (±0.9 around river path) ──
-  if (Math.abs(y - r) < 0.9) return "river";
-
-  // ── Wetlands: lowlands around the river mouth ──
-  if (x >= 12 && y >= 9 && y <= 14 && x < seaEdge - 2) return "wetland";
-  if (x >= 11 && y >= 11 && y <= 13) return "wetland";
-
-  // ── Mangrove belt: hugging the southeast shore ──
-  if (x >= 13 && y >= 12 && y <= 15 && x < seaEdge) return "mangrove";
-  if (x >= 12 && (y === 13 || y === 14)) return "mangrove";
-
-  // ── Forest hill: northwest corner, rising elevation ──
-  if (x <= 3 && y <= 4) return "forest";
-  if (x <= 4 && y <= 6 && x + y <= 9) return "forest";
-  if (x === 5 && y <= 3) return "forest";
-
-  // ── Farmland: western strip and northern fields ──
-  if (x <= 2) return "agriculture";
-  if (y === 0 && x >= 4 && x <= 14) return "agriculture";
-  if (x === 3 && y === 0) return "agriculture";
-
-  // ── Industrial zone: northeast near the docks ──
-  if (x >= 11 && x <= 15 && y <= 3) return "industrial";
-  if (x >= 16 && y <= 3) return "industrial";
-
-  // ── Urban core: center-west ──
-  if (x >= 5 && x <= 9 && y >= 6 && y <= 10) return "urbanCore";
-
-  // ── Upscale district: north-central, higher ground ──
-  if (x >= 7 && x <= 11 && y >= 3 && y <= 5) return "highIncome";
-
-  // ── Kampung settlement: southern coastal edge (highest flood exposure) ──
-  if (y >= 17) return "residentialLow";
-  if (x >= 14 && y >= 15) return "residentialLow";
-
-  // Residential fills the rest
-  return "residential";
+  return CELL_TYPES[y][x];
 }
 
 function elevationFor(x: number, y: number, type: CellType): number {
