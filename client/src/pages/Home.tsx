@@ -216,21 +216,19 @@ export default function Home() {
           </section>
 
           {/* Light/dark toggle — pinned to the viewport bottom-right for the
-             first page, so it follows the scroll while the hero is in view. */}
-          {!pastHero && (
-            <button
-              onClick={toggleTheme}
-              className="fixed bottom-4 right-4 z-50 btn-press inline-flex items-center justify-center w-11 h-11 rounded-full bg-background/92 backdrop-blur-md text-foreground border border-border transition-colors hover:border-foreground"
-              aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
-              title={dark ? "Light mode" : "Dark mode"}
-            >
-              {dark ? (
-                <Sun className="w-5 h-5" />
-              ) : (
-                <Moon className="w-5 h-5" />
-              )}
-            </button>
-          )}
+             entire first page, so it follows the scroll throughout. */}
+          <button
+            onClick={toggleTheme}
+            className="fixed bottom-4 right-4 z-50 btn-press inline-flex items-center justify-center w-11 h-11 rounded-full bg-background/92 backdrop-blur-md text-foreground border border-border transition-colors hover:border-foreground"
+            aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+            title={dark ? "Light mode" : "Dark mode"}
+          >
+            {dark ? (
+              <Sun className="w-5 h-5" />
+            ) : (
+              <Moon className="w-5 h-5" />
+            )}
+          </button>
 
           {/* ────────────── Specimen bench: the real engine, three preset plans ────────────── */}
           <section

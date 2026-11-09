@@ -114,13 +114,11 @@ export default function SiteHeader({
                 href={n.href}
                 aria-current={active ? "page" : undefined}
                 className={`btn-press inline-flex items-center gap-1.5 font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 transition-colors border border-transparent ${
-                  n.label === "FAQ"
-                    ? "bg-white dark:bg-foreground text-foreground dark:text-background"
-                    : active
-                      ? "bg-secondary text-secondary-foreground dark:bg-[oklch(0.24_0.012_75)]"
-                      : muted
-                        ? "text-muted-foreground hover:text-foreground hover:border-border"
-                        : "text-foreground hover:border-border hover:bg-secondary/60"
+                  active
+                    ? "bg-secondary text-secondary-foreground dark:bg-[oklch(0.24_0.012_75)]"
+                    : muted
+                      ? "text-muted-foreground hover:text-foreground hover:border-border"
+                      : "text-foreground hover:border-border hover:bg-secondary/60"
                 }`}
               >
                 <span
@@ -143,7 +141,7 @@ export default function SiteHeader({
           {showSearch && (
             <button
               onClick={() => setSearchOpen(true)}
-              className="btn-press inline-flex items-center gap-1.5 font-data text-[11px] tracking-[0.14em] uppercase bg-white dark:bg-foreground text-foreground dark:text-background border border-transparent hover:border-border px-3 py-2 transition-colors"
+              className="btn-press inline-flex items-center gap-1.5 font-data text-[11px] tracking-[0.14em] uppercase text-foreground border border-transparent hover:border-border px-3 py-2 transition-colors"
               aria-label="Search the field study"
               title="Search (Cmd/Ctrl+K)"
             >
@@ -153,7 +151,7 @@ export default function SiteHeader({
           )}
           <button
             onClick={toggleTheme}
-            className="btn-press inline-flex items-center font-data text-[11px] tracking-[0.14em] uppercase bg-white dark:bg-foreground text-foreground dark:text-background border border-transparent hover:border-border px-3 py-2 transition-colors"
+            className="btn-press inline-flex items-center font-data text-[11px] tracking-[0.14em] uppercase text-foreground border border-transparent hover:border-border px-3 py-2 transition-colors"
             aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
             title={dark ? "Light mode" : "Dark mode"}
           >
@@ -176,7 +174,7 @@ export default function SiteHeader({
           {showSearch && (
             <button
               onClick={() => setSearchOpen(true)}
-              className="btn-press inline-flex items-center p-2 bg-white dark:bg-foreground text-foreground dark:text-background transition-colors"
+              className="btn-press inline-flex items-center p-2 text-foreground transition-colors"
               aria-label="Search the field study"
             >
               <Search className="w-4 h-4" />
@@ -184,7 +182,7 @@ export default function SiteHeader({
           )}
           <button
             onClick={toggleTheme}
-            className="btn-press inline-flex items-center p-2 bg-white dark:bg-foreground text-foreground dark:text-background transition-colors"
+            className="btn-press inline-flex items-center p-2 text-foreground transition-colors"
             aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
           >
             {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
