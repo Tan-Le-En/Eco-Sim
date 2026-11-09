@@ -5,7 +5,7 @@
  * Editorial discipline: hairlines, mono labels, zero radius.
  *
  * IA spine (v4): the nav mirrors the visitor's flow —
- *   01 Story → 02 Briefing → 03 Simulator → 04 Report (state-aware)
+ *   01 Story → 02 Simulator → 03 Report (state-aware)
  * then the quieter trust layer: Transparency, FAQ.
  * Flow items read as foreground; reference items sit back in muted.
  */
@@ -19,7 +19,6 @@ import SiteSearch from "@/components/SiteSearch";
 
 export const NAV: { href: string; label: string; tier: "flow" | "ref" }[] = [
   { href: "/story", label: "Story", tier: "flow" },
-  { href: "/briefing", label: "Briefing", tier: "flow" },
   { href: "/simulator", label: "Simulator", tier: "flow" },
   { href: "/results", label: "Report", tier: "flow" },
   { href: "/transparency", label: "Transparency", tier: "ref" },

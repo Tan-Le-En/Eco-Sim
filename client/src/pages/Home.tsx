@@ -183,16 +183,16 @@ export default function Home() {
                 </p>
                 <div className="mt-8 flex flex-wrap items-center gap-4">
                   <Link
-                    href="/simulator"
+                    href="/story"
                     className="btn btn-primary px-8 py-4 text-[15px]"
                   >
-                    Start governing <ArrowRight className="w-4 h-4" />
+                    Read the story <ArrowRight className="w-4 h-4" />
                   </Link>
                   <Link
-                    href="/story"
+                    href="/simulator"
                     className="font-data text-[11px] tracking-[0.14em] uppercase text-muted-foreground border-b border-border pb-0.5 hover:text-foreground hover:border-foreground transition-colors"
                   >
-                    Read the story first
+                    Start governing
                   </Link>
                 </div>
               </motion.div>
@@ -361,8 +361,8 @@ export default function Home() {
                 >
                   Start governing <ArrowRight className="w-4 h-4" />
                 </Link>
-                <Link href="/briefing" className="btn btn-outline">
-                  Mission briefing
+                <Link href="/story" className="btn btn-outline">
+                  Read the story
                 </Link>
                 <Link href="/faq" className="btn btn-quiet">
                   FAQ
@@ -384,8 +384,8 @@ export default function Home() {
           >
             Start governing <ArrowRight className="w-4 h-4" />
           </Link>
-          <Link href="/briefing" className="btn btn-quiet">
-            Briefing
+          <Link href="/story" className="btn btn-quiet">
+            Story
           </Link>
         </div>
       )}

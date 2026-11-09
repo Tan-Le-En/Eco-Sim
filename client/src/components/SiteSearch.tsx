@@ -80,15 +80,13 @@ function buildIndex(): Entry[] {
     hint:
       n.href === "/"
         ? "The field study — one million people, twenty-five years"
-        : n.href === "/briefing"
-          ? "Mission briefing — keep Teluk Nusa alive for 25 years"
-          : n.href === "/story"
-            ? "Story mode — five chapters on the town that speaks"
-            : n.href === "/simulator"
-              ? "The cockpit — eight decisions, seven registers, 2026–2050"
-              : n.href === "/transparency"
-                ? "Every equation published — rules-based, not a forecast"
-                : "Common questions — honest answers",
+        : n.href === "/story"
+          ? "Story mode — five chapters on the town that speaks"
+          : n.href === "/simulator"
+            ? "The cockpit — eight decisions, seven registers, 2026–2050"
+            : n.href === "/transparency"
+              ? "Every equation published — rules-based, not a forecast"
+              : "Common questions — honest answers",
     href: n.href,
     keywords: [n.label.toLowerCase(), n.href],
   }));

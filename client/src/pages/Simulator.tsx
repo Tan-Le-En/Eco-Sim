@@ -373,7 +373,7 @@ export default function Simulator() {
         title="ECO//SIM — The simulator · govern Teluk Nusa 2026–2050"
         description="Eight dials. 25 years. Step one year at a time."
       />
-      <SiteHeader backHref="/briefing" />
+      <SiteHeader backHref="/story" />
 
       {/* ── Instrument bar: year · budget · mission target ── */}
       <div className="border-b border-border">

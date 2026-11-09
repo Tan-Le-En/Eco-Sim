@@ -8,7 +8,6 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { SimProvider } from "./contexts/SimContext";
 import Home from "./pages/Home";
-import Briefing from "./pages/Briefing";
 import Prologue from "./pages/Prologue";
 import Simulator from "./pages/Simulator";
 import Results from "./pages/Results";
@@ -83,7 +82,6 @@ function Router() {
       >
         <Switch location={location}>
           <Route path={"/"} component={Home} />
-          <Route path={"/briefing"} component={Briefing} />
           <Route path={"/prologue"} component={Prologue} />
           <Route path={"/simulator"} component={Simulator} />
           <Route path={"/results"} component={Results} />

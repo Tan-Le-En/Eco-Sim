@@ -359,20 +359,12 @@ export default function Prologue() {
               Next <ArrowRight className="w-4 h-4" />
             </button>
           ) : (
-            <div className="flex flex-wrap justify-end gap-2">
-              <Link
-                href="/briefing"
-                className="btn btn-outline px-4 py-2 text-[12px]"
-              >
-                Mission briefing
-              </Link>
-              <Link
-                href="/simulator"
-                className="btn btn-primary px-5 py-2.5 text-[14px]"
-              >
-                Start the simulation <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
+            <Link
+              href="/simulator"
+              className="btn btn-primary px-5 py-2.5 text-[14px]"
+            >
+              Start the simulation <ArrowRight className="w-4 h-4" />
+            </Link>
           )}
         </div>
       </main>
