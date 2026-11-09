@@ -156,7 +156,7 @@ export default function Home() {
             className="relative flex-1 grid lg:grid-cols-[1.1fr_1fr] h-[92vh]"
           >
             {/* Left: typographic hero, offset */}
-            <div className="relative flex flex-col justify-between px-4 sm:px-6 lg:px-10 py-4 lg:py-6 border-r border-border">
+            <div className="relative flex flex-col justify-between px-4 sm:px-6 lg:px-10 py-4 lg:py-6 border-r border-white dark:border-background">
               <SiteHeader />
 
               <motion.div
