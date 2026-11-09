@@ -88,11 +88,15 @@ export default function SiteHeader({
             className="hidden md:flex flex-1 min-w-0 items-center justify-evenly gap-2 px-2"
             aria-label="Primary"
           >
-            {NAV.filter(n => n.tier === "flow").map((n, i) => (
+            {NAV.map((n, i) => (
               <Link
                 key={n.href}
                 href={n.href}
-                className="btn-press inline-flex items-center gap-1.5 font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 transition-colors border border-transparent text-foreground hover:border-border hover:bg-secondary/60 whitespace-nowrap"
+                className={`btn-press inline-flex items-center gap-1.5 font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 transition-colors border border-transparent whitespace-nowrap ${
+                  n.tier === "ref"
+                    ? "text-muted-foreground hover:text-foreground hover:border-border"
+                    : "text-foreground hover:border-border hover:bg-secondary/60"
+                }`}
               >
                 <span className="text-muted-foreground/80">
                   {String(i + 1).padStart(2, "0")}
