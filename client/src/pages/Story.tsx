@@ -13,7 +13,6 @@
  */
 import { Link } from "wouter";
 import { useState } from "react";
-import { useTheme } from "@/contexts/ThemeContext";
 import PageMeta from "@/components/PageMeta";
 import SiteFooter from "@/components/SiteFooter";
 import FadeImg from "@/components/FadeImg";
@@ -506,8 +505,6 @@ function WhatHappened({ result }: { result: SimulationResult }) {
 
 function Chapters() {
   const [page, setPage] = useState(0);
-  const { theme, toggleTheme } = useTheme();
-  const dark = theme === "dark";
   const c = CHAPTERS[page];
   const isFirst = page === 0;
   const isLast = page === CHAPTERS.length - 1;
@@ -532,8 +529,8 @@ function Chapters() {
           transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
           className="h-full grid lg:grid-cols-[1fr_1.15fr] gap-0 min-w-0"
         >
-          <div className="px-6 sm:px-10 lg:px-14 py-8 lg:py-10 lg:border-r border-border min-w-0 flex flex-col justify-between overflow-hidden">
-            <div>
+          <div className="px-6 sm:px-10 lg:px-14 py-8 lg:py-10 lg:border-r border-border min-w-0 flex flex-col h-full">
+            <div className="flex-1 min-h-0 overflow-y-auto pr-2">
               {isLast ? (
                 <>
                   <div className="flex items-baseline gap-4 mb-4">
@@ -685,14 +682,6 @@ function Chapters() {
           </figure>
         </motion.section>
       </main>
-
-      <button
-        onClick={toggleTheme}
-        aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
-        className="fixed bottom-4 right-4 z-50 btn-press inline-flex items-center p-3 border border-border bg-background/90 backdrop-blur rounded-full shadow-md"
-      >
-        {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-      </button>
 
       <SiteFooter />
     </div>
