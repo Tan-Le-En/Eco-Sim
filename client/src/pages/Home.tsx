@@ -212,20 +212,25 @@ export default function Home() {
                 alt="Aerial photograph of Kuala Kedah estuary showing the river mouth, coastal settlement, and breakwater"
                 className="absolute inset-0 w-full h-full object-cover"
               />
-              <button
-                onClick={toggleTheme}
-                className="absolute bottom-4 right-4 btn-press inline-flex items-center justify-center w-11 h-11 rounded-full bg-background/92 backdrop-blur-md text-foreground border border-border transition-colors hover:border-foreground"
-                aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
-                title={dark ? "Light mode" : "Dark mode"}
-              >
-                {dark ? (
-                  <Sun className="w-5 h-5" />
-                ) : (
-                  <Moon className="w-5 h-5" />
-                )}
-              </button>
             </div>
           </section>
+
+          {/* Light/dark toggle — pinned to the viewport bottom-right for the
+             first page, so it follows the scroll while the hero is in view. */}
+          {!pastHero && (
+            <button
+              onClick={toggleTheme}
+              className="fixed bottom-4 right-4 z-50 btn-press inline-flex items-center justify-center w-11 h-11 rounded-full bg-background/92 backdrop-blur-md text-foreground border border-border transition-colors hover:border-foreground"
+              aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+              title={dark ? "Light mode" : "Dark mode"}
+            >
+              {dark ? (
+                <Sun className="w-5 h-5" />
+              ) : (
+                <Moon className="w-5 h-5" />
+              )}
+            </button>
+          )}
 
           {/* ────────────── Specimen bench: the real engine, three preset plans ────────────── */}
           <section
@@ -242,7 +247,7 @@ export default function Home() {
                   screenshot.
                 </p>
               </div>
-              <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border border border-border bg-card">
+              <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border">
                 {BENCH.map(b => (
                   <article
                     key={b.key}
