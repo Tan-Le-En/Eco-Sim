@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>ECO//SIM Certificate of Completion – {{recipient_name}}</title>
 <!--
-  ECO//SIM certificate · A4 landscape · Mustache syntax (see PLACEHOLDERS.md).
+  ECO//SIM certificate · A4 landscape · Mustache syntax.
   Double braces = escaped text; # and / pairs = repeat or show-if-true block;
   caret pairs = show if empty or false.
   Change colours and fonts only in the :root block.
@@ -12,7 +12,7 @@
 <style>
   @page { size: A4 landscape; margin: 0; }
   :root {
-    --paper: #f6f2ea;
+    --paper: #ffffff;   /* white so unprintable printer edges never show as a rim */
     --ink: #1d1b17;
     --ink-soft: #5a554a;
     --rule: #1d1b17;
@@ -24,10 +24,10 @@
     --font-mono: "DejaVu Sans Mono", "Menlo", "Consolas", monospace;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { width: 297mm; height: 210mm; background: var(--paper); color: var(--ink);
+  html, body { width: 297mm; height: 209.6mm; margin: 0; overflow: hidden; background: var(--paper); color: var(--ink);
     font-family: var(--font-body); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .page { width: 297mm; height: 210mm; padding: 9mm; }
-  .frame { height: 100%; border: 0.5mm solid var(--rule); padding: 9mm 12mm 7mm;
+  .page { width: 297mm; height: 209.6mm; padding: 0; overflow: hidden; background: var(--paper); break-after: avoid; }
+  .frame { height: 100%; padding: 14mm 18mm 11mm;
     display: grid; grid-template-rows: auto 1fr auto; row-gap: 6mm; }
 
   .mono { font-family: var(--font-mono); font-size: 7pt; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
@@ -88,16 +88,16 @@
     <section>
       <div class="mono kicker">Certificate of completion</div>
       <p class="certifies">This certifies that</p>
-      <h1 class="recipient{{#recipient_name_class}} {{recipient_name_class}}{{/recipient_name_class}}">{{recipient_name}}</h1>
+      <h1 class="recipient {{recipient_name_class}}">{{recipient_name}}</h1>
       <p class="statement">
         completed the ECO//SIM simulation, guiding <b>{{run_place}}</b>
         from <b>{{run_baseline_year}}</b> to <b>{{run_final_year}}</b> ({{run_window}})
         and reaching <b>{{goals_met}} of {{goals_total}}</b> goals.
       </p>
-  <div class="notes">
-    <div class="note"><div class="mono">What worked</div><p>{{worked}}</p></div>
-    <div class="note"><div class="mono">What failed</div><p>{{failed}}</p></div>
-  </div>
+      <div class="notes">
+        <div class="note"><div class="mono">What worked</div><p>{{worked}}</p></div>
+        <div class="note"><div class="mono">What failed</div><p>{{failed}}</p></div>
+      </div>
     </section>
 
     <aside aria-label="Result">
@@ -116,7 +116,6 @@
       {{/goals}}
     </aside>
   </main>
-
 
   <footer>
     <div class="mono meta">

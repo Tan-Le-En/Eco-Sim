@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <title>ECO//SIM Field Report Transcript – {{recipient_name}}</title>
 <!--
-  ECO//SIM transcript · A4 portrait · 2 fixed pages · Mustache syntax (see PLACEHOLDERS.md).
+  ECO//SIM transcript · A4 portrait · 2 fixed pages · Mustache syntax.
   Page 1: summary + indicator table.  Page 2: policy mix, penalties, highlights, disclaimer.
   Change colours and fonts only in the :root block.
 -->
 <style>
   @page { size: A4 portrait; margin: 0; }
   :root {
-    --paper: #f6f2ea;
+    --paper: #ffffff;
     --ink: #1d1b17;
     --ink-soft: #5a554a;
     --hair: #c9c2b2;
@@ -23,9 +23,10 @@
     --font-mono: "DejaVu Sans Mono", "Menlo", "Consolas", monospace;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { background: var(--paper); color: var(--ink); font-family: var(--font-body);
+  html, body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-body);
     font-size: 8.5pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .page { width: 210mm; height: 297mm; padding: 14mm 14mm 12mm; position: relative; break-after: page; display: flex; flex-direction: column; }
+  .page { width: 210mm; height: 296.6mm; background: var(--paper); padding: 14mm 14mm 12mm; position: relative; overflow: hidden;
+    break-after: page; display: flex; flex-direction: column; }
   .page:last-child { break-after: auto; }
 
   .mono { font-family: var(--font-mono); font-size: 6.5pt; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
@@ -38,28 +39,28 @@
 
   h1 { font-family: var(--font-display); font-size: 22pt; line-height: 1.1; margin-top: 7mm; }
   h2 { font-family: var(--font-mono); font-size: 7pt; letter-spacing: .14em; text-transform: uppercase;
-    font-weight: 700; margin: 7mm 0 2mm; padding-bottom: 1.5mm; border-bottom: 0.3mm solid var(--ink); break-before: avoid; }
+    font-weight: 700; margin: 7mm 0 2mm; padding-bottom: 1.5mm; border-bottom: 0.3mm solid var(--ink); }
 
   .meta { display: grid; grid-template-columns: repeat(4, 1fr); column-gap: 6mm; margin-top: 4mm; }
   .meta dt { margin-bottom: .8mm; }
   .meta dd { font-size: 9.5pt; font-weight: 600; }
 
   .summary { display: grid; grid-template-columns: 38mm 1fr 1fr; column-gap: 8mm; margin-top: 6mm;
-    border-top: 1.2mm solid var(--ink); padding-top: 3mm; align-items: start; break-inside: avoid; }
+    border-top: 1.2mm solid var(--ink); padding-top: 3mm; align-items: start; }
   .big { font-family: var(--font-display); font-weight: 700; font-size: 40pt; line-height: 1; }
   .big small { font-family: var(--font-mono); font-weight: 400; font-size: 9pt; color: var(--ink-soft); }
   .verdict { font-family: var(--font-display); font-weight: 700; font-size: 12pt; margin-top: 1.5mm; }
   .verdict-sub { color: var(--ink-soft); margin-top: .8mm; line-height: 1.4; }
-  .kv { width: 100%; border-collapse: collapse; break-inside: avoid; }
+  .kv { width: 100%; border-collapse: collapse; }
   .kv td { padding: 1.3mm 0; border-bottom: 0.2mm solid var(--hair); }
   .kv td:last-child { text-align: right; font-family: var(--font-mono); }
   .st { font-family: var(--font-mono); font-size: 7pt; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
   .st.met { color: var(--met); } .st.unmet { color: var(--unmet); } .st.na { color: var(--ink-soft); }
 
-  .two { display: grid; grid-template-columns: 1fr 1fr; column-gap: 8mm; break-inside: avoid; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; column-gap: 8mm; }
   .prose { line-height: 1.5; margin-top: 2mm; }
 
-  table.grid { width: 100%; border-collapse: collapse; break-inside: avoid; }
+  table.grid { width: 100%; border-collapse: collapse; }
   table.grid th { font-family: var(--font-mono); font-size: 6pt; letter-spacing: .08em; text-transform: uppercase;
     font-weight: 400; color: var(--ink-soft); text-align: right; padding: 0 1.5mm 1.5mm; border-bottom: 0.3mm solid var(--ink); vertical-align: bottom; }
   table.grid th:first-child, table.grid td:first-child { text-align: left; padding-left: 0; }
@@ -73,8 +74,8 @@
   table.grid tfoot td:first-child { font-family: var(--font-mono); font-size: 7pt; letter-spacing: .1em; text-transform: uppercase; }
   .dgood { color: var(--met); } .dbad { color: var(--unmet); }
 
-ul.plain { list-style: none; margin: 0; break-inside: avoid; }
-ul.plain li { padding: 1.8mm 0; border-bottom: 0.2mm solid var(--hair); line-height: 1.45; }
+  ul.plain { list-style: none; margin: 0; }
+  ul.plain li { padding: 1.8mm 0; border-bottom: 0.2mm solid var(--hair); line-height: 1.45; }
   .empty { padding: 2mm 0; color: var(--ink-soft); }
 
   .legend { margin-top: 2.5mm; color: var(--ink-soft); font-size: 7pt; line-height: 1.5; }
@@ -140,7 +141,7 @@ ul.plain li { padding: 1.8mm 0; border-bottom: 0.2mm solid var(--hair); line-hei
   <table class="grid">
     <thead>
       <tr>
-        <th>Indicator</th><th>2026</th><th>2050</th><th>Change</th>
+        <th>Indicator</th><th>{{run_baseline_year}}</th><th>{{run_final_year}}</th><th>Change</th>
         <th>Target</th><th>Result</th><th>Weight</th><th>Points</th>
       </tr>
     </thead>
@@ -172,7 +173,7 @@ ul.plain li { padding: 1.8mm 0; border-bottom: 0.2mm solid var(--hair); line-hei
       <tr><td colspan="7">Final score</td><td>{{score_display}} / {{score_max}}</td></tr>
     </tfoot>
   </table>
-  <p class="legend">Change is 2050 minus 2026. &#9650; means the indicator moved in its better direction, &#9660; in its worse direction (for climate pressure, lower is better). Indicators without a hard target still count toward the score through their weight.</p>
+  <p class="legend">Change is {{run_final_year}} minus {{run_baseline_year}}. &#9650; means the indicator moved in its better direction, &#9660; in its worse direction (for climate pressure, lower is better). Indicators without a hard target still count toward the score through their weight.</p>
 
   <div class="pagefoot mono"><span>ECO//SIM · {{recipient_name}}</span><span>Page 1 of 2</span></div>
 </div>
@@ -208,10 +209,10 @@ ul.plain li { padding: 1.8mm 0; border-bottom: 0.2mm solid var(--hair); line-hei
   {{#causal_links}}
   <ul class="plain"><li>{{causal_text}}</li></ul>
   {{/causal_links}}
-  {{^causal_links}}<p class="empty">No causal highlights recorded.</p>{{/causal_links}}
+  {{^causal_links}}<p class="empty">No cause-and-effect links were recorded for this run.</p>{{/causal_links}}
   <p class="legend">{{events_count}} events were recorded during this run.</p>
 
-  <p class="disclaimer">{{disclaimer}}</p>
+  <p class="disclaimer">{{disclaimer}} This document records a simulation result. It is not a qualification or a certification of skills.</p>
   <div class="pagefoot mono"><span>ECO//SIM · {{recipient_name}} · Issued {{issued_date}}</span><span>Page 2 of 2</span></div>
 </div>
 
