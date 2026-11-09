@@ -75,7 +75,7 @@ export default function SiteHeader({
   if (minimal) {
     return (
       <header
-        className="sticky top-0 z-50 border-b border-border"
+        className="sticky top-0 z-50 border-b border-border bg-background"
         data-no-print="true"
       >
         <div className="flex items-center justify-between h-16 px-6 sm:px-10 lg:px-14">
