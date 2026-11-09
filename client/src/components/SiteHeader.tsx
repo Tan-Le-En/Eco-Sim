@@ -73,7 +73,7 @@ export default function SiteHeader({
     <header
       className={
         bare
-          ? "w-full border-b border-white dark:border-background bg-white dark:bg-background"
+          ? "w-full border-b border-[#F4F2ED] dark:border-background bg-[#F4F2ED] dark:bg-background"
           : "sticky top-0 z-50 bg-background/92 backdrop-blur-md border-b border-border"
       }
       data-no-print="true"
