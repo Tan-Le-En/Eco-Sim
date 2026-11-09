@@ -7,14 +7,16 @@
 import { Link } from "wouter";
 import SiteFooter from "@/components/SiteFooter";
 import PageMeta from "@/components/PageMeta";
+import SiteSearch from "@/components/SiteSearch";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Search, Sun, Moon } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
 import FadeImg from "@/components/FadeImg";
 import { goalsMetCount } from "@/components/TownMood";
 import { runSimulation } from "@/lib/sim/engine";
 import { Controls, DEFAULT_CONTROLS } from "@/lib/sim/types";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const HERO = "/storage/kuala-kedah-hd_dfd13b90.jpg";
 const JETTY = "/storage/stilt-houses-real_4d70b8ec.jpg";
@@ -118,6 +120,8 @@ const FIELD = [
 ];
 
 export default function Home() {
+  const [searchOpen, setSearchOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
   // Sticky mobile CTA: once the hero scrolls out of view, offer the main action
   // from the bottom of the screen on small devices.
   const [pastHero, setPastHero] = useState(false);
@@ -133,12 +137,15 @@ export default function Home() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const dark = theme === "dark";
+
   return (
     <>
       <PageMeta
         title="ECO//SIM — A Field Study of a Coastal Town, 2026–2050"
         description="Change one thing, watch everything change. An interactive field study of Teluk Nusa, a fictional Malaysian coastal town: simple enough for a child, rigorous enough for a professor."
       />
+      <SiteSearch open={searchOpen} onOpenChange={setSearchOpen} />
       <div
         className={
           `min-h-screen flex flex-col bg-background` +
@@ -156,7 +163,7 @@ export default function Home() {
             className="relative flex-1 grid lg:grid-cols-[1.1fr_1fr] h-[92vh]"
           >
             {/* Left: typographic hero, offset */}
-            <div className="relative flex flex-col justify-between px-4 sm:px-6 lg:px-10 py-4 lg:py-6 border-r border-[#F4F2ED] dark:border-background">
+            <div className="relative flex flex-col justify-between px-4 sm:px-6 lg:px-10 py-4 lg:py-6">
               <SiteHeader />
 
               <motion.div
@@ -207,12 +214,28 @@ export default function Home() {
                 alt="Aerial photograph of Kuala Kedah estuary showing the river mouth, coastal settlement, and breakwater"
                 className="absolute inset-0 w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/85 via-background/10 to-transparent dark:from-background dark:via-background/10" />
-              <div className="absolute bottom-0 left-0 right-0 px-6 sm:px-10 py-5">
-                <div className="plate-caption !bg-transparent !border-transparent !text-background/90 !font-semibold">
-                  <span>Aerial view, Kuala Kedah estuary</span>
-                  <span>Fig. 01</span>
-                </div>
+              <div className="absolute top-4 right-4 flex items-center gap-2">
+                <button
+                  onClick={() => setSearchOpen(true)}
+                  className="btn-press inline-flex items-center gap-1.5 font-data text-[11px] tracking-[0.14em] uppercase bg-background/92 backdrop-blur-md text-foreground border border-border px-3 py-2 transition-colors hover:border-foreground"
+                  aria-label="Search the field study"
+                  title="Search (Cmd/Ctrl+K)"
+                >
+                  <Search className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Search</span>
+                </button>
+                <button
+                  onClick={toggleTheme}
+                  className="btn-press inline-flex items-center font-data text-[11px] tracking-[0.14em] uppercase bg-background/92 backdrop-blur-md text-foreground border border-border px-3 py-2 transition-colors hover:border-foreground"
+                  aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+                  title={dark ? "Light mode" : "Dark mode"}
+                >
+                  {dark ? (
+                    <Sun className="w-3.5 h-3.5" />
+                  ) : (
+                    <Moon className="w-3.5 h-3.5" />
+                  )}
+                </button>
               </div>
             </div>
           </section>
