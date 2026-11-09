@@ -149,7 +149,7 @@ export const BASELINE = {
   biodiversity: 62,
   waterStress: 42,
   publicApproval: 55,
-  budgetUnits: 100,
+  budgetUnits: 200,
 };
 
 /** Mission success conditions used by the scorecard. */

@@ -230,16 +230,16 @@ function computeYear(
   );
 
   // ---- budget accounting ----
-  // spendRate: normalized so max total spend ≈ 12 pts/yr; revenue 1–8 pts/yr.
-  // At default settings → ~break-even. Full green + no industry → deficit after ~8 yrs.
+  // spendRate: normalized so max total spend ≈ 8 pts/yr; revenue 1–8 pts/yr.
+  // At default settings → ~break-even. Full green + no industry → deficit after ~15+ yrs.
   const spendRate =
-    (c.renewableElectricity / 100) * 4 +
-    (c.publicTransport / 100) * 3 +
-    (c.mangroveRestoration / 30) * 2 +
-    (c.waterEfficiency / 60) * 1.5 +
-    (c.wasteRecycling / 60) * 1 +
-    (c.coastalDevelopment / 30) * 0.5;
-  const revenue = 1 + (c.industrialActivity / 100) * 5;
+    (c.renewableElectricity / 100) * 3 +
+    (c.publicTransport / 100) * 2 +
+    (c.mangroveRestoration / 30) * 1.5 +
+    (c.waterEfficiency / 60) * 1 +
+    (c.wasteRecycling / 60) * 0.75 +
+    (c.coastalDevelopment / 30) * 0.3;
+  const revenue = 1.5 + (c.industrialActivity / 100) * 6;
   const budgetRemaining = prev
     ? clamp(prev.budgetRemaining + revenue - spendRate, 0, 999)
     : BASELINE.budgetUnits;
