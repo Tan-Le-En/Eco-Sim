@@ -88,7 +88,7 @@ export default function SiteHeader({
             className="hidden md:flex flex-1 min-w-0 items-center justify-evenly gap-2 px-2"
             aria-label="Primary"
           >
-            {NAV.map((n, i) => (
+            {NAV.filter(n => n.href !== "/transparency").map((n, i) => (
               <Link
                 key={n.href}
                 href={n.href}

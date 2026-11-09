@@ -26,6 +26,7 @@ import SiteHeader from "@/components/SiteHeader";
 import CausalChain from "@/components/CausalChain";
 import CopyButton from "@/components/CopyButton";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import ReportCertificate from "@/components/ReportCertificate";
 import { useSim } from "@/contexts/SimContext";
 import {
   CONTROL_RANGES,
@@ -136,7 +137,16 @@ export default function Results() {
     ? "Field photograph · the nets still go out, 2050"
     : "Field photograph · 2050, work ahead";
 
-  const shareText = `I scored ${latest.score.toFixed(1)}/100 protecting Teluk Nusa to 2050 on ECO//SIM. Try to beat it.`;
+  const shareText = [
+    `ECO//SIM · Teluk Nusa 2050 field report`,
+    `Score: ${latest.score.toFixed(1)}/100`,
+    `Verdict: ${verdict}`,
+    `Goals reached: ${goalsMet.filter(Boolean).length}/${KID_GOALS.length}`,
+    `Worked: ${latest.biggestSuccess}`,
+    `Failed: ${latest.biggestFailure}`,
+    `Try it: ${typeof window !== "undefined" ? `${window.location.origin}/simulator` : "/simulator"}`,
+    `(Educational simulation, not a real forecast.)`,
+  ].join("\n");
 
   const handleReplay = () => {
     navigate("/simulator");
@@ -296,8 +306,14 @@ export default function Results() {
               <div className="flex flex-wrap gap-2 mt-5">
                 <CopyButton
                   text={shareText}
+                  shareTitle="ECO//SIM — Teluk Nusa 2050 score"
                   label="Share score"
                   className="gap-1.5 px-4 py-2 text-[11px] tracking-[0.12em]"
+                />
+                <ReportCertificate
+                  result={latest}
+                  verdict={verdict}
+                  goalsMet={goalsMet}
                 />
                 <button onClick={handleReplay} className="btn btn-primary">
                   <RefreshCw className="w-3.5 h-3.5" /> Play again

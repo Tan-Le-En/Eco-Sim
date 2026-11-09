@@ -478,6 +478,15 @@ html.dark {
   [data-no-print="true"] {
     display: none !important;
   }
+  /* Certificate/transcript: keep visible and clean when printing the report */
+  [data-certificate] button,
+  [data-certificate] [data-no-print="true"] {
+    display: none !important;
+  }
+  [data-certificate] {
+    display: block !important;
+    break-inside: avoid;
+  }
   /* Data cells that happen to be buttons (indicator register) print as data. */
   button[data-print-keep="true"] {
     display: flex !important;
