@@ -4,6 +4,7 @@
  * field-numbered sections, hairline rules, zero radius, single vermilion accent.
  * Single screen on desktop — hero fills the viewport, one band below.
  */
+
 import { Link } from "wouter";
 import SiteFooter from "@/components/SiteFooter";
 import PageMeta from "@/components/PageMeta";
