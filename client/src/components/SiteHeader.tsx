@@ -74,7 +74,7 @@ export default function SiteHeader({
   if (minimal) {
     return (
       <header
-        className="sticky top-0 z-50 border-b border-border bg-background"
+        className="sticky top-0 z-50 border-b border-border bg-background bg-opacity-100"
         data-no-print="true"
       >
         <div className="flex items-center h-16 gap-4 px-6 sm:px-10 lg:px-14">
@@ -131,8 +131,8 @@ export default function SiteHeader({
     <header
       className={
         bare
-          ? "w-full border-b border-border bg-background"
-          : "sticky top-0 z-50 border-b border-border"
+          ? "w-full border-b border-border bg-background bg-opacity-100"
+          : "sticky top-0 z-50 border-b border-border bg-background bg-opacity-100"
       }
       data-no-print="true"
     >

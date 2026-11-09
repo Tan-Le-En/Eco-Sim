@@ -25,8 +25,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { background: var(--paper); color: var(--ink); font-family: var(--font-body);
     font-size: 8.5pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .page { width: 210mm; height: 297mm; padding: 14mm 14mm 12mm; position: relative; overflow: hidden;
-    break-after: page; display: flex; flex-direction: column; }
+  .page { width: 210mm; height: 297mm; padding: 14mm 14mm 12mm; position: relative; break-after: page; display: flex; flex-direction: column; }
   .page:last-child { break-after: auto; }
 
   .mono { font-family: var(--font-mono); font-size: 6.5pt; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
@@ -39,28 +38,28 @@
 
   h1 { font-family: var(--font-display); font-size: 22pt; line-height: 1.1; margin-top: 7mm; }
   h2 { font-family: var(--font-mono); font-size: 7pt; letter-spacing: .14em; text-transform: uppercase;
-    font-weight: 700; margin: 7mm 0 2mm; padding-bottom: 1.5mm; border-bottom: 0.3mm solid var(--ink); }
+    font-weight: 700; margin: 7mm 0 2mm; padding-bottom: 1.5mm; border-bottom: 0.3mm solid var(--ink); break-before: avoid; }
 
   .meta { display: grid; grid-template-columns: repeat(4, 1fr); column-gap: 6mm; margin-top: 4mm; }
   .meta dt { margin-bottom: .8mm; }
   .meta dd { font-size: 9.5pt; font-weight: 600; }
 
   .summary { display: grid; grid-template-columns: 38mm 1fr 1fr; column-gap: 8mm; margin-top: 6mm;
-    border-top: 1.2mm solid var(--ink); padding-top: 3mm; align-items: start; }
+    border-top: 1.2mm solid var(--ink); padding-top: 3mm; align-items: start; break-inside: avoid; }
   .big { font-family: var(--font-display); font-weight: 700; font-size: 40pt; line-height: 1; }
   .big small { font-family: var(--font-mono); font-weight: 400; font-size: 9pt; color: var(--ink-soft); }
   .verdict { font-family: var(--font-display); font-weight: 700; font-size: 12pt; margin-top: 1.5mm; }
   .verdict-sub { color: var(--ink-soft); margin-top: .8mm; line-height: 1.4; }
-  .kv { width: 100%; border-collapse: collapse; }
+  .kv { width: 100%; border-collapse: collapse; break-inside: avoid; }
   .kv td { padding: 1.3mm 0; border-bottom: 0.2mm solid var(--hair); }
   .kv td:last-child { text-align: right; font-family: var(--font-mono); }
   .st { font-family: var(--font-mono); font-size: 7pt; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
   .st.met { color: var(--met); } .st.unmet { color: var(--unmet); } .st.na { color: var(--ink-soft); }
 
-  .two { display: grid; grid-template-columns: 1fr 1fr; column-gap: 8mm; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; column-gap: 8mm; break-inside: avoid; }
   .prose { line-height: 1.5; margin-top: 2mm; }
 
-  table.grid { width: 100%; border-collapse: collapse; }
+  table.grid { width: 100%; border-collapse: collapse; break-inside: avoid; }
   table.grid th { font-family: var(--font-mono); font-size: 6pt; letter-spacing: .08em; text-transform: uppercase;
     font-weight: 400; color: var(--ink-soft); text-align: right; padding: 0 1.5mm 1.5mm; border-bottom: 0.3mm solid var(--ink); vertical-align: bottom; }
   table.grid th:first-child, table.grid td:first-child { text-align: left; padding-left: 0; }
@@ -74,8 +73,8 @@
   table.grid tfoot td:first-child { font-family: var(--font-mono); font-size: 7pt; letter-spacing: .1em; text-transform: uppercase; }
   .dgood { color: var(--met); } .dbad { color: var(--unmet); }
 
-  ul.plain { list-style: none; margin: 0; }
-  ul.plain li { padding: 1.8mm 0; border-bottom: 0.2mm solid var(--hair); line-height: 1.45; }
+ul.plain { list-style: none; margin: 0; break-inside: avoid; }
+ul.plain li { padding: 1.8mm 0; border-bottom: 0.2mm solid var(--hair); line-height: 1.45; }
   .empty { padding: 2mm 0; color: var(--ink-soft); }
 
   .legend { margin-top: 2.5mm; color: var(--ink-soft); font-size: 7pt; line-height: 1.5; }
