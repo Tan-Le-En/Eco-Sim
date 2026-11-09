@@ -1140,6 +1140,10 @@ function quietLine(year: number): string {
   return lines[year % lines.length]!;
 }
 
+const DIGIT_FACES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+const DIGIT_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const DIGIT_DURATION = 0.4;
+
 function OdometerYear({
   year,
   large = false,
@@ -1149,13 +1153,19 @@ function OdometerYear({
 }) {
   const digits = String(year).padStart(4, "0").split("");
   const reduced = useReducedMotion();
+  const prevYear = useRef(year);
+  const direction = year >= prevYear.current ? 1 : -1;
+  useEffect(() => {
+    prevYear.current = year;
+  }, [year]);
+
   return (
     <div className="flex items-center gap-1" aria-label={`Year ${year}`}>
       {digits.map((d, i) => (
         <RollingDigit
           key={i}
           digit={d}
-          delay={i * 0.015}
+          direction={direction}
           large={large}
           reduced={reduced ?? false}
         />
@@ -1166,16 +1176,38 @@ function OdometerYear({
 
 function RollingDigit({
   digit,
-  delay = 0,
+  direction,
   large = false,
   reduced = false,
 }: {
   digit: string;
-  delay?: number;
+  direction: 1 | -1;
   large?: boolean;
   reduced?: boolean;
 }) {
-  const n = Number(digit) || 0;
+  const target = Number(digit) || 0;
+  const indexRef = useRef(target);
+  const prevDigit = useRef(target);
+  const [index, setIndex] = useState(target);
+
+  useEffect(() => {
+    const prev = prevDigit.current;
+    if (prev === target) return;
+    prevDigit.current = target;
+    const cur = indexRef.current;
+    const curMod = ((cur % 10) + 10) % 10;
+    let step = 0;
+    if (direction >= 0) step = (target - curMod + 10) % 10;
+    else step = (target - curMod - 10) % 10;
+    if (step === 0) step = direction >= 0 ? 10 : -10;
+    let next = cur + step;
+    // Keep index inside the tripled strip; same-digit offset is seamless.
+    if (next >= 30) next -= 10;
+    if (next < 0) next += 10;
+    indexRef.current = next;
+    setIndex(next);
+  }, [target, direction]);
+
   // Reduced motion honored: a motion-sensitive user gets the digit, no roll.
   if (reduced) {
     return (
@@ -1187,6 +1219,7 @@ function RollingDigit({
       </span>
     );
   }
+
   return (
     <span
       className="inline-block overflow-hidden leading-none"
@@ -1197,13 +1230,14 @@ function RollingDigit({
       >
         <motion.span
           className="block will-change-transform"
-          animate={{ y: `-${n * 1.1}em` }}
-          transition={{ duration: 0.22, delay, ease: [0.22, 1, 0.36, 1] }}
-          style={{ height: "11em" }}
+          initial={false}
+          animate={{ y: `-${index * 1.1}em` }}
+          transition={{ duration: DIGIT_DURATION, ease: DIGIT_EASE }}
+          style={{ height: "33em" }}
         >
-          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(v => (
+          {DIGIT_FACES.map((v, i) => (
             <span
-              key={v}
+              key={i}
               className="block h-[1.1em] leading-[1.1em] text-center"
             >
               {v}

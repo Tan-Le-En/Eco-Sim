@@ -77,19 +77,22 @@ export default function SiteHeader({
         className="sticky top-0 z-50 border-b border-border bg-background"
         data-no-print="true"
       >
-        <div className="flex items-center justify-between h-16 px-6 sm:px-10 lg:px-14">
+        <div className="flex items-center h-16 gap-4 px-6 sm:px-10 lg:px-14">
           <Link
             href="/"
-            className="font-display italic font-semibold text-xl tracking-tight whitespace-nowrap"
+            className="font-display italic font-semibold text-xl tracking-tight whitespace-nowrap shrink-0"
           >
             ECO<span className="text-vermilion">//</span>SIM
           </Link>
-          <nav className="hidden md:flex items-center gap-1" aria-label="Primary">
+          <nav
+            className="hidden md:flex flex-1 min-w-0 items-center justify-evenly gap-2 px-2"
+            aria-label="Primary"
+          >
             {NAV.filter(n => n.tier === "flow").map((n, i) => (
               <Link
                 key={n.href}
                 href={n.href}
-                className="btn-press inline-flex items-center gap-1.5 font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 transition-colors border border-transparent text-foreground hover:border-border hover:bg-secondary/60"
+                className="btn-press inline-flex items-center gap-1.5 font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 transition-colors border border-transparent text-foreground hover:border-border hover:bg-secondary/60 whitespace-nowrap"
               >
                 <span className="text-muted-foreground/80">
                   {String(i + 1).padStart(2, "0")}
@@ -98,16 +101,18 @@ export default function SiteHeader({
               </Link>
             ))}
           </nav>
-          {showSearch && (
+          {showSearch ? (
             <button
               onClick={() => setSearchOpen(true)}
-              className="btn-press inline-flex items-center gap-1.5 font-data text-[11px] tracking-[0.14em] uppercase text-foreground border border-transparent hover:border-border px-3 py-2 transition-colors"
+              className="btn-press inline-flex shrink-0 items-center gap-1.5 font-data text-[11px] tracking-[0.14em] uppercase text-foreground border border-transparent hover:border-border px-3 py-2 transition-colors"
               aria-label="Search the field study"
               title="Search (Cmd/Ctrl+K)"
             >
               <Search className="w-3.5 h-3.5" />
               <span className="hidden xl:inline">Search</span>
             </button>
+          ) : (
+            <div className="shrink-0" aria-hidden="true" />
           )}
         </div>
 
