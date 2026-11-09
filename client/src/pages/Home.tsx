@@ -162,7 +162,7 @@ export default function Home() {
           >
             {/* Left: typographic hero, offset */}
             <div className="relative flex flex-col justify-between px-4 sm:px-6 lg:px-10 py-4 lg:py-6">
-              <SiteHeader />
+              <SiteHeader minimal />
 
               <motion.div
                 initial={{ opacity: 0, y: 14 }}

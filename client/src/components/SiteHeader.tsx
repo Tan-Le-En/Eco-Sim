@@ -29,9 +29,11 @@ export const NAV: { href: string; label: string; tier: "flow" | "ref" }[] = [
 export default function SiteHeader({
   backHref,
   bare,
+  minimal,
 }: {
   backHref?: string;
   bare?: boolean;
+  minimal?: boolean;
 }) {
   const [location] = useLocation();
   const { theme, toggleTheme } = useTheme();
@@ -68,6 +70,54 @@ export default function SiteHeader({
   // Cmd/Ctrl+K listener can't interrupt reel keyboard controls.
   const showSearch = !bare;
   const dark = theme === "dark";
+
+  // Minimal mode: logo + flow nav + search (for Home page)
+  if (minimal) {
+    return (
+      <header
+        className="sticky top-0 z-50 border-b border-border"
+        data-no-print="true"
+      >
+        <div className="flex items-center justify-between h-16 px-6 sm:px-10 lg:px-14">
+          <Link
+            href="/"
+            className="font-display italic font-semibold text-xl tracking-tight whitespace-nowrap"
+          >
+            ECO<span className="text-vermilion">//</span>SIM
+          </Link>
+          <nav className="hidden md:flex items-center gap-1" aria-label="Primary">
+            {NAV.filter(n => n.tier === "flow").map((n, i) => (
+              <Link
+                key={n.href}
+                href={n.href}
+                className="btn-press inline-flex items-center gap-1.5 font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 transition-colors border border-transparent text-foreground hover:border-border hover:bg-secondary/60"
+              >
+                <span className="text-muted-foreground/80">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                {n.label}
+              </Link>
+            ))}
+          </nav>
+          {showSearch && (
+            <button
+              onClick={() => setSearchOpen(true)}
+              className="btn-press inline-flex items-center gap-1.5 font-data text-[11px] tracking-[0.14em] uppercase text-foreground border border-transparent hover:border-border px-3 py-2 transition-colors"
+              aria-label="Search the field study"
+              title="Search (Cmd/Ctrl+K)"
+            >
+              <Search className="w-3.5 h-3.5" />
+              <span className="hidden xl:inline">Search</span>
+            </button>
+          )}
+        </div>
+
+        {showSearch && (
+          <SiteSearch open={searchOpen} onOpenChange={setSearchOpen} />
+        )}
+      </header>
+    );
+  }
 
   return (
     <header
