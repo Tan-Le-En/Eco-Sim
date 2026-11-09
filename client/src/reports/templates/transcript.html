@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ECO//SIM Field Report Transcript – {{recipient_name}}</title>
+<!--
+  ECO//SIM transcript · A4 portrait · 2 fixed pages · Mustache syntax (see PLACEHOLDERS.md).
+  Page 1: summary + indicator table.  Page 2: policy mix, penalties, highlights, disclaimer.
+  Change colours and fonts only in the :root block.
+-->
+<style>
+  @page { size: A4 portrait; margin: 0; }
+  :root {
+    --paper: #f6f2ea;
+    --ink: #1d1b17;
+    --ink-soft: #5a554a;
+    --hair: #c9c2b2;
+    --accent: #b8431f;
+    --met: #1f6b45;
+    --unmet: #a3341a;
+    --font-display: "Charter", "Bitstream Charter", "Georgia", "DejaVu Serif", serif;
+    --font-body: "Inter", "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "DejaVu Sans Mono", "Menlo", "Consolas", monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--paper); color: var(--ink); font-family: var(--font-body);
+    font-size: 8.5pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { width: 210mm; height: 297mm; padding: 14mm 14mm 12mm; position: relative; overflow: hidden;
+    break-after: page; display: flex; flex-direction: column; }
+  .page:last-child { break-after: auto; }
+
+  .mono { font-family: var(--font-mono); font-size: 6.5pt; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+  .logo { font-family: var(--font-mono); font-weight: 700; font-size: 15pt; letter-spacing: .04em; line-height: 1; }
+  .logo i { font-style: normal; color: var(--accent); }
+
+  header { display: flex; justify-content: space-between; align-items: flex-end;
+    padding-bottom: 3mm; border-bottom: 0.5mm solid var(--ink); }
+  header .right { text-align: right; line-height: 1.6; }
+
+  h1 { font-family: var(--font-display); font-size: 22pt; line-height: 1.1; margin-top: 7mm; }
+  h2 { font-family: var(--font-mono); font-size: 7pt; letter-spacing: .14em; text-transform: uppercase;
+    font-weight: 700; margin: 7mm 0 2mm; padding-bottom: 1.5mm; border-bottom: 0.3mm solid var(--ink); }
+
+  .meta { display: grid; grid-template-columns: repeat(4, 1fr); column-gap: 6mm; margin-top: 4mm; }
+  .meta dt { margin-bottom: .8mm; }
+  .meta dd { font-size: 9.5pt; font-weight: 600; }
+
+  .summary { display: grid; grid-template-columns: 38mm 1fr 1fr; column-gap: 8mm; margin-top: 6mm;
+    border-top: 1.2mm solid var(--ink); padding-top: 3mm; align-items: start; }
+  .big { font-family: var(--font-display); font-weight: 700; font-size: 40pt; line-height: 1; }
+  .big small { font-family: var(--font-mono); font-weight: 400; font-size: 9pt; color: var(--ink-soft); }
+  .verdict { font-family: var(--font-display); font-weight: 700; font-size: 12pt; margin-top: 1.5mm; }
+  .verdict-sub { color: var(--ink-soft); margin-top: .8mm; line-height: 1.4; }
+  .kv { width: 100%; border-collapse: collapse; }
+  .kv td { padding: 1.3mm 0; border-bottom: 0.2mm solid var(--hair); }
+  .kv td:last-child { text-align: right; font-family: var(--font-mono); }
+  .st { font-family: var(--font-mono); font-size: 7pt; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+  .st.met { color: var(--met); } .st.unmet { color: var(--unmet); } .st.na { color: var(--ink-soft); }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; column-gap: 8mm; }
+  .prose { line-height: 1.5; margin-top: 2mm; }
+
+  table.grid { width: 100%; border-collapse: collapse; }
+  table.grid th { font-family: var(--font-mono); font-size: 6pt; letter-spacing: .08em; text-transform: uppercase;
+    font-weight: 400; color: var(--ink-soft); text-align: right; padding: 0 1.5mm 1.5mm; border-bottom: 0.3mm solid var(--ink); vertical-align: bottom; }
+  table.grid th:first-child, table.grid td:first-child { text-align: left; padding-left: 0; }
+  table.grid td { padding: 2mm 1.5mm; border-bottom: 0.2mm solid var(--hair); text-align: right; vertical-align: top;
+    font-family: var(--font-mono); font-size: 8pt; font-variant-numeric: tabular-nums; }
+  table.grid td:first-child { font-family: var(--font-body); font-size: 8.5pt; }
+  table.grid td .sub { display: block; font-size: 7pt; color: var(--ink-soft); margin-top: .5mm; }
+  table.grid td.name { font-weight: 600; }
+  table.grid td.final { font-weight: 700; }
+  table.grid tfoot td { border-bottom: 0; border-top: 0.3mm solid var(--ink); font-weight: 700; padding-top: 2.2mm; }
+  table.grid tfoot td:first-child { font-family: var(--font-mono); font-size: 7pt; letter-spacing: .1em; text-transform: uppercase; }
+  .dgood { color: var(--met); } .dbad { color: var(--unmet); }
+
+  ul.plain { list-style: none; margin: 0; }
+  ul.plain li { padding: 1.8mm 0; border-bottom: 0.2mm solid var(--hair); line-height: 1.45; }
+  .empty { padding: 2mm 0; color: var(--ink-soft); }
+
+  .legend { margin-top: 2.5mm; color: var(--ink-soft); font-size: 7pt; line-height: 1.5; }
+
+  .disclaimer { margin-top: auto; padding-top: 3mm; border-top: 0.3mm solid var(--ink); font-size: 7.5pt; line-height: 1.5; color: var(--ink-soft); }
+  .pagefoot { display: flex; justify-content: space-between; margin-top: auto; padding-top: 3mm; }
+  .disclaimer + .pagefoot { margin-top: 3mm; padding-top: 0; }
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 1 ============ -->
+<div class="page" data-certificate>
+  <header>
+    <!-- Swap for <img src="logo.svg" height="20"> when the real logo file is available -->
+    <div class="logo" aria-label="ECO//SIM">ECO<i>//</i>SIM</div>
+    <div class="right mono">Transcript<br>Run ID {{report_id}}</div>
+  </header>
+
+  <h1>{{report_title}}</h1>
+  <p class="verdict-sub" style="margin-top:1.5mm">{{report_subtitle}}</p>
+
+  <dl class="meta">
+    <div><dt class="mono">Participant</dt><dd>{{recipient_name}}</dd></div>
+    <div><dt class="mono">Issued</dt><dd>{{issued_date}}</dd></div>
+    <div><dt class="mono">Place</dt><dd>{{run_place}}</dd></div>
+    <div><dt class="mono">Period</dt><dd>{{run_baseline_year}}–{{run_final_year}} ({{run_window}})</dd></div>
+  </dl>
+
+  <section class="summary" aria-label="Result summary">
+    <div>
+      <div class="mono">Final score</div>
+      <div class="big">{{score_display}}<small> / {{score_max}}</small></div>
+    </div>
+    <div>
+      <div class="verdict">{{verdict}}</div>
+      <p class="verdict-sub">{{verdict_subtext}}</p>
+      <table class="kv" style="margin-top:2.5mm">
+        <tr><td>Population {{run_final_year}}</td><td>{{population_2050}}</td></tr>
+        <tr><td>Budget remaining</td><td>{{budget_remaining}}</td></tr>
+        <tr><td>Goals met</td><td>{{goals_display}}</td></tr>
+      </table>
+    </div>
+    <div>
+      <div class="mono" style="margin-bottom:1mm">Goals</div>
+      <table class="kv">
+        {{#goals}}
+        <tr>
+          <td>{{goal_title}}</td>
+          <td>{{#goal_met}}<span class="st met">&#10003; Met</span>{{/goal_met}}{{^goal_met}}<span class="st unmet">&#215; Not met</span>{{/goal_met}}</td>
+        </tr>
+        {{/goals}}
+      </table>
+    </div>
+  </section>
+
+  <section class="two">
+    <div><h2>What worked</h2><p class="prose">{{worked}}</p></div>
+    <div><h2>What failed</h2><p class="prose">{{failed}}</p></div>
+  </section>
+
+  <h2>Indicators and score breakdown</h2>
+  <table class="grid">
+    <thead>
+      <tr>
+        <th>Indicator</th><th>2026</th><th>2050</th><th>Change</th>
+        <th>Target</th><th>Result</th><th>Weight</th><th>Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#indicators}}
+      <tr>
+        <td class="name">{{ind_label}}<span class="sub">{{ind_kid_name}} · {{ind_meaning}}</span></td>
+        <td>{{ind_baseline}}</td>
+        <td class="final">{{ind_final}}</td>
+        <td>
+          {{#ind_improved}}<span class="dgood">&#9650; {{ind_delta}}</span>{{/ind_improved}}
+          {{#ind_worsened}}<span class="dbad">&#9660; {{ind_delta}}</span>{{/ind_worsened}}
+          {{#ind_neutral}}{{ind_delta}}{{/ind_neutral}}
+        </td>
+        <td>{{ind_target}}</td>
+        <td>
+          {{#ind_target_met}}<span class="st met">&#10003; Met</span>{{/ind_target_met}}
+          {{#ind_target_missed}}<span class="st unmet">&#215; Not met</span>{{/ind_target_missed}}
+          {{#ind_target_na}}<span class="st na">n/a</span>{{/ind_target_na}}
+        </td>
+        <td>{{ind_weight}}</td>
+        <td>{{ind_points}} / {{ind_max_points}}</td>
+      </tr>
+      {{/indicators}}
+    </tbody>
+    <tfoot>
+      <tr><td colspan="7">Subtotal before penalties</td><td>{{breakdown_subtotal}}</td></tr>
+      <tr><td colspan="7">Penalties</td><td>{{penalty_total}}</td></tr>
+      <tr><td colspan="7">Final score</td><td>{{score_display}} / {{score_max}}</td></tr>
+    </tfoot>
+  </table>
+  <p class="legend">Change is 2050 minus 2026. &#9650; means the indicator moved in its better direction, &#9660; in its worse direction (for climate pressure, lower is better). Indicators without a hard target still count toward the score through their weight.</p>
+
+  <div class="pagefoot mono"><span>ECO//SIM · {{recipient_name}}</span><span>Page 1 of 2</span></div>
+</div>
+
+<!-- ============ PAGE 2 ============ -->
+<div class="page" data-certificate>
+  <header>
+    <div class="logo" aria-label="ECO//SIM">ECO<i>//</i>SIM</div>
+    <div class="right mono">Transcript<br>Run ID {{report_id}}</div>
+  </header>
+
+  <h2 style="margin-top:7mm">Policy mix chosen</h2>
+  <table class="grid">
+    <thead><tr><th>Control</th><th>Setting</th><th>Range</th></tr></thead>
+    <tbody>
+      {{#controls}}
+      <tr>
+        <td class="name">{{ctl_label}}<span class="sub">{{ctl_story}}</span></td>
+        <td class="final">{{ctl_value}} {{ctl_unit}}</td>
+        <td>{{ctl_range}}</td>
+      </tr>
+      {{/controls}}
+    </tbody>
+  </table>
+
+  <h2>Penalties applied</h2>
+  {{#penalties}}
+  <ul class="plain"><li>{{penalty_text}}</li></ul>
+  {{/penalties}}
+  {{^penalties}}<p class="empty">No penalties applied.</p>{{/penalties}}
+
+  <h2>Cause and effect highlights</h2>
+  {{#causal_links}}
+  <ul class="plain"><li>{{causal_text}}</li></ul>
+  {{/causal_links}}
+  {{^causal_links}}<p class="empty">No causal highlights recorded.</p>{{/causal_links}}
+  <p class="legend">{{events_count}} events were recorded during this run.</p>
+
+  <p class="disclaimer">{{disclaimer}}</p>
+  <div class="pagefoot mono"><span>ECO//SIM · {{recipient_name}} · Issued {{issued_date}}</span><span>Page 2 of 2</span></div>
+</div>
+
+</body>
+</html>

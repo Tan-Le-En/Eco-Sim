@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ECO//SIM Certificate of Completion – {{recipient_name}}</title>
+<!--
+  ECO//SIM certificate · A4 landscape · Mustache syntax (see PLACEHOLDERS.md).
+  Double braces = escaped text; # and / pairs = repeat or show-if-true block;
+  caret pairs = show if empty or false.
+  Change colours and fonts only in the :root block.
+-->
+<style>
+  @page { size: A4 landscape; margin: 0; }
+  :root {
+    --paper: #f6f2ea;
+    --ink: #1d1b17;
+    --ink-soft: #5a554a;
+    --rule: #1d1b17;
+    --accent: #b8431f;      /* ECO//SIM red-orange */
+    --met: #1f6b45;         /* goal met (text + glyph, never colour alone) */
+    --unmet: #a3341a;
+    --font-display: "Charter", "Bitstream Charter", "Georgia", "DejaVu Serif", serif;
+    --font-body: "Inter", "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "DejaVu Sans Mono", "Menlo", "Consolas", monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 297mm; height: 210mm; background: var(--paper); color: var(--ink);
+    font-family: var(--font-body); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { width: 297mm; height: 210mm; padding: 9mm; overflow: hidden; }
+  .frame { height: 100%; border: 0.5mm solid var(--rule); padding: 9mm 12mm 7mm;
+    display: grid; grid-template-rows: auto 1fr auto; row-gap: 6mm; }
+
+  .mono { font-family: var(--font-mono); font-size: 7pt; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+  .logo { font-family: var(--font-mono); font-weight: 700; font-size: 17pt; letter-spacing: .04em; line-height: 1; }
+  .logo i { font-style: normal; color: var(--accent); }
+
+  header { display: flex; justify-content: space-between; align-items: flex-end;
+    padding-bottom: 3.5mm; border-bottom: 0.3mm solid var(--rule); }
+
+  main { display: grid; grid-template-columns: 1fr 78mm; column-gap: 14mm; align-items: center; }
+
+  .kicker { color: var(--accent); margin-bottom: 5mm; }
+  .certifies { font-size: 10pt; color: var(--ink-soft); margin-bottom: 2mm; }
+  .recipient { font-family: var(--font-display); font-weight: 700; font-size: 40pt; line-height: 1.05;
+    overflow-wrap: anywhere; padding-bottom: 3mm; border-bottom: 0.3mm solid var(--rule); }
+  .recipient.long { font-size: 30pt; }
+  .recipient.xlong { font-size: 22pt; }
+  .statement { font-size: 11pt; line-height: 1.5; margin-top: 5mm; max-width: 150mm; }
+  .statement b { font-weight: 600; }
+
+  aside { border-top: 1.2mm solid var(--ink); padding-top: 3mm; }
+  .score-row { display: flex; align-items: baseline; gap: 2mm; }
+  .score { font-family: var(--font-display); font-weight: 700; font-size: 58pt; line-height: 1; }
+  .score-max { font-family: var(--font-mono); font-size: 11pt; color: var(--ink-soft); }
+  .verdict { font-family: var(--font-display); font-size: 15pt; font-weight: 700; margin-top: 2mm; }
+  .verdict-sub { font-size: 8.5pt; color: var(--ink-soft); margin-top: 1mm; line-height: 1.4; }
+  .goals-head { display: flex; justify-content: space-between; margin-top: 5mm; padding-bottom: 1.5mm; border-bottom: 0.3mm solid var(--rule); }
+  .goal { display: flex; justify-content: space-between; align-items: baseline; gap: 4mm;
+    padding: 1.8mm 0; border-bottom: 0.2mm solid #c9c2b2; font-size: 9pt; }
+  .goal-title { font-weight: 600; }
+  .goal-status { font-family: var(--font-mono); font-size: 7.5pt; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+  .goal-status.met { color: var(--met); }
+  .goal-status.unmet { color: var(--unmet); }
+
+  .notes { margin-top: 14mm; display: grid; grid-template-columns: 1fr 1fr; column-gap: 14mm; }
+  .note { border-top: 0.3mm solid var(--rule); padding-top: 2mm; }
+  .note p { font-size: 8.5pt; line-height: 1.45; margin-top: 1mm;
+    display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+
+  footer { display: grid; grid-template-columns: auto 1fr; column-gap: 10mm; align-items: end;
+    padding-top: 3mm; border-top: 0.3mm solid var(--rule); }
+  footer .meta { line-height: 1.7; }
+  footer .meta b { color: var(--ink); font-weight: 400; }
+  .disclaimer { font-size: 7pt; line-height: 1.45; color: var(--ink-soft); text-align: right; }
+</style>
+</head>
+<body>
+<div class="page" data-certificate>
+ <div class="frame">
+
+  <header>
+    <!-- Swap this span for <img src="logo.svg" height="24"> when the real logo file is available -->
+    <div class="logo" aria-label="ECO//SIM">ECO<i>//</i>SIM</div>
+    <div class="mono">{{report_title}}</div>
+  </header>
+
+  <main>
+    <section>
+      <div class="mono kicker">Certificate of completion</div>
+      <p class="certifies">This certifies that</p>
+      <h1 class="recipient{{#recipient_name_class}} {{recipient_name_class}}{{/recipient_name_class}}">{{recipient_name}}</h1>
+      <p class="statement">
+        completed the ECO//SIM simulation, guiding <b>{{run_place}}</b>
+        from <b>{{run_baseline_year}}</b> to <b>{{run_final_year}}</b> ({{run_window}})
+        and reaching <b>{{goals_met}} of {{goals_total}}</b> goals.
+      </p>
+  <div class="notes">
+    <div class="note"><div class="mono">What worked</div><p>{{worked}}</p></div>
+    <div class="note"><div class="mono">What failed</div><p>{{failed}}</p></div>
+  </div>
+    </section>
+
+    <aside aria-label="Result">
+      <div class="mono">Final score</div>
+      <div class="score-row"><span class="score">{{score_display}}</span><span class="score-max">/ {{score_max}}</span></div>
+      <div class="verdict">{{verdict}}</div>
+      <p class="verdict-sub">{{verdict_subtext}}</p>
+
+      <div class="goals-head mono"><span>Goals</span><span>{{goals_display}} met</span></div>
+      {{#goals}}
+      <div class="goal">
+        <span class="goal-title">{{goal_title}}</span>
+        {{#goal_met}}<span class="goal-status met">&#10003; Met</span>{{/goal_met}}
+        {{^goal_met}}<span class="goal-status unmet">&#215; Not met</span>{{/goal_met}}
+      </div>
+      {{/goals}}
+    </aside>
+  </main>
+
+
+  <footer>
+    <div class="mono meta">
+      Issued <b>{{issued_date}}</b><br>
+      Run ID <b>{{report_id}}</b>
+    </div>
+    <p class="disclaimer">{{disclaimer}}</p>
+  </footer>
+
+ </div>
+</div>
+</body>
+</html>

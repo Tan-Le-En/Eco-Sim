@@ -26,7 +26,7 @@ import SiteHeader from "@/components/SiteHeader";
 import CausalChain from "@/components/CausalChain";
 import CopyButton from "@/components/CopyButton";
 import ConfirmDialog from "@/components/ConfirmDialog";
-import ReportCertificate from "@/components/ReportCertificate";
+import ReportActions from "@/reports/ReportActions";
 import { useSim } from "@/contexts/SimContext";
 import {
   CONTROL_RANGES,
@@ -310,15 +310,11 @@ export default function Results() {
                   label="Share score"
                   className="gap-1.5 px-4 py-2 text-[11px] tracking-[0.12em]"
                 />
-                <ReportCertificate
-                  result={latest}
-                  verdict={verdict}
-                  goalsMet={goalsMet}
-                />
                 <button onClick={handleReplay} className="btn btn-primary">
                   <RefreshCw className="w-3.5 h-3.5" /> Play again
                 </button>
               </div>
+              <ReportActions result={latest} />
             </div>
           </div>
         </motion.section>
