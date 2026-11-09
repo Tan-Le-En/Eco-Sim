@@ -34,13 +34,24 @@ const TAG_COAST = "Coast built over — habitat loss";
 const TAG_WETLAND = "Wetland filled — buffering drops";
 const TAG_FLOOD = "Flood-prone kampung — protect first";
 
+// Overlay palette: centralized here and mirrored as CSS tokens in index.css
+// (--overlay-low-water, --overlay-mangrove, --overlay-built, --overlay-flood)
+// so the map legend and fills stay theme-auditable.
+const OVERLAY = {
+  lowWater: "rgba(185,145,100,0.65)",
+  mangrove: "rgba(34,120,60,0.55)",
+  built: "rgba(185,154,107,0.6)",
+  flood: "rgba(201,107,66,0.55)",
+  floodAlpha: 0.55,
+} as const;
+
 // Swatches shown in the legend. One per fill the overlays can paint,
 // so the legend never lies about what is on screen.
 const OVERLAY_LEGEND: [string, string][] = [
-  ["rgba(185,145,100,0.65)", "Low water — drought"],
-  ["rgba(34,120,60,0.55)", "Mangrove restored"],
-  ["rgba(185,154,107,0.6)", "Coast built over"],
-  ["rgba(201,107,66,0.55)", "Flood-prone kampung"],
+  [OVERLAY.lowWater, "Low water — drought"],
+  [OVERLAY.mangrove, "Mangrove restored"],
+  [OVERLAY.built, "Coast built over"],
+  [OVERLAY.flood, "Flood-prone kampung"],
 ];
 
 /** Overlay fill + hover tag for one cell. Fills match the legend exactly. */
@@ -58,7 +69,7 @@ function overlayFor(
   // it is healthy. Only the drought excursion gets painted (muddy low water).
   if (cell.type === "river") {
     if (indicators && indicators.waterSecurity < 45) {
-      return { fill: "rgba(185,145,100,0.65)", tag: TAG_LOW_WATER };
+      return { fill: OVERLAY.lowWater, tag: TAG_LOW_WATER };
     }
     return { fill: "transparent" };
   }
@@ -70,7 +81,7 @@ function overlayFor(
     indicators.floodResilience < 45 &&
     t > 10
   ) {
-    return { fill: `rgba(201,107,66,${isLate ? 0.7 : 0.55})`, tag: TAG_FLOOD };
+    return { fill: `rgba(201,107,66,${isLate ? 0.7 : OVERLAY.floodAlpha})`, tag: TAG_FLOOD };
   }
 
   // Mangrove restoration: green overlay grows with investment

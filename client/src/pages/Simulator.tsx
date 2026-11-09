@@ -719,10 +719,10 @@ export default function Simulator() {
                 />
                 {/* Weather event overlay: appears based on score */}
                 {previewResult!.score < 58 && (
-                  <div className="absolute inset-0 bg-gradient-to-t from-[rgba(185,154,107,0.4)] via-transparent to-[rgba(201,107,66,0.25)] pointer-events-none animate-in fade-in duration-700 delay-300" />
+                  <div className="absolute inset-0 mood-overlay-struggle pointer-events-none animate-in fade-in duration-700 delay-300" />
                 )}
                 {previewResult!.score >= 58 && (
-                  <div className="absolute inset-0 bg-gradient-to-t from-[rgba(47,122,72,0.3)] via-transparent to-[rgba(100,180,140,0.15)] pointer-events-none animate-in fade-in duration-700 delay-300" />
+                  <div className="absolute inset-0 mood-overlay-hope pointer-events-none animate-in fade-in duration-700 delay-300" />
                 )}
               </figure>
               <div className="px-5 py-4 space-y-3">

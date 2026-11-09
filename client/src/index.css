@@ -99,6 +99,17 @@
   --warn: oklch(0.55 0.11 68);
   --bad: var(--vermilion);
 
+  /* Map/data overlays (centralized; CityMap legend/fills mirror these semantics) */
+  --overlay-low-water: rgba(185, 145, 100, 0.65);
+  --overlay-mangrove: rgba(34, 120, 60, 0.55);
+  --overlay-built: rgba(185, 154, 107, 0.6);
+  --overlay-flood: rgba(201, 107, 66, 0.55);
+  /* Simulator verdict photo mood overlays */
+  --overlay-struggle-from: rgba(185, 154, 107, 0.4);
+  --overlay-struggle-to: rgba(201, 107, 66, 0.25);
+  --overlay-hope-from: rgba(47, 122, 72, 0.3);
+  --overlay-hope-to: rgba(100, 180, 140, 0.15);
+
   --chart-1: var(--vermilion);
   --chart-2: var(--deepsea);
   --chart-3: oklch(0.45 0.05 140);
@@ -139,6 +150,15 @@ html.dark {
   --warn: oklch(0.79 0.11 75);
   --bad: var(--vermilion);
 
+  --overlay-low-water: rgba(185, 145, 100, 0.6);
+  --overlay-mangrove: rgba(52, 145, 90, 0.5);
+  --overlay-built: rgba(185, 154, 107, 0.55);
+  --overlay-flood: rgba(201, 107, 66, 0.5);
+  --overlay-struggle-from: rgba(185, 154, 107, 0.35);
+  --overlay-struggle-to: rgba(201, 107, 66, 0.2);
+  --overlay-hope-from: rgba(47, 122, 72, 0.28);
+  --overlay-hope-to: rgba(100, 180, 140, 0.14);
+
   /* Residual stock emerald classes (kept for safety); v4 code uses --ok/--warn */
   --color-emerald-700: oklch(0.74 0.13 155);
   --color-emerald-800: oklch(0.8 0.12 155);
@@ -154,6 +174,18 @@ html.dark {
   * {
     @apply border-border;
     border-radius: 0;
+  }
+  /* Documented radius exceptions (audit decision B): the editorial system is
+     zero-radius, but tactile form controls keep a small radius for affordance.
+     Large shadows remain disallowed; depth comes from hairlines/contrast. */
+  [data-slot="slider-track"] {
+    border-radius: 9999px;
+  }
+  [data-slot="slider-thumb"] {
+    border-radius: 9999px;
+  }
+  [data-slot="input"] {
+    border-radius: 2px;
   }
   /* Full-opacity focus indicator (WCAG 2.4.13 focus appearance) */
   :focus-visible {
@@ -361,6 +393,24 @@ html.dark {
   }
   .btn-press:active {
     transform: scale(0.97);
+  }
+
+  /* Verdict mood overlays (Simulator): tokenized, no hardcoded rgba in JSX */
+  .mood-overlay-struggle {
+    background-image: linear-gradient(
+      to top,
+      var(--overlay-struggle-from),
+      transparent,
+      var(--overlay-struggle-to)
+    );
+  }
+  .mood-overlay-hope {
+    background-image: linear-gradient(
+      to top,
+      var(--overlay-hope-from),
+      transparent,
+      var(--overlay-hope-to)
+    );
   }
 
   /* Form controls (checkbox, range) tinted to the signature accent colour */

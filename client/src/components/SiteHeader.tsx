@@ -123,7 +123,7 @@ export default function SiteHeader({
     <header
       className={
         bare
-          ? "w-full border-b border-[#F4F2ED] dark:border-background bg-[#F4F2ED] dark:bg-background"
+          ? "w-full border-b border-border bg-background"
           : "sticky top-0 z-50 border-b border-border"
       }
       data-no-print="true"
@@ -165,7 +165,7 @@ export default function SiteHeader({
                 aria-current={active ? "page" : undefined}
                 className={`btn-press inline-flex items-center gap-1.5 font-data text-[11px] tracking-[0.14em] uppercase px-3 py-2 transition-colors border border-transparent ${
                   active
-                    ? "bg-secondary text-secondary-foreground dark:bg-[oklch(0.24_0.012_75)]"
+                    ? "bg-secondary text-secondary-foreground"
                     : muted
                       ? "text-muted-foreground hover:text-foreground hover:border-border"
                       : "text-foreground hover:border-border hover:bg-secondary/60"

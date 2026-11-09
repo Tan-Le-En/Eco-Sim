@@ -4,7 +4,6 @@
  * plain explanation, and a primary CTA to start the story. No tech jargon.
  */
 import { Link } from "wouter";
-import { motion } from "framer-motion";
 import { ArrowRight, Compass } from "lucide-react";
 import PageMeta from "@/components/PageMeta";
 
