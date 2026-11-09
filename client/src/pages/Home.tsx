@@ -7,10 +7,9 @@
 import { Link } from "wouter";
 import SiteFooter from "@/components/SiteFooter";
 import PageMeta from "@/components/PageMeta";
-import SiteSearch from "@/components/SiteSearch";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Search, Sun, Moon } from "lucide-react";
+import { ArrowRight, Sun, Moon } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
 import FadeImg from "@/components/FadeImg";
 import { goalsMetCount } from "@/components/TownMood";
@@ -120,7 +119,6 @@ const FIELD = [
 ];
 
 export default function Home() {
-  const [searchOpen, setSearchOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
   // Sticky mobile CTA: once the hero scrolls out of view, offer the main action
   // from the bottom of the screen on small devices.
@@ -145,7 +143,6 @@ export default function Home() {
         title="ECO//SIM — A Field Study of a Coastal Town, 2026–2050"
         description="Change one thing, watch everything change. An interactive field study of Teluk Nusa, a fictional Malaysian coastal town: simple enough for a child, rigorous enough for a professor."
       />
-      <SiteSearch open={searchOpen} onOpenChange={setSearchOpen} />
       <div
         className={
           `min-h-screen flex flex-col bg-background` +
@@ -214,29 +211,18 @@ export default function Home() {
                 alt="Aerial photograph of Kuala Kedah estuary showing the river mouth, coastal settlement, and breakwater"
                 className="absolute inset-0 w-full h-full object-cover"
               />
-              <div className="absolute top-4 right-4 flex items-center gap-2">
-                <button
-                  onClick={() => setSearchOpen(true)}
-                  className="btn-press inline-flex items-center gap-1.5 font-data text-[11px] tracking-[0.14em] uppercase bg-background/92 backdrop-blur-md text-foreground border border-border px-3 py-2 transition-colors hover:border-foreground"
-                  aria-label="Search the field study"
-                  title="Search (Cmd/Ctrl+K)"
-                >
-                  <Search className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Search</span>
-                </button>
-                <button
-                  onClick={toggleTheme}
-                  className="btn-press inline-flex items-center font-data text-[11px] tracking-[0.14em] uppercase bg-background/92 backdrop-blur-md text-foreground border border-border px-3 py-2 transition-colors hover:border-foreground"
-                  aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
-                  title={dark ? "Light mode" : "Dark mode"}
-                >
-                  {dark ? (
-                    <Sun className="w-3.5 h-3.5" />
-                  ) : (
-                    <Moon className="w-3.5 h-3.5" />
-                  )}
-                </button>
-              </div>
+              <button
+                onClick={toggleTheme}
+                className="absolute bottom-4 right-4 btn-press inline-flex items-center justify-center w-11 h-11 rounded-full bg-background/92 backdrop-blur-md text-foreground border border-border transition-colors hover:border-foreground"
+                aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+                title={dark ? "Light mode" : "Dark mode"}
+              >
+                {dark ? (
+                  <Sun className="w-5 h-5" />
+                ) : (
+                  <Moon className="w-5 h-5" />
+                )}
+              </button>
             </div>
           </section>
 
