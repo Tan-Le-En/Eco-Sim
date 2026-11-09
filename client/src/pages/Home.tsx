@@ -142,7 +142,7 @@ export default function Home() {
     <>
       <PageMeta
         title="ECO//SIM — A Field Study of a Coastal Town, 2026–2050"
-        description="Change one thing, watch everything change. An interactive field study of Teluk Nusa, a fictional Malaysian coastal town: simple enough for a child, rigorous enough for a professor."
+        description="Govern Teluk Nusa, a fictional Malaysian coastal town, from 2026 to 2050. Eight policy dials, one 100-point budget, seven registers to protect. Change one thing, watch everything change."
       />
       <div
         className={
