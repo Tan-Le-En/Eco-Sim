@@ -43,7 +43,6 @@ export default function ReportActions({ result }: Props) {
           <p className="text-[12px] text-muted-foreground leading-relaxed mt-1">
             Download printable A4 documents for this run ({goals_met}/3 goals).
             Transcript works without a name; certificate requires a name.
-            In the print dialog, choose <b>Save as PDF</b> to save the document.
           </p>
         </div>
       </div>
@@ -65,17 +64,17 @@ export default function ReportActions({ result }: Props) {
           onClick={() => renderAndPrint("certificate")}
           disabled={certDisabled}
           className="btn btn-outline h-9 px-3 text-[11px] disabled:opacity-40"
-          title={certDisabled ? "Enter a name to save the certificate as PDF" : "Print/save certificate as PDF (A4 landscape)"}
+          title={certDisabled ? "Enter a name to download the certificate" : "Print/download certificate (A4 landscape)"}
         >
-          <Download className="w-3.5 h-3.5" /> Save certificate PDF
+          <Download className="w-3.5 h-3.5" /> Download certificate
         </button>
         <button
           type="button"
           onClick={() => renderAndPrint("transcript")}
           className="btn btn-outline h-9 px-3 text-[11px]"
-          title="Print/save transcript as PDF (A4 portrait, 2 pages)"
+          title="Print/download transcript (A4 portrait, 2 pages)"
         >
-          <Printer className="w-3.5 h-3.5" /> Save transcript PDF
+          <Printer className="w-3.5 h-3.5" /> Download transcript
         </button>
       </div>
     </div>
