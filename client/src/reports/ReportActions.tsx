@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import Mustache from "mustache";
-import { Download, FileText, Printer } from "lucide-react";
+import { Download, FileText, Mail, Printer } from "lucide-react";
 import { toast } from "sonner";
 import type { SimulationResult } from "@/lib/sim/types";
 import { buildReportViewModel, computeGoalsMet } from "./buildReportViewModel";
@@ -12,6 +12,7 @@ interface Props {
 
 export default function ReportActions({ result }: Props) {
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
 
   const goalsMet = useMemo(() => computeGoalsMet(result), [result]);
   const goals_met = goalsMet.filter(Boolean).length;
@@ -30,6 +31,40 @@ export default function ReportActions({ result }: Props) {
         e instanceof Error ? e.message : "Could not open print dialog"
       );
     }
+  };
+
+  const emailReport = (kind: "certificate" | "transcript") => {
+    if (!email.trim()) {
+      toast.error("Enter an email address");
+      return;
+    }
+    const vm = buildReportViewModel(
+      result,
+      kind === "transcript" && !name.trim() ? "" : name
+    );
+    const subject = `ECO//SIM · Teluk Nusa 2050 Field Report${vm.recipient_name ? " · " + vm.recipient_name : ""}`;
+    const body = [
+      `ECO//SIM — Teluk Nusa 2050 Field Report`,
+      ``,
+      `Participant: ${vm.recipient_name}`,
+      `Issued: ${vm.issued_date}`,
+      `Run ID: ${vm.report_id}`,
+      `Place: ${vm.run_place} (${vm.run_baseline_year}–${vm.run_final_year})`,
+      `Score: ${vm.score_display} / ${vm.score_max}`,
+      `Verdict: ${vm.verdict}`,
+      `Goals: ${vm.goals_met} / ${vm.goals_total}`,
+      ``,
+      `Worked: ${vm.worked}`,
+      `Failed: ${vm.failed}`,
+      ``,
+      `Simulator: ${vm.simulator_url}`,
+      ``,
+      `Educational simulation, not a real forecast.`,
+    ].join("\n");
+
+    const url = `mailto:${encodeURIComponent(email.trim())}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = url;
+    toast("Opened your mail app to send the report");
   };
 
   return (
@@ -59,6 +94,18 @@ export default function ReportActions({ result }: Props) {
             aria-label="Player name for certificate"
           />
         </label>
+        <label className="flex flex-col gap-1 min-w-[220px] flex-1 max-w-sm">
+          <span className="font-data text-[10px] tracking-[0.12em] uppercase text-muted-foreground">
+            Send report to email
+          </span>
+          <input
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            className="h-9 px-3 border border-input bg-background text-sm font-data rounded-none outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            aria-label="Email address to send report to"
+          />
+        </label>
         <button
           type="button"
           onClick={() => renderAndPrint("certificate")}
@@ -70,11 +117,29 @@ export default function ReportActions({ result }: Props) {
         </button>
         <button
           type="button"
+          onClick={() => emailReport("certificate")}
+          disabled={!email.trim() || certDisabled}
+          className="btn btn-outline h-9 px-3 text-[11px] disabled:opacity-40"
+          title={!email.trim() ? "Enter an email address" : certDisabled ? "Enter a name to email the certificate" : "Email certificate"}
+        >
+          <Mail className="w-3.5 h-3.5" /> Email certificate
+        </button>
+        <button
+          type="button"
           onClick={() => renderAndPrint("transcript")}
           className="btn btn-outline h-9 px-3 text-[11px]"
           title="Print/download transcript (A4 portrait, 2 pages)"
         >
           <Printer className="w-3.5 h-3.5" /> Download transcript
+        </button>
+        <button
+          type="button"
+          onClick={() => emailReport("transcript")}
+          disabled={!email.trim()}
+          className="btn btn-outline h-9 px-3 text-[11px]"
+          title={!email.trim() ? "Enter an email address" : "Email transcript"}
+        >
+          <Mail className="w-3.5 h-3.5" /> Email transcript
         </button>
       </div>
     </div>
